@@ -1,17 +1,17 @@
-# Egyland Agricultural Export Platform
+# Egyland - منصة تصدير المنتجات الزراعية المصرية
 
-Professional platform for an Egyptian agricultural export company built with Django and Tailwind CSS.
+منصة احترافية لشركة تصدير منتجات زراعية مصرية مبنية باستخدام Django و Tailwind CSS.
 
-## Key Features
+## الميزات الرئيسية
 
-- Dynamic product catalog with fresh/IQF handling
-- Monthly seasonality charts per product/variety
-- Modular, component-based frontend
-- Admin dashboard for full content control
-- Responsive design for all device sizes
-- SEO-optimized
+- كتالوج منتجات ديناميكي مع دعم المنتجات الطازجة والمجمدة (IQF)
+- مخططات موسمية شهرية لكل منتج/صنف
+- واجهة أمامية مبنية على المكونات القابلة لإعادة الاستخدام
+- لوحة تحكم للمدير تتيح التحكم الكامل في المحتوى
+- تصميم متجاوب يعمل على جميع أحجام الشاشات
+- محسّن لمحركات البحث SEO
 
-## Tech Stack
+## التقنيات المستخدمة
 
 - Python 3.12+
 - Django 4.2.7
@@ -20,208 +20,137 @@ Professional platform for an Egyptian agricultural export company built with Dja
 - Vanilla JavaScript
 - HTML5 & Django Templates
 
-## Installation
+## التثبيت
 
-1. Clone the repository
+1. استنساخ المستودع
 ```bash
-git clone <repository-url>
-cd egyland
+git clone https://github.com/MWHEBA/Egyland.git
+cd Egyland
 ```
 
-2. Create and activate virtual environment
+2. إنشاء وتفعيل البيئة الافتراضية
 ```bash
 python -m venv venv
 source venv/bin/activate  # Linux/Mac
 venv\Scripts\activate     # Windows
 ```
 
-3. Install dependencies
+3. تثبيت التبعيات
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Setup database (PostgreSQL)
-- Create a database as per the instructions in `setup_db.sql`
-- Configure database connection in `config/.env`
+4. إعداد قاعدة البيانات
+- إنشاء قاعدة بيانات PostgreSQL
+- تكوين اتصال قاعدة البيانات في ملف `config/.env`
 
-5. Run migrations and create superuser
+5. تشغيل الترحيلات وإنشاء المستخدم الرئيسي
 ```bash
 python manage.py migrate
 python manage.py createsuperuser
 ```
 
-6. Run the development server
+6. تشغيل خادم التطوير
 ```bash
 python manage.py runserver
 ```
 
-7. Access the website at http://127.0.0.1:8000/
+7. الوصول إلى الموقع من خلال http://127.0.0.1:8000/
 
-## Project Structure
+## هيكل المشروع
 
-- `apps/`: Module applications
-  - `core/`: Main site pages and functionality
-  - `products/`: Product catalog and detail pages
-  - `admin/`: Custom admin dashboard
-  - `accounts/`: User accounts (future)
-- `config/`: Project configuration
-- `templates/`: HTML templates
-- `static/`: Static assets (CSS, JS, images)
-- `media/`: User-uploaded content
-- `logs/`: Application logs
+- `apps/`: تطبيقات المشروع المختلفة
+  - `core/`: الصفحات والوظائف الرئيسية للموقع
+  - `products/`: كتالوج المنتجات وصفحات التفاصيل
+  - `admin/`: لوحة تحكم مخصصة
+  - `accounts/`: حسابات المستخدمين (مستقبلاً)
+- `config/`: تكوين المشروع
+- `templates/`: قوالب HTML
+- `static/`: الأصول الثابتة (CSS, JS, الصور)
+- `media/`: المحتوى الذي يرفعه المستخدم
+- `logs/`: سجلات التطبيق
 
-## Content Management
+## إدارة المحتوى
 
-The site is fully managed through the admin interface at `/admin`. Key content sections:
+يتم إدارة الموقع بالكامل من خلال واجهة المدير على `/admin`. الأقسام الرئيسية:
 
-1. Products
-   - Add/edit products and their details
-   - Manage seasonality, counts, sizes, packaging
+1. المنتجات
+   - إضافة/تحرير المنتجات وتفاصيلها
+   - إدارة المواسم، الأحجام، العدد، التعبئة
 
-2. Inquiries
-   - View and manage contact messages
-   - Handle quote requests
+2. الاستفسارات
+   - عرض وإدارة رسائل الاتصال
+   - معالجة طلبات الأسعار
 
-## Packaging System
+## نظام التعبئة والتغليف
 
-The system supports an enhanced packaging management approach:
+يدعم النظام نهجاً متطوراً لإدارة التعبئة والتغليف:
 
-1. **Packaging Types**
-   - Reusable packaging types with images (e.g., "Wooden boxes - 30pcs")
-   - Each type has a key word (e.g., "boxes") for dynamic labeling
-   - Types can be marked for Fresh products, IQF products, or both
+1. **أنواع التعبئة**
+   - أنواع تعبئة قابلة لإعادة الاستخدام مع صور (مثل "صناديق خشبية - 30 قطعة")
+   - كل نوع له كلمة مفتاحية (مثل "صناديق") للتسمية الديناميكية
+   - يمكن تصنيف الأنواع للمنتجات الطازجة، المجمدة، أو كليهما
 
-2. **Product Packaging Types**
-   - Associates products with packaging types
-   - Configurable specifications:
-     - Items per pallet (using the key word)
-     - Pallets per container
-     - Net weight and units
-   - Display options (e.g., show "Fresh" label)
+2. **أنواع تعبئة المنتجات**
+   - ربط المنتجات بأنواع التعبئة
+   - مواصفات قابلة للتكوين:
+     - العناصر لكل منصة (باستخدام الكلمة المفتاحية)
+     - المنصات لكل حاوية
+     - الوزن الصافي والوحدات
+   - خيارات العرض (مثل إظهار علامة "طازج")
 
-3. **Display**
-   - Packaging displays similarly to counts and sizes
-   - Visual representation with images and structured data
-   - Consistent user experience across product specifications
+## إرشادات التطوير
 
-## Development Guidelines
+- استخدام قوالب نمطية مع base.html وblocks
+- استخدام includes للمكونات القابلة لإعادة الاستخدام
+- فصل HTML عن CSS/SCSS
+- اتباع snake_case في Python، camelCase في JS
+- التحقق من صحة جميع مدخلات المستخدم
+- تحديث README.md مع التغييرات الهيكلية
 
-- Use modular templates with base.html and blocks
-- Use includes for reusable components
-- Keep HTML separate from CSS/SCSS
-- Follow snake_case in Python, camelCase in JS
-- Validate all user input 
-- Update README.md with structural changes 
+## إعداد Tailwind CSS
 
-## Running the Application on Windows
+يستخدم Egyland الآن نسخة مجمعة محلياً من Tailwind CSS بدلاً من CDN. هذا هو النهج الموصى به لبيئات الإنتاج.
 
-Due to specific limitations in Windows PowerShell, here's how to correctly run the application:
+### تعليمات الإعداد
 
-### Using PowerShell
-
-PowerShell doesn't support the `&&` operator for command chaining like bash does. Use these commands instead:
-
-```powershell
-# Change to the project directory
-cd C:\Users\MohYousif\Egyland
-
-# Start the Django development server
-python manage.py runserver
-```
-
-To activate a virtual environment before running the server:
-
-```powershell
-# Activate the virtual environment (if you're using one)
-.\venv\Scripts\Activate.ps1
-
-# Then run the server
-python manage.py runserver
-```
-
-### For Product Packaging Types Management
-
-When working with Product Packaging Types, ensure that:
-
-1. All required fields are filled out properly
-2. The selected Product and Packaging Type combination with the same Product Type doesn't already exist
-3. All numeric values (especially Net Weight) are valid numbers
-
-After saving the form, you should be redirected back to the product packaging types list with your new entry visible in the table.
-
-## Troubleshooting
-
-If you encounter issues with PowerShell and command chaining, use separate commands or create a batch file (.bat) with the commands for easier execution.
-
-## Tailwind CSS Setup
-
-Egyland now uses a locally compiled version of Tailwind CSS instead of the CDN. This is the recommended approach for production environments.
-
-### Setup Instructions
-
-1. Make sure Node.js and npm are installed on your system
-2. Install the required packages:
+1. تأكد من تثبيت Node.js و npm على نظامك
+2. تثبيت الحزم المطلوبة:
    ```bash
    npm install
    ```
-3. Build the CSS file:
+3. بناء ملف CSS:
    ```bash
    npm run build:css
    ```
-4. For development with auto-refresh:
+4. للتطوير مع التحديث التلقائي:
    ```bash
    npm run dev
    ```
 
-The compiled CSS file will be at `static/css/tailwind.min.css` and is already configured in the templates.
+سيكون ملف CSS المجمع في `static/css/tailwind.min.css` وهو مُكوّن بالفعل في القوالب.
 
-### Fallback Solution
+## المساهمة
 
-If Node.js is not available or you're experiencing issues with Tailwind compilation, a fallback solution has been implemented:
+نرحب بمساهماتكم! يرجى اتباع هذه الخطوات:
 
-1. A pre-compiled version of Tailwind is included at `static/css/tailwind.min.css`
-2. A custom CSS file with all the necessary Tailwind utilities is provided at `static/css/tailwind-custom.css`
-3. Both files are linked in all templates to ensure consistent styling
+1. افتح issue لمناقشة التغيير المقترح
+2. قم بعمل fork للمستودع
+3. قم بإنشاء فرع جديد لميزتك (`git checkout -b feature/amazing-feature`)
+4. قم بعمل commit للتغييرات (`git commit -m 'إضافة ميزة رائعة'`)
+5. قم بدفع الفرع إلى المستودع الخاص بك (`git push origin feature/amazing-feature`)
+6. افتح طلب سحب
 
-This approach ensures that the site will look correct even without running the Node.js build process.
+## الترخيص
 
-### Local Fonts Setup
+هذا المشروع مرخص بموجب [MIT License](LICENSE).
 
-To avoid issues with Google Fonts and improve loading performance, the project now uses local fonts:
+## التواصل
 
-1. Download the required font files (WOFF2 and WOFF formats):
-   - Poppins (weights: 300, 400, 500, 600, 700)
-   - Raleway (weights: 400, 600, 800)
-   - Inter (weights: 400, 500, 700)
+لمزيد من المعلومات، يرجى التواصل مع:
+- المستخدم: MWHEBA
+- البريد الإلكتروني: [example@example.com](mailto:example@example.com)
 
-2. Place the font files in the `static/fonts/` directory following the naming convention in `static/css/fonts.css`
+---
 
-3. If you can't obtain the font files, the site will fall back to system fonts defined in `static/css/font-fallback.css`
-
-All templates have been updated to use these local font definitions.
-
-## تحسينات الموبايل
-
-تم إضافة تحسينات للصفحة الرئيسية على الأجهزة المحمولة. لاستخدام هذه التحسينات:
-
-1. قم بتثبيت Sass إذا لم يكن موجودًا بالفعل:
-   ```
-   npm install -g sass
-   ```
-
-2. قم بتشغيل أمر التطوير الذي يراقب كلاً من ملفات Tailwind CSS و SCSS:
-   ```
-   npm run dev
-   ```
-
-3. أو يمكنك تجميع ملفات SCSS فقط:
-   ```
-   npm run build:scss
-   ```
-
-تشمل التحسينات الرئيسية للموبايل:
-- تحسين العناوين والنصوص لتكون أكثر قابلية للقراءة على الشاشات الصغيرة
-- دعم السحب لتغيير الشرائح في العرض الرئيسي
-- إصلاح مشكلة ارتفاع الشاشة الكاملة (100vh) في متصفحات الموبايل
-- تحسين تفاعل القائمة المتنقلة للموبايل
-- تأثيرات انتقالية محسّنة 
+تم تطوير هذا المشروع بواسطة [MWHEBA](https://github.com/MWHEBA). 
