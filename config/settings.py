@@ -38,6 +38,8 @@ environ.Env.read_env(os.path.join(os.path.dirname(__file__), '.env'))
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# إضافة في ملف settings.py
+CSRF_TRUSTED_ORIGINS = ['https://egyland.com', 'https://www.egyland.com']
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -48,8 +50,17 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = env('ALLOWED_HOSTS')
+ALLOWED_HOSTS = ['*']
 
+
+# أضف في settings.py
+
+# إذا كنت تستخدم HTTPS
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+# إذا كان الموقع يعمل خلف proxy
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 
