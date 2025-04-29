@@ -18,7 +18,7 @@
 
 {% block content %}
 <div class="max-w-7xl mx-auto">
-    <!-- New improved header and breadcrumbs design -->
+    <!-- لوحة التحكم الرئيسية مع التصميم المحسن للعنوان وشريط التنقل -->
     <div class="bg-white shadow rounded-lg p-6 mb-6">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
             <div>
@@ -37,8 +37,9 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <!-- Products Card -->
+    <!-- قسم البطاقات الإحصائية الرئيسية - ثلاث بطاقات متساوية -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- بطاقة المنتجات -->
         <div class="bg-white shadow rounded-lg p-6">
             <div class="flex items-center justify-between">
                 <div>
@@ -56,7 +57,7 @@
             </div>
         </div>
         
-        <!-- Inquiries Card -->
+        <!-- بطاقة الاستفسارات الكلية -->
         <div class="bg-white shadow rounded-lg p-6">
             <div class="flex items-center justify-between">
                 <div>
@@ -74,7 +75,7 @@
             </div>
         </div>
         
-        <!-- New Inquiries Card -->
+        <!-- بطاقة الاستفسارات الجديدة -->
         <div class="bg-white shadow rounded-lg p-6">
             <div class="flex items-center justify-between">
                 <div>
@@ -91,29 +92,101 @@
                 </a>
             </div>
         </div>
-        
-        <!-- In Progress Inquiries Card -->
+    </div>
+
+    <!-- قسم الإحصائيات المفصلة - ثلاث بطاقات متساوية -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- أنواع المنتجات -->
         <div class="bg-white shadow rounded-lg p-6">
-            <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Products by Type</h3>
+            <div class="space-y-4">
                 <div>
-                    <p class="text-gray-500 text-sm">In Progress</p>
-                    <h3 class="text-3xl font-semibold mt-1">{{ in_progress_inquiries }}</h3>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm font-medium">Fresh Products</span>
+                        <span class="text-sm font-medium">{{ fresh_products }}</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                        <div class="bg-green-500 h-2 rounded-full"
+                            style="width: {% widthratio fresh_products total_products 100 %}%; max-width: 100%;"></div>
+                    </div>
                 </div>
-                <div class="bg-indigo-100 p-3 rounded-full">
-                    <i class="fas fa-spinner text-indigo-500 text-xl"></i>
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm font-medium">IQF Products</span>
+                        <span class="text-sm font-medium">{{ iqf_products }}</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                        <div class="bg-blue-500 h-2 rounded-full"
+                            style="width: {% widthratio iqf_products total_products 100 %}%; max-width: 100%;"></div>
+                    </div>
                 </div>
             </div>
-            <div class="mt-4">
-                <a href="{% url 'dashboard:inquiries' %}?status=in_progress" class="text-primary hover:text-primary-dark text-sm flex items-center">
-                    View in progress <i class="fas fa-arrow-right ml-1"></i>
-                </a>
+        </div>
+        
+        <!-- حالة الاستفسارات -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Inquiry Status</h3>
+            <div class="space-y-4">
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm font-medium">New</span>
+                        <span class="text-sm font-medium">{{ new_inquiries }}</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                        <div class="bg-yellow-500 h-2 rounded-full"
+                            style="width: {% widthratio new_inquiries total_inquiries 100 %}%; max-width: 100%;"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm font-medium">In Progress</span>
+                        <span class="text-sm font-medium">{{ in_progress_inquiries }}</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                        <div class="bg-blue-500 h-2 rounded-full"
+                            style="width: {% widthratio in_progress_inquiries total_inquiries 100 %}%; max-width: 100%;"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm font-medium">Completed</span>
+                        <span class="text-sm font-medium">{{ completed_inquiries }}</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                        <div class="bg-green-500 h-2 rounded-full"
+                            style="width: {% widthratio completed_inquiries total_inquiries 100 %}%; max-width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- مقارنة الأنشطة الشهرية -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Monthly Activity</h3>
+            <div class="flex items-center mb-4">
+                <div class="w-14 h-14 rounded-full flex items-center justify-center {% if inquiry_change_percent >= 0 %}bg-green-100 text-green-500{% else %}bg-red-100 text-red-500{% endif %}">
+                    <i class="fas fa-{% if inquiry_change_percent >= 0 %}arrow-up{% else %}arrow-down{% endif %} text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm text-gray-500">Inquiries this month</p>
+                    <div class="flex items-center">
+                        <span class="text-2xl font-bold">{{ current_month_inquiries }}</span>
+                        <span class="ml-2 text-sm {% if inquiry_change_percent >= 0 %}text-green-500{% else %}text-red-500{% endif %}">
+                            {{ inquiry_change_percent }}% {% if inquiry_change_percent >= 0 %}increase{% else %}decrease{% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-4 border-t border-gray-200">
+                <p class="text-sm text-gray-500">Compared to last month: {{ last_month_inquiries }}</p>
             </div>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Recent Inquiries -->
-        <div class="bg-white shadow rounded-lg p-6 lg:col-span-2">
+    <!-- قسم أحدث الاستفسارات وإحصائيات المنتجات - توازن جديد -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+        <!-- جدول أحدث الاستفسارات - 8 أعمدة -->
+        <div class="bg-white shadow rounded-lg p-6 lg:col-span-8">
             <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Inquiries</h3>
             
             {% if recent_inquiries %}
@@ -135,8 +208,10 @@
                                     <td class="p-3">
                                         {% if inquiry.type == 'contact' %}
                                             <span class="badge badge-info">Contact</span>
+                                        {% elif inquiry.type == 'product_inquiry' %}
+                                            <span class="badge badge-primary">Product</span>
                                         {% else %}
-                                            <span class="badge badge-warning">Quote</span>
+                                            <span class="badge badge-warning">Request</span>
                                         {% endif %}
                                     </td>
                                     <td class="p-3">
@@ -172,8 +247,8 @@
             {% endif %}
         </div>
         
-        <!-- Product Statistics -->
-        <div class="bg-white shadow rounded-lg p-6">
+        <!-- إحصائيات المنتجات - 4 أعمدة -->
+        <div class="bg-white shadow rounded-lg p-6 lg:col-span-4">
             <h3 class="text-lg font-semibold text-gray-800 mb-4">Product Statistics</h3>
             
             <div class="space-y-4">
@@ -188,6 +263,8 @@
                                             Fresh Products
                                         {% elif type.product_type == 'iqf' %}
                                             IQF Products
+                                        {% elif type.product_type == 'general' %}
+                                            General Products
                                         {% else %}
                                             Both Fresh & IQF
                                         {% endif %}
@@ -195,7 +272,7 @@
                                     <span class="text-sm font-medium">{{ type.count }}</span>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div class="{% if type.product_type == 'fresh' %}bg-green-500{% elif type.product_type == 'iqf' %}bg-blue-500{% else %}bg-purple-500{% endif %} h-2 rounded-full"
+                                    <div class="{% if type.product_type == 'fresh' %}bg-green-500{% elif type.product_type == 'iqf' %}bg-blue-500{% elif type.product_type == 'general' %}bg-gray-500{% else %}bg-purple-500{% endif %} h-2 rounded-full"
                                         style="width: {{ type.count|floatformat:0|default:0|multiply:100|divide:total_products }}%"></div>
                                 </div>
                             </div>
@@ -209,16 +286,15 @@
                 </div>
                 
                 <div class="border-t pt-4">
-                    <h4 class="text-sm font-medium text-gray-500 mb-2">Featured Products</h4>
-                    <div class="flex items-center">
-                        <div class="w-12 h-12 rounded-full flex items-center justify-center bg-primary text-white">
-                            <span class="font-semibold">{{ featured_products }}</span>
+                    <h4 class="text-sm font-medium text-gray-500 mb-2">Product Varieties</h4>
+                    <div class="flex justify-between">
+                        <div class="text-center">
+                            <div class="text-xl font-semibold text-blue-600">{{ products_with_varieties }}</div>
+                            <div class="text-xs text-gray-500">Products with varieties</div>
                         </div>
-                        <div class="ml-3">
-                            <span class="block text-sm text-gray-500">Featured out of {{ total_products }}</span>
-                            <span class="block text-sm font-medium">
-                                {{ featured_products|floatformat:0|default:0|multiply:100|divide:total_products }}% of total
-                            </span>
+                        <div class="text-center">
+                            <div class="text-xl font-semibold text-green-600">{{ total_varieties }}</div>
+                            <div class="text-xs text-gray-500">Total varieties</div>
                         </div>
                     </div>
                 </div>
@@ -229,18 +305,156 @@
             </div>
         </div>
     </div>
+    
+    <!-- قسم آخر التحديثات والمعلومات الموسمية - بطاقتان متساويتان -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- أحدث المنتجات المعدلة -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Recently Updated Products</h3>
+            
+            {% if latest_updated_products %}
+                <div class="space-y-3">
+                    {% for product in latest_updated_products %}
+                        <div class="p-3 border border-gray-100 rounded-lg hover:bg-gray-50 flex items-center">
+                            {% if product.list_image %}
+                                <img src="{{ product.list_image.url }}" alt="{{ product.name }}" class="w-10 h-10 object-cover rounded mr-3">
+                            {% else %}
+                                <div class="w-10 h-10 bg-gray-200 rounded flex items-center justify-center mr-3">
+                                    <i class="fas fa-box text-gray-400"></i>
+                                </div>
+                            {% endif %}
+                            <div class="flex-1">
+                                <h4 class="font-medium text-sm">{{ product.name }}</h4>
+                                <div class="text-xs text-gray-500">
+                                    Updated: {{ product.updated_at|date:"M d, Y" }}
+                                </div>
+                            </div>
+                            <a href="{% url 'dashboard:product_edit' pk=product.pk %}" class="btn-icon btn-sm btn-outline-primary">
+                                <i class="fas fa-pen"></i>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="mt-4 text-center">
+                    <a href="{% url 'dashboard:products' %}" class="btn btn-outline-primary btn-sm">View All Products</a>
+                </div>
+            {% else %}
+                <div class="flex flex-col items-center justify-center py-6 text-center">
+                    <i class="fas fa-box-open text-3xl mb-2 text-gray-400"></i>
+                    <p class="text-gray-500">No recently updated products.</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- التوزيع الموسمي للمنتجات -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Seasonal Distribution</h3>
+            <p class="text-xs text-gray-500 mb-4">Number of seasonal entries (a product may appear in multiple seasons)</p>
+            
+            <div class="space-y-4">
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm font-medium flex items-center">
+                            <i class="fas fa-snowflake mr-2 text-blue-400"></i>
+                            <span>Winter Products</span>
+                        </span>
+                        <span class="text-sm font-medium">{{ seasons_data.winter }}</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                        <div class="bg-blue-400 h-2 rounded-full" style="width: {% widthratio seasons_data.winter 30 100 %}%; max-width: 100%;"></div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm font-medium flex items-center">
+                            <i class="fas fa-seedling mr-2 text-green-400"></i>
+                            <span>Spring Products</span>
+                        </span>
+                        <span class="text-sm font-medium">{{ seasons_data.spring }}</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                        <div class="bg-green-400 h-2 rounded-full" style="width: {% widthratio seasons_data.spring 30 100 %}%; max-width: 100%;"></div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm font-medium flex items-center">
+                            <i class="fas fa-sun mr-2 text-yellow-400"></i>
+                            <span>Summer Products</span>
+                        </span>
+                        <span class="text-sm font-medium">{{ seasons_data.summer }}</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                        <div class="bg-yellow-400 h-2 rounded-full" style="width: {% widthratio seasons_data.summer 30 100 %}%; max-width: 100%;"></div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm font-medium flex items-center">
+                            <i class="fas fa-leaf mr-2 text-orange-400"></i>
+                            <span>Autumn Products</span>
+                        </span>
+                        <span class="text-sm font-medium">{{ seasons_data.autumn }}</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                        <div class="bg-red-500 h-2 rounded-full" style="width: {% widthratio seasons_data.autumn 30 100 %}%; max-width: 100%; min-width: 10px;"></div>
+                    </div>
+                </div>
+                
+                <div class="border-t pt-4 mt-4">
+                    <a href="{% url 'dashboard:seasonality' %}" class="btn btn-outline-primary w-full btn-sm">Manage Seasonality</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    // Custom filters for template tags
-    // Note: These would normally be Django template filters
-    // Adding them as JavaScript for demonstration
     document.addEventListener('DOMContentLoaded', function() {
-        // This is just a placeholder for template filters
-        // In real Django, you would create custom template filters
-        // for operations like multiply and divide
+        // إضافة تحسينات للداشبورد
+        
+        // تأثيرات الانتقال
+        const cards = document.querySelectorAll('.bg-white.shadow');
+        cards.forEach(card => {
+            card.classList.add('transition', 'duration-300', 'transform', 'hover:shadow-lg');
+        });
+        
+        // تحسين عرض البادجات
+        const badges = document.querySelectorAll('.badge');
+        badges.forEach(badge => {
+            // تطبيق تأثيرات انتقالية
+            badge.classList.add('transition', 'duration-300', 'transform');
+            
+            // تحسين مظهر البادجات حسب نوعها
+            if (badge.classList.contains('badge-warning')) {
+                badge.classList.add('bg-yellow-100', 'text-yellow-800', 'px-2', 'py-1', 'rounded', 'text-xs');
+            } else if (badge.classList.contains('badge-info')) {
+                badge.classList.add('bg-blue-100', 'text-blue-800', 'px-2', 'py-1', 'rounded', 'text-xs');
+            } else if (badge.classList.contains('badge-success')) {
+                badge.classList.add('bg-green-100', 'text-green-800', 'px-2', 'py-1', 'rounded', 'text-xs');
+            } else if (badge.classList.contains('badge-danger')) {
+                badge.classList.add('bg-red-100', 'text-red-800', 'px-2', 'py-1', 'rounded', 'text-xs');
+            } else if (badge.classList.contains('badge-primary')) {
+                badge.classList.add('bg-indigo-100', 'text-indigo-800', 'px-2', 'py-1', 'rounded', 'text-xs');
+            }
+        });
+
+        // تحسين أداء الجداول
+        const tables = document.querySelectorAll('table');
+        tables.forEach(table => {
+            table.classList.add('border-collapse', 'table-auto');
+            
+            // إضافة تأثيرات للصفوف عند التحويم
+            const rows = table.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                row.classList.add('transition-colors', 'duration-150');
+            });
+        });
     });
 </script>
 {% endblock %} 
