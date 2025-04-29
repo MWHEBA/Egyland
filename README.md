@@ -24,8 +24,8 @@ Professional platform for an Egyptian agricultural export company built with Dja
 
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/Egyland.git
-cd Egyland
+git clone <repository-url>
+cd egyland
 ```
 
 2. Create and activate virtual environment
