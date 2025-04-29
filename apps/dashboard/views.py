@@ -42,18 +42,82 @@ class DashboardHomeView(LoginRequiredMixin, StaffRequiredMixin, TemplateView):
         
         # Key metrics
         context['total_products'] = Product.objects.count()
-        context['total_inquiries'] = ProductInquiry.objects.count()
-        context['new_inquiries'] = ProductInquiry.objects.filter(status='new').count()
-        context['in_progress_inquiries'] = ProductInquiry.objects.filter(status='in_progress').count()
+        context['total_inquiries'] = InquiriesInquiry.objects.count()
+        context['new_inquiries'] = InquiriesInquiry.objects.filter(status='new').count()
+        context['in_progress_inquiries'] = InquiriesInquiry.objects.filter(status='in_progress').count()
+        context['completed_inquiries'] = InquiriesInquiry.objects.filter(status='completed').count()
         
-        # Recent inquiries
-        context['recent_inquiries'] = ProductInquiry.objects.order_by('-created_at')[:5]
+        # إحصائيات طلبات المنتجات (باستخدام الاستفسارات ذات النوع product_request)
+        product_requests = InquiriesInquiry.objects.filter(type='product_request')
+        context['total_product_requests'] = product_requests.count()
+        context['new_product_requests'] = product_requests.filter(status='new').count()
+        context['in_progress_product_requests'] = product_requests.filter(status='in_progress').count()
+        context['completed_product_requests'] = product_requests.filter(status='completed').count()
+        
+        # Recent inquiries (أحدث الاستفسارات)
+        context['recent_inquiries'] = InquiriesInquiry.objects.filter(type__in=['contact', 'product_inquiry']).order_by('-created_at')[:5]
+        
+        # Recent product requests (أحدث طلبات المنتجات)
+        context['recent_product_requests'] = InquiriesInquiry.objects.filter(type='product_request').order_by('-created_at')[:5]
         
         # Product statistics
         context['product_types'] = Product.objects.values('product_type').annotate(count=Count('id'))
         context['featured_products'] = Product.objects.filter(is_featured=True).count()
+        context['popular_products'] = Product.objects.filter(is_popular=True).count()
+        context['special_products'] = Product.objects.filter(is_special=True).count()
+        
+        # إحصائيات متقدمة للمنتجات
+        context['products_with_varieties'] = Product.objects.filter(has_varieties=True).count()
+        context['total_varieties'] = ProductVariety.objects.count()
+        
+        # الإحصائيات حسب أنواع المنتجات 
+        context['fresh_products'] = Product.objects.filter(product_type__in=['fresh', 'both']).count()
+        context['iqf_products'] = Product.objects.filter(product_type__in=['iqf', 'both']).count()
+        
+        # آخر المنتجات المضافة أو المعدلة
+        context['latest_updated_products'] = Product.objects.order_by('-updated_at')[:5]
+        
+        # ربط إحصائيات التغليف
+        context['total_packaging_types'] = PackagingType.objects.count()
+        context['product_packaging_count'] = ProductPackagingType.objects.count()
+        
+        # بيانات عدد المنتجات لكل فصل (بناءً على بيانات الموسمية)
+        seasons_data = {
+            'winter': Seasonality.objects.filter(Q(dec=True) | Q(jan=True) | Q(feb=True)).distinct().count(),
+            'spring': Seasonality.objects.filter(Q(mar=True) | Q(apr=True) | Q(may=True)).distinct().count(),
+            'summer': Seasonality.objects.filter(Q(jun=True) | Q(jul=True) | Q(aug=True)).distinct().count(),
+            'autumn': Seasonality.objects.filter(Q(sep=True) | Q(oct=True) | Q(nov=True)).distinct().count(),
+        }
+        context['seasons_data'] = seasons_data
+        
+        # إحصائيات مقارنة الشهر الحالي
+        current_month = timezone.now().month
+        last_month = current_month - 1 if current_month > 1 else 12
+        
+        # استفسارات الشهر الحالي والشهر السابق
+        current_month_inquiries = InquiriesInquiry.objects.filter(
+            created_at__month=current_month, 
+            created_at__year=timezone.now().year
+        ).count()
+        
+        last_month_inquiries = InquiriesInquiry.objects.filter(
+            created_at__month=last_month,
+            created_at__year=timezone.now().year if last_month != 12 else timezone.now().year - 1
+        ).count()
+        
+        context['current_month_inquiries'] = current_month_inquiries
+        context['last_month_inquiries'] = last_month_inquiries
+        context['inquiry_change_percent'] = self._calculate_percent_change(last_month_inquiries, current_month_inquiries)
         
         return context
+    
+    def _calculate_percent_change(self, old_value, new_value):
+        """حساب نسبة التغيير بين قيمتين"""
+        if old_value == 0:
+            return 100 if new_value > 0 else 0
+        
+        change = ((new_value - old_value) / old_value) * 100
+        return round(change, 1)
 
 class ProductListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
     """
