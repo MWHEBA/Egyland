@@ -4,8 +4,7 @@
   font-style: normal;
   font-weight: 400;
   src: local('Raleway'),
-       url('../fonts/raleway-v28-latin-regular.woff2') format('woff2'),
-       url('../fonts/raleway-v28-latin-regular.woff') format('woff');
+       url('../fonts/raleway-v28-latin-regular.woff2') format('woff2');
   font-display: swap;
 }
 
@@ -14,8 +13,7 @@
   font-style: normal;
   font-weight: 600;
   src: local('Raleway SemiBold'),
-       url('../fonts/raleway-v28-latin-600.woff2') format('woff2'),
-       url('../fonts/raleway-v28-latin-600.woff') format('woff');
+       url('../fonts/raleway-v28-latin-600.woff2') format('woff2');
   font-display: swap;
 }
 
@@ -24,7 +22,6 @@
   font-style: normal;
   font-weight: 800;
   src: local('Raleway ExtraBold'),
-       url('../fonts/raleway-v28-latin-800.woff2') format('woff2'),
-       url('../fonts/raleway-v28-latin-800.woff') format('woff');
+       url('../fonts/raleway-v28-latin-800.woff2') format('woff2');
   font-display: swap;
 } 

@@ -178,7 +178,8 @@ STATICFILES_DIRS = [
 ]
 
 # إعدادات Whitenoise لخدمة الملفات الثابتة
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # إعدادات وسائط المستخدم
 MEDIA_URL = 'media/'
