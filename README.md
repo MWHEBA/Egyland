@@ -69,6 +69,7 @@ python manage.py runserver
 - `static/`: Static assets (CSS, JS, images)
 - `media/`: User-uploaded content
 - `logs/`: Application logs
+- `scripts/`: Utility scripts
 
 ## Content Management
 
@@ -81,6 +82,27 @@ The site is fully managed through the admin interface at `/admin`. Key content s
 2. Inquiries
    - View and manage contact messages
    - Handle quote requests
+
+## Image Processing
+
+The project includes a comprehensive image processor script (`scripts/image_processor.py`) that:
+
+- Automatically compresses images while maintaining quality
+- Converts images to WebP format for better performance
+- Updates HTML templates with `<picture>` elements for WebP support
+- Can be integrated with Django signals for automatic processing
+
+### Basic Usage
+
+```bash
+# Process all images in static/img
+python scripts/image_processor.py
+
+# Process only a specific image or directory
+python scripts/image_processor.py --path static/img/products/apple.jpg
+```
+
+For more details, see the [Image Processing Documentation](scripts/README.md).
 
 ## Packaging System
 
