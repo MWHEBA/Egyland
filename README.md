@@ -1,17 +1,17 @@
-# Egyland - منصة تصدير المنتجات الزراعية المصرية
+# Egyland - Agricultural Export Platform
 
-منصة احترافية لشركة تصدير منتجات زراعية مصرية مبنية باستخدام Django و Tailwind CSS.
+Professional platform for an Egyptian agricultural export company built with Django and Tailwind CSS.
 
-## الميزات الرئيسية
+## Key Features
 
-- كتالوج منتجات ديناميكي مع دعم المنتجات الطازجة والمجمدة (IQF)
-- مخططات موسمية شهرية لكل منتج/صنف
-- واجهة أمامية مبنية على المكونات القابلة لإعادة الاستخدام
-- لوحة تحكم للمدير تتيح التحكم الكامل في المحتوى
-- تصميم متجاوب يعمل على جميع أحجام الشاشات
-- محسّن لمحركات البحث SEO
+- Dynamic product catalog with fresh/IQF handling
+- Monthly seasonality charts per product/variety
+- Modular, component-based frontend
+- Admin dashboard for full content control
+- Responsive design for all device sizes
+- SEO-optimized
 
-## التقنيات المستخدمة
+## Tech Stack
 
 - Python 3.12+
 - Django 4.2.7
@@ -20,137 +20,137 @@
 - Vanilla JavaScript
 - HTML5 & Django Templates
 
-## التثبيت
+## Installation
 
-1. استنساخ المستودع
+1. Clone the repository
 ```bash
 git clone https://github.com/MWHEBA/Egyland.git
 cd Egyland
 ```
 
-2. إنشاء وتفعيل البيئة الافتراضية
+2. Create and activate virtual environment
 ```bash
 python -m venv venv
 source venv/bin/activate  # Linux/Mac
 venv\Scripts\activate     # Windows
 ```
 
-3. تثبيت التبعيات
+3. Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-4. إعداد قاعدة البيانات
-- إنشاء قاعدة بيانات PostgreSQL
-- تكوين اتصال قاعدة البيانات في ملف `config/.env`
+4. Setup database
+- Create a PostgreSQL database
+- Configure database connection in `config/.env`
 
-5. تشغيل الترحيلات وإنشاء المستخدم الرئيسي
+5. Run migrations and create superuser
 ```bash
 python manage.py migrate
 python manage.py createsuperuser
 ```
 
-6. تشغيل خادم التطوير
+6. Run the development server
 ```bash
 python manage.py runserver
 ```
 
-7. الوصول إلى الموقع من خلال http://127.0.0.1:8000/
+7. Access the website at http://127.0.0.1:8000/
 
-## هيكل المشروع
+## Project Structure
 
-- `apps/`: تطبيقات المشروع المختلفة
-  - `core/`: الصفحات والوظائف الرئيسية للموقع
-  - `products/`: كتالوج المنتجات وصفحات التفاصيل
-  - `admin/`: لوحة تحكم مخصصة
-  - `accounts/`: حسابات المستخدمين (مستقبلاً)
-- `config/`: تكوين المشروع
-- `templates/`: قوالب HTML
-- `static/`: الأصول الثابتة (CSS, JS, الصور)
-- `media/`: المحتوى الذي يرفعه المستخدم
-- `logs/`: سجلات التطبيق
+- `apps/`: Module applications
+  - `core/`: Main site pages and functionality
+  - `products/`: Product catalog and detail pages
+  - `admin/`: Custom admin dashboard
+  - `accounts/`: User accounts (future)
+- `config/`: Project configuration
+- `templates/`: HTML templates
+- `static/`: Static assets (CSS, JS, images)
+- `media/`: User-uploaded content
+- `logs/`: Application logs
 
-## إدارة المحتوى
+## Content Management
 
-يتم إدارة الموقع بالكامل من خلال واجهة المدير على `/admin`. الأقسام الرئيسية:
+The site is fully managed through the admin interface at `/admin`. Key content sections:
 
-1. المنتجات
-   - إضافة/تحرير المنتجات وتفاصيلها
-   - إدارة المواسم، الأحجام، العدد، التعبئة
+1. Products
+   - Add/edit products and their details
+   - Manage seasonality, counts, sizes, packaging
 
-2. الاستفسارات
-   - عرض وإدارة رسائل الاتصال
-   - معالجة طلبات الأسعار
+2. Inquiries
+   - View and manage contact messages
+   - Handle quote requests
 
-## نظام التعبئة والتغليف
+## Packaging System
 
-يدعم النظام نهجاً متطوراً لإدارة التعبئة والتغليف:
+The system supports an enhanced packaging management approach:
 
-1. **أنواع التعبئة**
-   - أنواع تعبئة قابلة لإعادة الاستخدام مع صور (مثل "صناديق خشبية - 30 قطعة")
-   - كل نوع له كلمة مفتاحية (مثل "صناديق") للتسمية الديناميكية
-   - يمكن تصنيف الأنواع للمنتجات الطازجة، المجمدة، أو كليهما
+1. **Packaging Types**
+   - Reusable packaging types with images (e.g., "Wooden boxes - 30pcs")
+   - Each type has a key word (e.g., "boxes") for dynamic labeling
+   - Types can be marked for Fresh products, IQF products, or both
 
-2. **أنواع تعبئة المنتجات**
-   - ربط المنتجات بأنواع التعبئة
-   - مواصفات قابلة للتكوين:
-     - العناصر لكل منصة (باستخدام الكلمة المفتاحية)
-     - المنصات لكل حاوية
-     - الوزن الصافي والوحدات
-   - خيارات العرض (مثل إظهار علامة "طازج")
+2. **Product Packaging Types**
+   - Associates products with packaging types
+   - Configurable specifications:
+     - Items per pallet (using the key word)
+     - Pallets per container
+     - Net weight and units
+   - Display options (e.g., show "Fresh" label)
 
-## إرشادات التطوير
+## Development Guidelines
 
-- استخدام قوالب نمطية مع base.html وblocks
-- استخدام includes للمكونات القابلة لإعادة الاستخدام
-- فصل HTML عن CSS/SCSS
-- اتباع snake_case في Python، camelCase في JS
-- التحقق من صحة جميع مدخلات المستخدم
-- تحديث README.md مع التغييرات الهيكلية
+- Use modular templates with base.html and blocks
+- Use includes for reusable components
+- Keep HTML separate from CSS/SCSS
+- Follow snake_case in Python, camelCase in JS
+- Validate all user input
+- Update README.md with structural changes
 
-## إعداد Tailwind CSS
+## Tailwind CSS Setup
 
-يستخدم Egyland الآن نسخة مجمعة محلياً من Tailwind CSS بدلاً من CDN. هذا هو النهج الموصى به لبيئات الإنتاج.
+Egyland now uses a locally compiled version of Tailwind CSS instead of the CDN. This is the recommended approach for production environments.
 
-### تعليمات الإعداد
+### Setup Instructions
 
-1. تأكد من تثبيت Node.js و npm على نظامك
-2. تثبيت الحزم المطلوبة:
+1. Make sure Node.js and npm are installed on your system
+2. Install the required packages:
    ```bash
    npm install
    ```
-3. بناء ملف CSS:
+3. Build the CSS file:
    ```bash
    npm run build:css
    ```
-4. للتطوير مع التحديث التلقائي:
+4. For development with auto-refresh:
    ```bash
    npm run dev
    ```
 
-سيكون ملف CSS المجمع في `static/css/tailwind.min.css` وهو مُكوّن بالفعل في القوالب.
+The compiled CSS file will be at `static/css/tailwind.min.css` and is already configured in the templates.
 
-## المساهمة
+## Contributing
 
-نرحب بمساهماتكم! يرجى اتباع هذه الخطوات:
+We welcome contributions! Please follow these steps:
 
-1. افتح issue لمناقشة التغيير المقترح
-2. قم بعمل fork للمستودع
-3. قم بإنشاء فرع جديد لميزتك (`git checkout -b feature/amazing-feature`)
-4. قم بعمل commit للتغييرات (`git commit -m 'إضافة ميزة رائعة'`)
-5. قم بدفع الفرع إلى المستودع الخاص بك (`git push origin feature/amazing-feature`)
-6. افتح طلب سحب
+1. Open an issue to discuss the proposed change
+2. Fork the repository
+3. Create a new branch for your feature (`git checkout -b feature/amazing-feature`)
+4. Commit your changes (`git commit -m 'Add amazing feature'`)
+5. Push to the branch (`git push origin feature/amazing-feature`)
+6. Open a Pull Request
 
-## الترخيص
+## License
 
-هذا المشروع مرخص بموجب [MIT License](LICENSE).
+This project is licensed under the [MIT License](LICENSE).
 
-## التواصل
+## Contact
 
-لمزيد من المعلومات، يرجى التواصل مع:
-- المستخدم: MWHEBA
-- البريد الإلكتروني: [example@example.com](mailto:example@example.com)
+For more information, please contact:
+- User: MWHEBA
+- Email: [example@example.com](mailto:example@example.com)
 
 ---
 
-تم تطوير هذا المشروع بواسطة [MWHEBA](https://github.com/MWHEBA). 
+Developed by [MWHEBA](https://github.com/MWHEBA). 
