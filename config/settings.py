@@ -30,13 +30,6 @@ env = environ.Env(
     CONTACT_EMAIL=(str, 'info@egyland.com'),
     # إعداد وضع البناء
     UNDER_CONSTRUCTION=(bool, True),
-    # إعدادات قاعدة البيانات MySQL
-    DB_ENGINE=(str, 'django.db.backends.mysql'),
-    DB_NAME=(str, 'mwegyland_db'),
-    DB_USER=(str, 'mwegyland_mw'),
-    DB_PASSWORD=(str, ''),
-    DB_HOST=(str, 'localhost'),
-    DB_PORT=(str, '3306'),
 )
 
 # نحاول قراءة ملف .env إذا كان موجودًا
@@ -124,30 +117,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# For development (SQLite)
-if DEBUG:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
-# For production (MySQL)
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': env('DB_ENGINE'),
-            'NAME': env('DB_NAME'),
-            'USER': env('DB_USER'),
-            'PASSWORD': env('DB_PASSWORD'),
-            'HOST': env('DB_HOST'),
-            'PORT': env('DB_PORT'),
-            'OPTIONS': {
-                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-                'charset': 'utf8mb4',
-            },
-        }
-    }
+}
 
 # Uncomment this to use PostgreSQL
 # DATABASES = {

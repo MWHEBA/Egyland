@@ -2,7 +2,14 @@
  * مودال الاستفسارات
  */
 
-/* متغيرات الألوان من خلال قيم مباشرة */
+/* متغيرات الألوان */
+:root {
+  --primary-color: #39AE68;
+  --primary-hover: #2d8a52;
+  --text-color: #333333;
+  --border-color: #e2e8f0;
+  --bg-color: #f8fafc;
+}
 
 /* مودال الاستفسارات */
 .inquiry-modal {
@@ -32,7 +39,7 @@
 
 .inquiry-modal-container {
   position: relative;
-  max-width: 800px;
+  max-width: 700px;
   width: 90%;
   margin: 2rem auto;
   background-color: white;
@@ -41,16 +48,9 @@
   z-index: 1002;
 }
 
-@media (max-width: 768px) {
-  .inquiry-modal-container {
-    width: 95%;
-    margin: 1rem auto;
-  }
-}
-
 .inquiry-modal-header {
-  padding: 1.5rem;
-  border-bottom: 1px solid #e2e8f0;
+  padding: 10px 1.25rem;
+  border-bottom: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -63,7 +63,7 @@
 }
 
 .inquiry-modal-header h2 span {
-  color: #39AE68;
+  color: var(--primary-color);
 }
 
 .inquiry-modal-close {
@@ -80,39 +80,39 @@
 }
 
 .inquiry-modal-body {
-  padding: 1.5rem;
+  padding: 1.25rem;
 }
 
 /* ستايل النموذج داخل المودال */
 #inquiryForm .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 #inquiryForm .form-label {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 500;
-  color: #333333;
+  color: var(--text-color);
 }
 
 #inquiryForm .form-input {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-color);
   border-radius: 0.375rem;
-  background-color: #f8fafc;
+  background-color: var(--bg-color);
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 #inquiryForm .form-input:focus {
   outline: none;
-  border-color: #39AE68;
+  border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(57, 174, 104, 0.2);
 }
 
 #inquiryForm .submit-btn {
   width: 100%;
-  background-color: #39AE68;
+  background-color: var(--primary-color);
   color: white;
   padding: 0.75rem 1.5rem;
   border: none;
@@ -123,7 +123,7 @@
 }
 
 #inquiryForm .submit-btn:hover {
-  background-color: #2d8a52;
+  background-color: var(--primary-hover);
 }
 
 /* تصميم محسن لقائمة المنتجات */
@@ -223,66 +223,12 @@
   animation: slideIn 0.3s ease-out forwards;
 }
 
-/* تخصيص تنسيق إشعارات toastr للنافذة المنبثقة */
-.inquiry-toast {
-  max-width: 400px !important;
-  width: auto !important;
-  border-radius: 6px !important;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
-  padding: 16px !important;
-  font-family: inherit !important;
-  font-size: 14px !important;
-  line-height: 1.4 !important;
-  opacity: 1 !important;
-}
-
-.toast-success.inquiry-toast {
-  background-color: #10b981 !important;
-  color: #ffffff !important;
-}
-
-.toast-error.inquiry-toast {
-  background-color: #ef4444 !important;
-  color: #ffffff !important;
-}
-
-.toast-info.inquiry-toast {
-  background-color: #3b82f6 !important;
-  color: #ffffff !important;
-}
-
-.toast-warning.inquiry-toast {
-  background-color: #f59e0b !important;
-  color: #ffffff !important;
-}
-
-/* تنسيق لزر الإغلاق في الإشعارات */
-.inquiry-toast .toast-close-button {
-  right: 12px !important;
-  top: 12px !important;
-  opacity: 0.8 !important;
-  text-shadow: none !important;
-  color: #ffffff !important;
-}
-
-.inquiry-toast .toast-close-button:hover {
-  opacity: 1 !important;
-}
-
-/* تنسيق لشريط التقدم في الإشعارات */
-.inquiry-toast .toast-progress {
-  height: 4px !important;
-  bottom: 0 !important;
-  opacity: 0.6 !important;
-}
-
-/* تحديد موضع ظهور الإشعارات */
-.toast-top-center {
-  top: 12px !important;
-}
-
-.toast-top-center > div {
-  margin: 0 auto !important;
+/* ضبط للشاشات الصغيرة */
+@media (max-width: 768px) {
+  .inquiry-modal-container {
+    width: 95%;
+    margin: 1rem auto;
+  }
 }
 
 /* تعديل حجم مربع النص */

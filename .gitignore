@@ -23,8 +23,16 @@ wheels/
 # Django
 *.log
 local_settings.py
+# Database files
 db.sqlite3
 db.sqlite3-journal
+*.db
+*.sqlite
+*.sqlite3
+*.sql
+*.dump
+*.postgres
+databases/
 media/
 
 # Environment

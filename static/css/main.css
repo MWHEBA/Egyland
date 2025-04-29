@@ -1,19 +1,22 @@
-/* ملف CSS الرئيسي */
+@import "variables";
+@import "components/inquiry_modal";
+
+// ملف SCSS الرئيسي
 body {
-  font-family: "Raleway", sans-serif;
+  font-family: $font-family;
   color: #333;
   line-height: 1.6;
 }
 
-/* تنسيق العناوين */
+// تنسيق العناوين
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  font-weight: 800;
-  margin-bottom: 16px;
+  font-weight: $font-weight-bold;
+  margin-bottom: $spacing-md;
 }
 
 h1 {
@@ -28,90 +31,90 @@ h3 {
   font-size: 1.75rem;
 }
 
-/* تنسيق الروابط */
+// تنسيق الروابط
 a {
-  color: #27ae60;
+  color: $primary-green;
   text-decoration: none;
   transition: color 0.3s ease;
+
+  &:hover {
+    color: darken($primary-green, 10%);
+  }
 }
 
-a:hover {
-  color: #1e8449;
-}
-
-/* تمييز النص */
+// تمييز النص
 .highlight {
-  background-color: #27ae60;
-  color: #FFFFFF;
-  padding: 0 4px;
+  background-color: $primary-green;
+  color: $white;
+  padding: 0 $spacing-xs;
 }
 
-/* البطاقات */
+// البطاقات
 .card {
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: $box-shadow;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
 }
 
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* زر رئيسي */
+// زر رئيسي
 .btn-primary {
-  background-color: #27ae60;
-  color: #FFFFFF;
+  background-color: $primary-green;
+  color: $white;
   border: none;
-  padding: 8px 24px;
+  padding: $spacing-sm $spacing-lg;
   border-radius: 4px;
-  font-weight: 600;
+  font-weight: $font-weight-medium;
   cursor: pointer;
   transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: darken($primary-green, 10%);
+  }
 }
 
-.btn-primary:hover {
-  background-color: #1e8449;
-}
-
-/* تنسيق النماذج */
+// تنسيق النماذج
 .form-control {
   width: 100%;
-  padding: 8px;
-  border: 1px solid #E0E0E0;
+  padding: $spacing-sm;
+  border: 1px solid $gray;
   border-radius: 4px;
   transition: border-color 0.3s ease;
+
+  &:focus {
+    border-color: $primary-green;
+    outline: none;
+  }
 }
 
-.form-control:focus {
-  border-color: #27ae60;
-  outline: none;
-}
-
-/* تنسيق جدول الموسمية */
+// تنسيق جدول الموسمية
 .seasonality-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 24px;
+  margin-bottom: $spacing-lg;
+
+  th,
+  td {
+    padding: $spacing-sm;
+    text-align: center;
+    border: 1px solid $gray;
+  }
+
+  th {
+    background-color: lighten($primary-green, 50%);
+  }
+
+  .month-available {
+    background-color: rgba($season-light-green, 0.1);
+  }
 }
 
-.seasonality-table th,
-.seasonality-table td {
-  padding: 8px;
-  text-align: center;
-  border: 1px solid #E0E0E0;
-}
-
-.seasonality-table th {
-  background-color: #d5f2e3;
-}
-
-.seasonality-table .month-available {
-  background-color: rgba(139, 195, 74, 0.1);
-}
-
-/* أيقونات الموسمية */
+// أيقونات الموسمية
 .month-icon,
 .seasonality-icon {
   width: 24px;
@@ -121,7 +124,7 @@ a:hover {
   object-fit: contain;
 }
 
-/* الدوائر الملونة للشهور المتاحة */
+// الدوائر الملونة للشهور المتاحة
 .month-active-fresh,
 .month-active-iqf {
   width: 20px;
@@ -131,78 +134,78 @@ a:hover {
 }
 
 .month-active-fresh {
-  background-color: #27ae60;
+  background-color: $primary-green;
 }
 
 .month-active-iqf {
   background-color: #5a6b77;
 }
 
-/* جدول متجاوب */
+// جدول متجاوب
 .table-responsive {
   overflow-x: auto;
-  margin-bottom: 24px;
+  margin-bottom: $spacing-lg;
 }
 
-/* أنماط العد والأحجام */
+// أنماط العد والأحجام
 .counts-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: $spacing-md;
   justify-content: flex-start;
-  margin-top: 16px;
+  margin-top: $spacing-md;
 }
 
 .count-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #FFFFFF;
-  padding: 8px;
+  background-color: $color-white;
+  padding: $spacing-sm;
   border-radius: 8px;
   min-width: 50px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: $box-shadow;
   transition: transform 0.3s ease;
-}
 
-.count-item:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
 }
 
 .count-value {
   font-weight: 600;
   font-size: 20px;
-  margin-bottom: 4px;
+  margin-bottom: $spacing-xs;
 }
 
 .count-check {
-  color: #27ae60;
+  color: $color-primary;
   font-size: 18px;
   font-weight: 800;
 }
 
-/* جدول الأحجام */
+// جدول الأحجام
 .sizing-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 24px;
-}
+  margin-bottom: $spacing-lg;
 
-.sizing-table th,
-.sizing-table td {
-  padding: 8px;
-  text-align: center;
-  border: 1px solid #E0E0E0;
-}
+  th,
+  td {
+    padding: $spacing-sm;
+    text-align: center;
+    border: 1px solid $gray;
+  }
 
-.sizing-table th {
-  background-color: #d5f2e3;
-  font-weight: 800;
-}
+  th {
+    background-color: lighten($primary-green, 50%);
+    font-weight: $font-weight-bold;
+  }
 
-.sizing-table tr:nth-child(even) {
-  background-color: rgba(39, 174, 96, 0.05);
+  tr:nth-child(even) {
+    background-color: rgba($primary-green, 0.05);
+  }
 }
 
 .size-indicator {
@@ -210,61 +213,61 @@ a:hover {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  margin-right: 4px;
+  margin-right: $spacing-xs;
+
+  &.small {
+    background-color: #63cafd;
+  }
+
+  &.medium {
+    background-color: #ffca28;
+  }
+
+  &.large {
+    background-color: #ff7043;
+  }
+
+  &.xl {
+    background-color: #ff5252;
+  }
 }
 
-.size-indicator.small {
-  background-color: #63cafd;
-}
-
-.size-indicator.medium {
-  background-color: #ffca28;
-}
-
-.size-indicator.large {
-  background-color: #ff7043;
-}
-
-.size-indicator.xl {
-  background-color: #ff5252;
-}
-
-/* شريط التنقل */
+// شريط التنقل
 .navbar {
   background-color: transparent;
   transition: background-color 0.3s ease;
-  padding: 16px 0;
+  padding: $spacing-md 0;
+
+  &.sticky {
+    background-color: $white;
+    box-shadow: $box-shadow;
+  }
+
+  .nav-link {
+    color: $white;
+    font-weight: $font-weight-medium;
+
+    &:hover {
+      color: $primary-green;
+    }
+  }
+
+  &.sticky .nav-link {
+    color: #333;
+  }
 }
 
-.navbar.sticky {
-  background-color: #FFFFFF;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.navbar .nav-link {
-  color: #FFFFFF;
-  font-weight: 600;
-}
-
-.navbar .nav-link:hover {
-  color: #27ae60;
-}
-
-.navbar.sticky .nav-link {
-  color: #333;
-}
-
-/* التذييل */
+// تذييل الصفحة
 .footer {
-  background-color: #333;
-  color: #FFFFFF;
-  padding: 24px 0;
-}
+  background-color: #2c3e50;
+  color: $white;
+  padding: $spacing-xl 0;
 
-.footer a {
-  color: #FFFFFF;
-}
+  a {
+    color: $white;
 
-.footer a:hover {
-  color: #27ae60;
+    &:hover {
+      color: $primary-green;
+    }
+  }
 }

@@ -200,89 +200,28 @@ To avoid issues with Google Fonts and improve loading performance, the project n
 
 All templates have been updated to use these local font definitions.
 
-## Mobile Enhancements
+## تحسينات الموبايل
 
-Mobile enhancements have been added to the homepage. To use these enhancements:
+تم إضافة تحسينات للصفحة الرئيسية على الأجهزة المحمولة. لاستخدام هذه التحسينات:
 
-1. Install Sass if it's not already installed:
+1. قم بتثبيت Sass إذا لم يكن موجودًا بالفعل:
    ```
    npm install -g sass
    ```
 
-2. Run the development command that watches both Tailwind CSS and SCSS files:
+2. قم بتشغيل أمر التطوير الذي يراقب كلاً من ملفات Tailwind CSS و SCSS:
    ```
    npm run dev
    ```
 
-3. Or you can compile only the SCSS files:
+3. أو يمكنك تجميع ملفات SCSS فقط:
    ```
    npm run build:scss
    ```
 
-The main mobile enhancements include:
-- Improved headings and text for better readability on small screens
-- Swipe support for changing slides in the main carousel
-- Fix for full-height (100vh) issues in mobile browsers
-- Improved mobile menu interaction
-- Enhanced transition effects
-
-## Production Setup with MySQL
-
-For production environments, the application can be configured to use MySQL instead of SQLite or PostgreSQL.
-
-### MySQL Setup
-
-1. Create a MySQL database on your hosting provider
-   - Database name: `mwegyland_db` (or your preferred name)
-   - Collation: `utf8mb4_unicode_ci`
-
-2. Create a `.env` file in the `config/` directory:
-   ```bash
-   # Copy the example file to config/.env
-   cp .env-example config/.env
-   
-   # Edit the file to set your actual database credentials
-   nano config/.env  # or use any text editor
-   ```
-
-3. Make sure to update the following settings in your `.env` file:
-   - `SECRET_KEY`: Set a unique, secure key in production
-   - `ALLOWED_HOSTS`: Update with your actual domain names
-   - `DB_PASSWORD`: Set your actual database password
-   - Email settings for your mail server
-
-4. Settings are already configured to use MySQL in production mode when DEBUG=False:
-   ```python
-   # For production (MySQL)
-   DATABASES = {
-       'default': {
-           'ENGINE': env('DB_ENGINE'),
-           'NAME': env('DB_NAME'),
-           'USER': env('DB_USER'),
-           'PASSWORD': env('DB_PASSWORD'),
-           'HOST': env('DB_HOST'),
-           'PORT': env('DB_PORT'),
-           'OPTIONS': {
-               'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-               'charset': 'utf8mb4',
-           },
-       }
-   }
-   ```
-
-5. Run migrations to set up the database tables:
-   ```bash
-   python manage.py migrate
-   ```
-
-6. Create a superuser to access the admin panel:
-   ```bash
-   python manage.py createsuperuser
-   ```
-
-7. For production deployment, remember to set `DEBUG=False` and update `ALLOWED_HOSTS` with your domain names.
-
-8. Important security notes:
-   - Never commit your `.env` file to version control
-   - Regularly change passwords and keep them secure
-   - Consider using environment variables instead of `.env` files in highly secure environments 
+تشمل التحسينات الرئيسية للموبايل:
+- تحسين العناوين والنصوص لتكون أكثر قابلية للقراءة على الشاشات الصغيرة
+- دعم السحب لتغيير الشرائح في العرض الرئيسي
+- إصلاح مشكلة ارتفاع الشاشة الكاملة (100vh) في متصفحات الموبايل
+- تحسين تفاعل القائمة المتنقلة للموبايل
+- تأثيرات انتقالية محسّنة 
