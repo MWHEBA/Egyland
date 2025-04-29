@@ -1,0 +1,223 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}
+    Egypt (Head Office) - Egyland Dashboard
+{% endblock %}
+
+{% block header_title %}
+    <!-- Header title removed -->
+{% endblock %}
+
+{% block breadcrumbs %}
+    <!-- Breadcrumbs moved to content -->
+{% endblock %}
+
+{% block header_actions %}
+    <!-- Header actions moved to content -->
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- New improved header and breadcrumbs design -->
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">
+                    Egypt (Head Office)
+                </h1>
+                <nav class="flex flex-wrap items-center text-sm text-gray-600">
+                    <a href="{% url 'dashboard:home' %}" class="hover:text-primary transition">
+                        <i class="fas fa-home"></i>
+                        <span class="hidden sm:inline">Dashboard</span>
+                    </a>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <a href="{% url 'dashboard:branches' %}" class="hover:text-primary transition">Branches</a>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <span class="text-primary font-medium">Head Office</span>
+                </nav>
+            </div>
+            <div class="mt-4 md:mt-0">
+                <a href="{% url 'dashboard:branches' %}" class="btn btn-outline">
+                    <i class="fas fa-arrow-left mr-1"></i> Back to Branches
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto">
+        <div class="bg-white shadow rounded-lg">
+            <form method="post" enctype="multipart/form-data" class="p-6" id="mainBranchForm">
+                {% csrf_token %}
+                
+                <!-- Form errors -->
+                {% if form.non_field_errors %}
+                <div class="mb-6">
+                    <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-exclamation-circle text-red-500"></i>
+                            </div>
+                            <div class="ml-3">
+                                {% for error in form.non_field_errors %}
+                                    <p class="text-sm text-red-700">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if messages %}
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        {% for message in messages %}
+                            {% if message.tags == 'success' %}
+                                toastr.success('{{ message }}');
+                            {% elif message.tags == 'error' %}
+                                toastr.error('{{ message }}');
+                            {% elif message.tags == 'warning' %}
+                                toastr.warning('{{ message }}');
+                            {% else %}
+                                toastr.info('{{ message }}');
+                            {% endif %}
+                        {% endfor %}
+                    });
+                </script>
+                {% endif %}
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- مقدمة (Introduction) -->
+                    <div class="md:col-span-2">
+                        <p class="text-gray-600 mb-4">
+                            This page allows you to edit your company's main branch information. This information will appear in various places on the website.
+                        </p>
+                    </div>
+                    
+                    <!-- معلومات الشركة (Company Information) -->
+                    <div class="md:col-span-2">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4">Office Information</h3>
+                    </div>
+                    
+                    <!-- Company Name -->
+                    <div>
+                        <label for="{{ form.company_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            Office Name <span class="text-red-600">*</span>
+                        </label>
+                        {{ form.company_name }}
+                        {% if form.company_name.errors %}
+                            <p class="text-red-600 text-sm mt-1">
+                                {{ form.company_name.errors.0 }}
+                            </p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Logo -->
+                    <div>
+                        <label for="{{ form.logo.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            Office Logo
+                        </label>
+                        {% if form.instance.logo %}
+                            <div class="mb-2 flex items-center">
+                                <img src="{{ form.instance.logo.url }}" alt="{{ form.instance.company_name }}" class="w-16 h-16 object-contain rounded">
+                                <span class="ml-2 text-xs text-gray-500">Current logo</span>
+                            </div>
+                        {% endif %}
+                        <div class="flex items-center">
+                            <input type="file" name="logo" id="{{ form.logo.id_for_label }}" class="hidden" accept="image/*">
+                            <label for="{{ form.logo.id_for_label }}" class="btn btn-outline cursor-pointer">
+                                <i class="fas fa-upload mr-1"></i> {{ form.instance.logo|yesno:"Change,Upload" }} Logo
+                            </label>
+                            <span class="ml-3 text-sm text-gray-500 file-name"></span>
+                        </div>
+                        {% if form.logo.errors %}
+                            <p class="text-red-600 text-sm mt-1">
+                                {{ form.logo.errors.0 }}
+                            </p>
+                        {% endif %}
+                        <div class="mt-2 text-sm text-gray-500">Recommended size: 200×200 pixels (PNG or JPG)</div>
+                    </div>
+                    
+                    <!-- معلومات الاتصال (Contact Information) -->
+                    <div class="md:col-span-2 mt-8">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4">Contact Information</h3>
+                    </div>
+                    
+                    <!-- Address -->
+                    <div class="md:col-span-2">
+                        <label for="{{ form.address.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            Office Address <span class="text-red-600">*</span>
+                        </label>
+                        {{ form.address }}
+                        {% if form.address.errors %}
+                            <p class="text-red-600 text-sm mt-1">
+                                {{ form.address.errors.0 }}
+                            </p>
+                        {% endif %}
+                        <div class="mt-2 text-sm text-gray-500">Full address of the head office</div>
+                    </div>
+                    
+                    <!-- Phone -->
+                    <div>
+                        <label for="{{ form.phone.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            Phone Number <span class="text-red-600">*</span>
+                        </label>
+                        {{ form.phone }}
+                        {% if form.phone.errors %}
+                            <p class="text-red-600 text-sm mt-1">
+                                {{ form.phone.errors.0 }}
+                            </p>
+                        {% endif %}
+                        <div class="mt-2 text-sm text-gray-500">Phone number with country code</div>
+                    </div>
+                    
+                    <!-- Email -->
+                    <div>
+                        <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            Email <span class="text-red-600">*</span>
+                        </label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <p class="text-red-600 text-sm mt-1">
+                                {{ form.email.errors.0 }}
+                            </p>
+                        {% endif %}
+                        <div class="mt-2 text-sm text-gray-500">Official email</div>
+                    </div>
+                    
+                    <!-- Hidden is_active field with default value true -->
+                    <input type="hidden" name="is_active" value="true">
+                </div>
+                
+                <!-- Action buttons -->
+                <div class="mt-8 flex justify-end space-x-3">
+                    <a href="{% url 'dashboard:branches' %}" class="btn btn-outline">
+                        <i class="fas fa-times mr-1"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <i class="fas fa-save mr-1"></i> Save Information
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // عرض اسم الملف عند اختياره (Show filename when a file is selected)
+        const fileInput = document.getElementById('{{ form.logo.id_for_label }}');
+        const fileName = document.querySelector('.file-name');
+        
+        fileInput.addEventListener('change', function() {
+            if (fileInput.files.length > 0) {
+                fileName.textContent = fileInput.files[0].name;
+            } else {
+                fileName.textContent = '';
+            }
+        });
+    });
+</script>
+{% endblock %} 

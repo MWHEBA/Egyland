@@ -1,0 +1,41 @@
+{% extends "base/home_base.html" %}
+{% load static %}
+
+{% block title %}Egyland - Under Construction{% endblock %}
+
+{% block content %}
+<div class="h-screen w-full bg-cover bg-center underconstruction-bg"></div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+    
+    html, body {
+        height: 100%;
+    }
+    
+    /* Hide header */
+    #main-header {
+        display: none !important;
+    }
+    
+    /* Desktop background image */
+    .underconstruction-bg {
+        background-image: url('{% static "img/underconstruction.jpg" %}');
+    }
+    
+    /* Mobile background image */
+    @media (max-width: 768px) {
+        .underconstruction-bg {
+            background-image: url('{% static "img/underconstruction-mobile.jpg" %}');
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body_class %}under-construction-page{% endblock %} 

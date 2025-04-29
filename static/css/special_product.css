@@ -1,0 +1,244 @@
+/* Special Product Styles */
+
+/* إعدادات عامة للصفحة - حذف أي وضع ثابت للجسم */
+html.special-product-page,
+body.special-product-page {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    /* منع التمرير الأفقي فقط */
+    overflow-y: auto;
+    /* السماح بالتمرير العمودي */
+    min-height: 100vh;
+    position: static;
+    /* وضع عادي */
+    width: 100%;
+}
+
+/* عرض المحتوى الرئيسي بشكل طبيعي */
+body.special-product-page main,
+body.special-product-page main.flex-grow {
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: auto !important;
+    position: relative;
+}
+
+/* تأكيد أن الفوتر يظهر بشكل طبيعي */
+body.special-product-page footer {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    display: block !important;
+}
+
+/* تأكيد أن الهيدر يظهر فوق الصورة */
+body.special-product-page header {
+    position: relative;
+}
+
+/* إعدادات قسم المنتج المخصوص */
+body.special-product-page .special-product-section {
+    position: relative !important;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    z-index: 1;
+    /* إزالة الهامش السفلي والارتفاع الثابت */
+    margin-bottom: 0;
+    padding-top: 20px;
+    min-height: 60vh;
+    margin-top: -30px;
+}
+
+.special-product-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+    z-index: 3;
+    border-radius: 0;
+    margin-right: auto;
+    margin-left: 0;
+    padding-left: 5%;
+    margin-top: -10px;
+}
+
+
+.special-product-header h1 {
+    font-size: 42px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 10px;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+}
+
+.special-product-content {
+    max-width: 750px;
+    padding: 15px;
+    border-radius: 8px;
+    margin-right: auto;
+    margin-left: 0;
+    margin-top: 0;
+    background-color: rgba(255, 255, 255, 0.65);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+}
+
+.special-product-description {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #333;
+    margin-bottom: 30px;
+    text-align: justify;
+}
+
+.special-product-description p {
+    margin-bottom: 15px;
+}
+
+.special-product-button {
+    font-size: 16px;
+    display: block;
+    width: 150px;
+    background-color: #39ae68;
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    text-align: center;
+}
+
+.special-product-button:hover {
+    opacity: 0.9;
+    color: #fff !important;
+    text-decoration: none !important;
+}
+
+.special-product-image {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    /* جعل الصورة خلف كل شيء */
+    pointer-events: none;
+    /* منع التفاعل مع الصورة */
+    overflow: hidden;
+}
+
+.special-product-image img {
+    position: absolute;
+    width: auto;
+    height: auto;
+    max-width: 60%;
+    max-height: 90%;
+    object-fit: contain;
+    top: auto;
+    bottom: 0;
+    left: auto;
+    right: 0;
+    object-position: right bottom;
+}
+
+/* تحسين ظهور الصورة في الخلفية - كلاس إضافي للتأكيد */
+.special-product-image img.right-bottom-img {
+    object-position: right bottom !important;
+}
+
+/* Responsive Styles */
+@media (min-width: 768px) {
+    .special-product-container {
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 0 60px;
+        min-height: auto;
+        margin-top: 20px;
+    }
+    
+    body.special-product-page .special-product-section {
+        min-height: 70vh;
+    }
+    
+    .special-product-image img {
+        max-width: 55%;
+        max-height: 80%;
+    }
+    
+    .special-product-content {
+        margin-left: 30px;
+        padding: 20px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .special-product-image img {
+        max-width: 50%;
+        max-height: 85%;
+    }
+    
+    .special-product-content {
+        padding: 25px;
+        margin-left: 50px;
+    }
+}
+
+@media (min-width: 1500px) {
+    .special-product-content {
+        padding: 30px;
+        margin-left: 15%;
+    }
+}
+
+@media (max-width: 767px) {
+    body.special-product-page .special-product-section {
+        padding-top: 10px;
+        min-height: 50vh;
+        margin-top: -20px;
+        padding-bottom: 40vh; /* إضافة مساحة في الأسفل للصورة */
+    }
+    
+    .special-product-container {
+        padding: 10px 15px;
+        margin-top: 30px;
+    }
+    
+    .special-product-image {
+        position: fixed; /* تثبيت موضع الصورة */
+        bottom: 0; /* لصق في الأسفل */
+        right: 0;
+        top: auto; /* إلغاء الموضع العلوي */
+        height: 40vh; /* ارتفاع محدد */
+        z-index: 2; /* تأكد من أن الصورة فوق الفوتر */
+    }
+    
+    .special-product-image img {
+        max-width: 200%;
+        position: absolute;
+        bottom: 0; /* لصق في أسفل الكونتينر */
+        right: 0;
+    }
+    
+    /* تأكد من أن محتوى المنتج يظهر فوق الصورة */
+    .special-product-content {
+        position: relative;
+        z-index: 3;
+        background-color: rgba(255, 255, 255, 0.35); /* زيادة التعتيم للمحتوى */
+    }
+    
+    /* تحسين ظهور الفوتر */
+    body.special-product-page footer {
+        position: relative;
+        z-index: 4; /* جعل الفوتر فوق الصورة */
+    }
+}

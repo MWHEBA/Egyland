@@ -1,0 +1,104 @@
+{% extends "base/home_base.html" %}
+{% load static %}
+
+{% block title %}About Us - Egyland{% endblock %}
+{% block meta_description %}Learn about Egyland, a dynamic international trade company, established in 2008, with a strong specialization in the food & beverage industry.{% endblock %}
+
+{% block extra_css %}
+<style>
+    html, body {
+        height: 100%;
+        overflow: hidden;
+    }
+    
+    /* خلفية مختلفة للموبايل والديسكتوب */
+    .about-bg-image {
+        object-fit: contain;
+        max-width: none;
+        height: 100%;
+        width: auto;
+    }
+    
+    /* استخدام الميديا كويري لتبديل الصور */
+    @media (max-width: 768px) {
+        .about-bg-desktop {
+            display: none;
+        }
+        
+        .about-bg-mobile {
+            display: block;
+        }
+        
+        /* تعديل نمط المحتوى للموبايل */
+        .about-content {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        /* تعديل حجم الخط وارتفاع السطر للبراجراف في نسخة الموبايل */
+        .about-content p {
+            font-size: 16px;
+            line-height: 1.5rem;
+        }
+        
+        /* تعديل موضع المحتوى للموبايل ليبدأ من أعلى الشاشة بعد الهيدر */
+        .content-container {
+            align-items: flex-start;
+            padding-top: 100px; /* مساحة للهيدر */
+        }
+        
+        /* إزالة توسيط العناصر رأسياً في نسخة الموبايل */
+        .mobile-content-position {
+            display: flex;
+            align-items: flex-start !important;
+        }
+    }
+    
+    @media (min-width: 769px) {
+        .about-bg-desktop {
+            display: block;
+        }
+        
+        .about-bg-mobile {
+            display: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="flex flex-col h-screen overflow-hidden">
+    <!-- Hero Image Background -->
+    <div class="absolute inset-0 z-0 flex justify-end">
+        <!-- صورة لسطح المكتب -->
+        <img src="{% static 'img/about-bg.jpg' %}" alt="Background" class="about-bg-image about-bg-desktop">
+        <!-- صورة للموبايل -->
+        <img src="{% static 'img/about-bg-mobile.jpg' %}" alt="Background" class="about-bg-image about-bg-mobile">
+    </div>
+
+    <!-- Content -->
+    <div class="absolute inset-0 z-10 flex items-center content-container mobile-content-position">
+        <div class="container mx-auto px-4 max-w-[1300px]">
+            <div class="max-w-2xl about-content">
+                <h1 class="text-4xl font-bold mb-8">About <span class="text-green-500">Us</span></h1>
+                
+                <p class="text-black text-lg mb-6" style="text-align: justify;">
+                    Egyland is a dynamic international trade company, established in 2008, with a strong specialization in the food & beverage industry. With a commitment to excellence and innovation, we have built a reputation for delivering high-quality products and services, fostering global partnerships, and driving sustainable growth.
+                </p>
+                
+                <p class="text-black text-lg" style="text-align: justify;">
+                    Our expertise spans sourcing, distribution, market expansion, enabling us to connect businesses with premium food and beverage solutions across local & international markets by ensuring quality, efficiency and customer satisfaction at every step.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // إضافة كلاس no-scroll للمنع التمرير في هذه الصفحة
+    document.body.classList.add('no-scroll');
+</script>
+{% endblock %} 

@@ -1,0 +1,246 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load dashboard_filters %}
+
+{% block title %}Dashboard - Egyland Admin{% endblock %}
+
+{% block header_title %}
+    <!-- Header title removed -->
+{% endblock %}
+
+{% block breadcrumbs %}
+    <!-- Breadcrumbs moved to content -->
+{% endblock %}
+
+{% block header_actions %}
+    <!-- Header actions moved to content -->
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- New improved header and breadcrumbs design -->
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">
+                    Dashboard
+                </h1>
+                <nav class="flex flex-wrap items-center text-sm text-gray-600">
+                    <a href="{% url 'dashboard:home' %}" class="hover:text-primary transition">
+                        <i class="fas fa-home"></i>
+                        <span class="hidden sm:inline">Dashboard</span>
+                    </a>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <span class="text-primary font-medium">Overview</span>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Products Card -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">Total Products</p>
+                    <h3 class="text-3xl font-semibold mt-1">{{ total_products }}</h3>
+                </div>
+                <div class="bg-green-100 p-3 rounded-full">
+                    <i class="fas fa-box text-primary text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4">
+                <a href="{% url 'dashboard:products' %}" class="text-primary hover:text-primary-dark text-sm flex items-center">
+                    View all products <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Inquiries Card -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">Total Inquiries</p>
+                    <h3 class="text-3xl font-semibold mt-1">{{ total_inquiries }}</h3>
+                </div>
+                <div class="bg-blue-100 p-3 rounded-full">
+                    <i class="fas fa-envelope text-blue-500 text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4">
+                <a href="{% url 'dashboard:inquiries' %}" class="text-primary hover:text-primary-dark text-sm flex items-center">
+                    View all inquiries <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </div>
+        </div>
+        
+        <!-- New Inquiries Card -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">New Inquiries</p>
+                    <h3 class="text-3xl font-semibold mt-1">{{ new_inquiries }}</h3>
+                </div>
+                <div class="bg-yellow-100 p-3 rounded-full">
+                    <i class="fas fa-bell text-yellow-500 text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4">
+                <a href="{% url 'dashboard:inquiries' %}?status=new" class="text-primary hover:text-primary-dark text-sm flex items-center">
+                    View new inquiries <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </div>
+        </div>
+        
+        <!-- In Progress Inquiries Card -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">In Progress</p>
+                    <h3 class="text-3xl font-semibold mt-1">{{ in_progress_inquiries }}</h3>
+                </div>
+                <div class="bg-indigo-100 p-3 rounded-full">
+                    <i class="fas fa-spinner text-indigo-500 text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4">
+                <a href="{% url 'dashboard:inquiries' %}?status=in_progress" class="text-primary hover:text-primary-dark text-sm flex items-center">
+                    View in progress <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Recent Inquiries -->
+        <div class="bg-white shadow rounded-lg p-6 lg:col-span-2">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Inquiries</h3>
+            
+            {% if recent_inquiries %}
+                <div class="overflow-x-auto">
+                    <table class="table-auto w-full">
+                        <thead>
+                            <tr class="text-left bg-gray-50">
+                                <th class="p-3">Name</th>
+                                <th class="p-3">Type</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3">Date</th>
+                                <th class="p-3">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for inquiry in recent_inquiries %}
+                                <tr class="border-b border-gray-200 hover:bg-gray-50">
+                                    <td class="p-3">{{ inquiry.name }}</td>
+                                    <td class="p-3">
+                                        {% if inquiry.type == 'contact' %}
+                                            <span class="badge badge-info">Contact</span>
+                                        {% else %}
+                                            <span class="badge badge-warning">Quote</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="p-3">
+                                        {% if inquiry.status == 'new' %}
+                                            <span class="badge badge-warning">New</span>
+                                        {% elif inquiry.status == 'in_progress' %}
+                                            <span class="badge badge-info">In Progress</span>
+                                        {% elif inquiry.status == 'completed' %}
+                                            <span class="badge badge-success">Completed</span>
+                                        {% else %}
+                                            <span class="badge badge-danger">Cancelled</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="p-3">{{ inquiry.created_at|date:"M d, Y" }}</td>
+                                    <td class="p-3">
+                                        <a href="{% url 'dashboard:inquiry_detail' pk=inquiry.pk %}" class="btn-icon btn-info">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-4 text-right">
+                    <a href="{% url 'dashboard:inquiries' %}" class="btn btn-outline">View All Inquiries</a>
+                </div>
+            {% else %}
+                <div class="flex flex-col items-center justify-center py-6 text-center">
+                    <i class="fas fa-envelope-open text-3xl mb-2 text-blue-500"></i>
+                    <p class="text-gray-500">No recent inquiries found.</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Product Statistics -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Product Statistics</h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <h4 class="text-sm font-medium text-gray-500 mb-2">Product Types</h4>
+                    <div class="space-y-2">
+                        {% for type in product_types %}
+                            <div>
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-sm font-medium">
+                                        {% if type.product_type == 'fresh' %}
+                                            Fresh Products
+                                        {% elif type.product_type == 'iqf' %}
+                                            IQF Products
+                                        {% else %}
+                                            Both Fresh & IQF
+                                        {% endif %}
+                                    </span>
+                                    <span class="text-sm font-medium">{{ type.count }}</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="{% if type.product_type == 'fresh' %}bg-green-500{% elif type.product_type == 'iqf' %}bg-blue-500{% else %}bg-purple-500{% endif %} h-2 rounded-full"
+                                        style="width: {{ type.count|floatformat:0|default:0|multiply:100|divide:total_products }}%"></div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="flex flex-col items-center justify-center py-4">
+                                <i class="fas fa-box text-3xl mb-2 text-gray-400"></i>
+                                <p class="text-gray-500">No products available.</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="border-t pt-4">
+                    <h4 class="text-sm font-medium text-gray-500 mb-2">Featured Products</h4>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center bg-primary text-white">
+                            <span class="font-semibold">{{ featured_products }}</span>
+                        </div>
+                        <div class="ml-3">
+                            <span class="block text-sm text-gray-500">Featured out of {{ total_products }}</span>
+                            <span class="block text-sm font-medium">
+                                {{ featured_products|floatformat:0|default:0|multiply:100|divide:total_products }}% of total
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <a href="{% url 'dashboard:products' %}" class="btn btn-primary w-full">Manage Products</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Custom filters for template tags
+    // Note: These would normally be Django template filters
+    // Adding them as JavaScript for demonstration
+    document.addEventListener('DOMContentLoaded', function() {
+        // This is just a placeholder for template filters
+        // In real Django, you would create custom template filters
+        // for operations like multiply and divide
+    });
+</script>
+{% endblock %} 

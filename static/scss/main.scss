@@ -1,0 +1,273 @@
+@import "variables";
+@import "components/inquiry_modal";
+
+// ملف SCSS الرئيسي
+body {
+  font-family: $font-family;
+  color: #333;
+  line-height: 1.6;
+}
+
+// تنسيق العناوين
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: $font-weight-bold;
+  margin-bottom: $spacing-md;
+}
+
+h1 {
+  font-size: 2.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.75rem;
+}
+
+// تنسيق الروابط
+a {
+  color: $primary-green;
+  text-decoration: none;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: darken($primary-green, 10%);
+  }
+}
+
+// تمييز النص
+.highlight {
+  background-color: $primary-green;
+  color: $white;
+  padding: 0 $spacing-xs;
+}
+
+// البطاقات
+.card {
+  border-radius: 8px;
+  box-shadow: $box-shadow;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+// زر رئيسي
+.btn-primary {
+  background-color: $primary-green;
+  color: $white;
+  border: none;
+  padding: $spacing-sm $spacing-lg;
+  border-radius: 4px;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: darken($primary-green, 10%);
+  }
+}
+
+// تنسيق النماذج
+.form-control {
+  width: 100%;
+  padding: $spacing-sm;
+  border: 1px solid $gray;
+  border-radius: 4px;
+  transition: border-color 0.3s ease;
+
+  &:focus {
+    border-color: $primary-green;
+    outline: none;
+  }
+}
+
+// تنسيق جدول الموسمية
+.seasonality-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: $spacing-lg;
+
+  th,
+  td {
+    padding: $spacing-sm;
+    text-align: center;
+    border: 1px solid $gray;
+  }
+
+  th {
+    background-color: lighten($primary-green, 50%);
+  }
+
+  .month-available {
+    background-color: rgba($season-light-green, 0.1);
+  }
+}
+
+// أيقونات الموسمية
+.month-icon,
+.seasonality-icon {
+  width: 24px;
+  height: 24px;
+  display: block;
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+// الدوائر الملونة للشهور المتاحة
+.month-active-fresh,
+.month-active-iqf {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin: 0 auto;
+}
+
+.month-active-fresh {
+  background-color: $primary-green;
+}
+
+.month-active-iqf {
+  background-color: #5a6b77;
+}
+
+// جدول متجاوب
+.table-responsive {
+  overflow-x: auto;
+  margin-bottom: $spacing-lg;
+}
+
+// أنماط العد والأحجام
+.counts-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+  justify-content: flex-start;
+  margin-top: $spacing-md;
+}
+
+.count-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: $color-white;
+  padding: $spacing-sm;
+  border-radius: 8px;
+  min-width: 50px;
+  box-shadow: $box-shadow;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.count-value {
+  font-weight: 600;
+  font-size: 20px;
+  margin-bottom: $spacing-xs;
+}
+
+.count-check {
+  color: $color-primary;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+// جدول الأحجام
+.sizing-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: $spacing-lg;
+
+  th,
+  td {
+    padding: $spacing-sm;
+    text-align: center;
+    border: 1px solid $gray;
+  }
+
+  th {
+    background-color: lighten($primary-green, 50%);
+    font-weight: $font-weight-bold;
+  }
+
+  tr:nth-child(even) {
+    background-color: rgba($primary-green, 0.05);
+  }
+}
+
+.size-indicator {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin-right: $spacing-xs;
+
+  &.small {
+    background-color: #63cafd;
+  }
+
+  &.medium {
+    background-color: #ffca28;
+  }
+
+  &.large {
+    background-color: #ff7043;
+  }
+
+  &.xl {
+    background-color: #ff5252;
+  }
+}
+
+// شريط التنقل
+.navbar {
+  background-color: transparent;
+  transition: background-color 0.3s ease;
+  padding: $spacing-md 0;
+
+  &.sticky {
+    background-color: $white;
+    box-shadow: $box-shadow;
+  }
+
+  .nav-link {
+    color: $white;
+    font-weight: $font-weight-medium;
+
+    &:hover {
+      color: $primary-green;
+    }
+  }
+
+  &.sticky .nav-link {
+    color: #333;
+  }
+}
+
+// تذييل الصفحة
+.footer {
+  background-color: #2c3e50;
+  color: $white;
+  padding: $spacing-xl 0;
+
+  a {
+    color: $white;
+
+    &:hover {
+      color: $primary-green;
+    }
+  }
+}

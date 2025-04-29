@@ -1,0 +1,274 @@
+{% load static %}
+
+<form method="post" action="{% url 'dashboard:packaging_type_modal_edit' object.id %}" enctype="multipart/form-data" id="editPackagingTypeForm" novalidate>
+  {% csrf_token %}
+  
+  <!-- سنستخدم هذا الحقل المخفي للتحكم في إرسال Key Word -->
+  <input type="hidden" name="is_key_word_required" id="is_key_word_required" value="{% if form.is_fresh.value %}true{% else %}false{% endif %}">
+  
+  {% if form.non_field_errors %}
+  <div class="p-3 mb-4 bg-red-50 border-l-4 border-red-500">
+    <div class="flex items-start">
+      <div class="flex-shrink-0">
+        <i class="fas fa-exclamation-circle text-red-500"></i>
+      </div>
+      <div class="ml-3">
+        <p class="text-sm text-red-700">
+          {{ form.non_field_errors.0 }}
+        </p>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+    <!-- Packaging Name Field -->
+    <div class="form-field md:col-span-2" id="name-field-container">
+      <label for="{{ form.name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+        Packaging Name <span class="text-red-500">*</span>
+      </label>
+      <input type="text" name="name" id="{{ form.name.id_for_label }}" required class="form-input w-full" placeholder="Enter the packaging type name" value="{{ form.name.value|default:'' }}">
+      <div class="mt-1 text-xs text-gray-600">
+        Enter the name of this packaging type
+      </div>
+      {% if form.name.errors %}
+        <p class="text-red-600 text-xs mt-1 font-medium">{{ form.name.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <!-- Key Word Field Container - Will be dynamically managed -->
+    <div id="key-word-field-container" class="{% if not form.is_fresh.value %}hidden{% endif %}">
+      <label for="{{ form.key_word.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+        Key Word <span class="text-red-500">*</span>
+      </label>
+      <input type="text" name="key_word" id="{{ form.key_word.id_for_label }}" 
+             {% if form.is_fresh.value %}required{% endif %} 
+             class="form-input w-full" 
+             placeholder="e.g. carton-box" 
+             value="{{ form.key_word.value|default:'' }}">
+      <div class="mt-1 text-xs text-gray-600">
+        Used for tracking (e.g. carton-box)
+      </div>
+      {% if form.key_word.errors %}
+        <p class="text-red-600 text-xs mt-1 font-medium">{{ form.key_word.errors.0 }}</p>
+      {% endif %}
+      <p class="text-red-600 text-xs mt-1 font-medium hidden" id="key-word-error">This field is required when Fresh Products is selected</p>
+    </div>
+  </div>
+  
+  <!-- Description Field with reduced height -->
+  <div class="form-field mb-4">
+    <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+      Description
+    </label>
+    <textarea name="description" id="{{ form.description.id_for_label }}" rows="2" style="height: 5rem;" class="form-input w-full" placeholder="Enter packaging type description">{{ form.description.value|default:'' }}</textarea>
+    <div class="mt-1 text-xs text-gray-600">
+      Optional: Provide additional details about this packaging type
+    </div>
+    {% if form.description.errors %}
+      <p class="text-red-600 text-xs mt-1 font-medium">{{ form.description.errors.0 }}</p>
+    {% endif %}
+  </div>
+  
+  <!-- Image Field -->
+  <div class="form-field mb-4">
+    <label for="{{ form.image.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+      Image
+    </label>
+    
+    {% if object and object.image %}
+    <div class="mb-2 flex items-center bg-gray-50 p-2 rounded-lg">
+      <img src="{{ object.image.url }}" alt="{{ object.name }}" class="w-12 h-12 object-contain border rounded-md" id="image-preview">
+      <span class="ml-2 text-xs text-gray-600">Current image</span>
+    </div>
+    {% endif %}
+    
+    <input type="file" name="image" id="{{ form.image.id_for_label }}" class="block w-full text-sm text-gray-600
+      file:mr-3 file:py-2 file:px-4
+      file:rounded-md file:border-0
+      file:text-xs file:font-medium
+      file:bg-primary file:text-white
+      hover:file:bg-primary-dark cursor-pointer">
+    
+    <div class="mt-1 text-xs text-gray-600">
+      Optional: Upload an image of this packaging type
+    </div>
+    
+    {% if form.image.errors %}
+      <p class="text-red-600 text-xs mt-1 font-medium">{{ form.image.errors.0 }}</p>
+    {% endif %}
+  </div>
+  
+  <!-- Availability Options -->
+  <div class="form-field mb-4">
+    <p class="block text-sm font-medium text-gray-700 mb-2">
+      Available for:
+    </p>
+    
+    <div class="bg-gray-50 p-3 rounded-lg">
+      <div class="grid grid-cols-2 gap-4">
+        <!-- Fresh Option -->
+        <div>
+          <div class="custom-checkbox-wrapper mb-1">
+            <label class="inline-flex items-center cursor-pointer">
+              <input type="checkbox" name="is_fresh" id="{{ form.is_fresh.id_for_label }}" 
+                     class="custom-checkbox sr-only" 
+                     {% if form.is_fresh.value %}checked{% endif %}>
+              <span class="checkbox-display w-4 h-4 rounded border border-gray-400 flex items-center justify-center mr-2 bg-white">
+                <i class="fas fa-check text-primary text-xs transition-opacity {% if form.is_fresh.value %}opacity-100{% else %}opacity-0{% endif %}"></i>
+              </span>
+              <span class="text-sm font-medium text-gray-700">Fresh Products</span>
+            </label>
+          </div>
+        </div>
+        
+        <!-- IQF Option -->
+        <div>
+          <div class="custom-checkbox-wrapper mb-1">
+            <label class="inline-flex items-center cursor-pointer">
+              <input type="checkbox" name="is_iqf" id="{{ form.is_iqf.id_for_label }}" 
+                     class="custom-checkbox sr-only" 
+                     {% if form.is_iqf.value %}checked{% endif %}>
+              <span class="checkbox-display w-4 h-4 rounded border border-gray-400 flex items-center justify-center mr-2 bg-white">
+                <i class="fas fa-check text-primary text-xs transition-opacity {% if form.is_iqf.value %}opacity-100{% else %}opacity-0{% endif %}"></i>
+              </span>
+              <span class="text-sm font-medium text-gray-700">IQF Products</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="mt-1 text-xs text-gray-600">
+      Select which product types can use this packaging
+    </div>
+    
+    {% if form.is_fresh.errors %}
+      <p class="text-red-600 text-xs mt-1 font-medium">{{ form.is_fresh.errors.0 }}</p>
+    {% endif %}
+    
+    {% if form.is_iqf.errors %}
+      <p class="text-red-600 text-xs mt-1 font-medium">{{ form.is_iqf.errors.0 }}</p>
+    {% endif %}
+  </div>
+  
+  <div class="flex justify-end space-x-2 mt-6">
+    <button type="button" onclick="closeEditModal()" class="btn btn-outline">Cancel</button>
+    <button type="submit" class="btn btn-primary">
+      <i class="fas fa-save mr-1"></i> Update Packaging Type
+    </button>
+  </div>
+</form>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // معالجة الشيك بوكس للتغيير من خلال الجافاسكريبت
+    document.querySelectorAll('.custom-checkbox').forEach(function(checkbox) {
+      checkbox.addEventListener('change', function() {
+        const icon = this.parentElement.querySelector('i');
+        if (this.checked) {
+          icon.classList.remove('opacity-0');
+          icon.classList.add('opacity-100');
+        } else {
+          icon.classList.remove('opacity-100');
+          icon.classList.add('opacity-0');
+        }
+        
+        // التحقق مما إذا كان هذا هو الخيار "Fresh Products"
+        if (this.name === 'is_fresh') {
+          toggleKeyWordField(this.checked);
+        }
+      });
+    });
+    
+    // الدالة المسؤولة عن إظهار/إخفاء حقل Key Word بناءً على اختيار Fresh Products
+    function toggleKeyWordField(isFreshSelected) {
+      const keyWordContainer = document.getElementById('key-word-field-container');
+      const nameContainer = document.getElementById('name-field-container');
+      const keyWordInput = document.getElementById('{{ form.key_word.id_for_label }}');
+      const keyWordRequiredField = document.getElementById('is_key_word_required');
+      const keyWordError = document.getElementById('key-word-error');
+      
+      if (isFreshSelected) {
+        // إظهار حقل Key Word وجعله إجباري
+        keyWordContainer.classList.remove('hidden');
+        keyWordInput.setAttribute('required', 'required');
+        keyWordRequiredField.value = 'true';
+        keyWordError.classList.add('hidden');
+        
+        // تعديل عرض حقل الاسم
+        nameContainer.classList.remove('md:col-span-2');
+      } else {
+        // إخفاء حقل Key Word وإلغاء الإجباري
+        keyWordContainer.classList.add('hidden');
+        keyWordInput.removeAttribute('required');
+        keyWordRequiredField.value = 'false';
+        
+        // إعادة حقل الاسم ليأخذ العرض الكامل
+        nameContainer.classList.add('md:col-span-2');
+      }
+    }
+    
+    // تنفيذ الدالة عند تحميل الصفحة لضبط الحالة الأولية
+    toggleKeyWordField(document.getElementById('{{ form.is_fresh.id_for_label }}').checked);
+    
+    // معاينة الصورة عند اختيارها
+    const imageInput = document.getElementById('{{ form.image.id_for_label }}');
+    if (imageInput) {
+      imageInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            // البحث عن عنصر معاينة الصورة الحالي أو إنشاء عنصر جديد إذا لم يكن موجودًا
+            let imagePreview = document.getElementById('image-preview');
+            if (!imagePreview) {
+              const previewContainer = document.createElement('div');
+              previewContainer.className = 'mb-2 flex items-center bg-gray-50 p-2 rounded-lg';
+              previewContainer.innerHTML = `
+                <img src="${e.target.result}" alt="Preview" class="w-12 h-12 object-contain border rounded-md" id="image-preview">
+                <span class="ml-2 text-xs text-gray-600">Selected image</span>
+              `;
+              imageInput.parentNode.insertBefore(previewContainer, imageInput);
+            } else {
+              // تحديث الصورة الموجودة
+              imagePreview.src = e.target.result;
+              imagePreview.parentNode.classList.remove('hidden');
+            }
+          };
+          reader.readAsDataURL(this.files[0]);
+        }
+      });
+    }
+    
+    // التحقق من النموذج قبل الإرسال
+    document.getElementById('editPackagingTypeForm').addEventListener('submit', function(e) {
+      const isFreshSelected = document.getElementById('{{ form.is_fresh.id_for_label }}').checked;
+      const keyWordInput = document.getElementById('{{ form.key_word.id_for_label }}');
+      const keyWordRequiredField = document.getElementById('is_key_word_required');
+      const keyWordError = document.getElementById('key-word-error');
+      
+      // تعيين إجبارية الحقل بناءً على اختيار Fresh Products
+      if (isFreshSelected) {
+        keyWordRequiredField.value = 'true';
+        
+        // التحقق من أن القيمة مدخلة
+        if (!keyWordInput.value.trim()) {
+          e.preventDefault();
+          keyWordInput.setAttribute('required', 'required');
+          keyWordInput.classList.add('border-red-500');
+          keyWordError.classList.remove('hidden');
+          keyWordInput.focus();
+          return false;
+        } else {
+          keyWordError.classList.add('hidden');
+          keyWordInput.classList.remove('border-red-500');
+        }
+      } else {
+        // إذا لم يتم اختيار Fresh Products، نقوم بإلغاء إجبارية الحقل
+        keyWordRequiredField.value = 'false';
+        keyWordInput.value = ''; // تفريغ قيمة الحقل
+        keyWordInput.removeAttribute('required');
+      }
+    });
+  });
+</script> 

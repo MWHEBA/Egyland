@@ -1,0 +1,198 @@
+/* Custom Tailwind-like Utility Classes */
+
+.text-primary {
+    color: var(--color-primary) !important;
+}
+
+.text-primary-dark {
+    color: var(--color-primary-dark) !important;
+}
+
+.text-secondary {
+    color: var(--color-secondary) !important;
+}
+
+.text-secondary-dark {
+    color: var(--color-secondary-dark) !important;
+}
+
+.text-accent {
+    color: var(--color-accent) !important;
+}
+
+.text-gray-light {
+    color: var(--color-gray-light) !important;
+}
+
+.text-gray-medium {
+    color: var(--color-gray-medium) !important;
+}
+
+.text-gray-dark {
+    color: var(--color-gray-dark) !important;
+}
+
+.bg-primary {
+    background-color: var(--color-primary) !important;
+}
+
+.bg-primary-dark {
+    background-color: var(--color-primary-dark) !important;
+}
+
+.bg-secondary {
+    background-color: var(--color-secondary) !important;
+}
+
+.bg-secondary-dark {
+    background-color: var(--color-secondary-dark) !important;
+}
+
+.bg-accent {
+    background-color: var(--color-accent) !important;
+}
+
+.bg-gray-light {
+    background-color: var(--color-gray-light) !important;
+}
+
+.bg-gray-medium {
+    background-color: var(--color-gray-medium) !important;
+}
+
+.bg-gray-dark {
+    background-color: var(--color-gray-dark) !important;
+}
+
+.border-primary {
+    border-color: var(--color-primary) !important;
+}
+
+.border-primary-dark {
+    border-color: var(--color-primary-dark) !important;
+}
+
+.border-secondary {
+    border-color: var(--color-secondary) !important;
+}
+
+.border-secondary-dark {
+    border-color: var(--color-secondary-dark) !important;
+}
+
+.border-accent {
+    border-color: var(--color-accent) !important;
+}
+
+.border-gray-light {
+    border-color: var(--color-gray-light) !important;
+}
+
+.border-gray-medium {
+    border-color: var(--color-gray-medium) !important;
+}
+
+.border-gray-dark {
+    border-color: var(--color-gray-dark) !important;
+}
+
+.font-inter {
+    font-family: 'Inter', sans-serif !important;
+}
+
+/* Hover Versions */
+.hover\:bg-primary:hover {
+    background-color: var(--color-primary) !important;
+}
+
+.hover\:bg-primary-dark:hover {
+    background-color: var(--color-primary-dark) !important;
+}
+
+.hover\:bg-secondary:hover {
+    background-color: var(--color-secondary) !important;
+}
+
+.hover\:bg-secondary-dark:hover {
+    background-color: var(--color-secondary-dark) !important;
+}
+
+.hover\:bg-accent:hover {
+    background-color: var(--color-accent) !important;
+}
+
+.hover\:bg-gray-light:hover {
+    background-color: var(--color-gray-light) !important;
+}
+
+.hover\:bg-gray-medium:hover {
+    background-color: var(--color-gray-medium) !important;
+}
+
+.hover\:bg-gray-dark:hover {
+    background-color: var(--color-gray-dark) !important;
+}
+
+.hover\:text-primary:hover {
+    color: var(--color-primary) !important;
+}
+
+.hover\:text-primary-dark:hover {
+    color: var(--color-primary-dark) !important;
+}
+
+.hover\:text-secondary:hover {
+    color: var(--color-secondary) !important;
+}
+
+.hover\:text-secondary-dark:hover {
+    color: var(--color-secondary-dark) !important;
+}
+
+.hover\:text-accent:hover {
+    color: var(--color-accent) !important;
+}
+
+.hover\:text-gray-light:hover {
+    color: var(--color-gray-light) !important;
+}
+
+.hover\:text-gray-medium:hover {
+    color: var(--color-gray-medium) !important;
+}
+
+.hover\:text-gray-dark:hover {
+    color: var(--color-gray-dark) !important;
+}
+
+.hover\:border-primary:hover {
+    border-color: var(--color-primary) !important;
+}
+
+.hover\:border-primary-dark:hover {
+    border-color: var(--color-primary-dark) !important;
+}
+
+.hover\:border-secondary:hover {
+    border-color: var(--color-secondary) !important;
+}
+
+.hover\:border-secondary-dark:hover {
+    border-color: var(--color-secondary-dark) !important;
+}
+
+.hover\:border-accent:hover {
+    border-color: var(--color-accent) !important;
+}
+
+.hover\:border-gray-light:hover {
+    border-color: var(--color-gray-light) !important;
+}
+
+.hover\:border-gray-medium:hover {
+    border-color: var(--color-gray-medium) !important;
+}
+
+.hover\:border-gray-dark:hover {
+    border-color: var(--color-gray-dark) !important;
+}

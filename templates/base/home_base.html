@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en" class="{% block html_class %}{% endblock %}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>{% block title %}Egyland - Agricultural Export Company{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Egyland specializes in exporting high-quality agricultural products worldwide.{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}agricultural exports, fresh fruits, iqf products, egypt export{% endblock %}">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN (التحميل المباشر) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#27ae60',
+                        'primary-dark': '#219653',
+                        gray: '#E0E0E0',
+                        'season-yellow': '#FFE082',
+                        'season-green-light': '#8BC34A',
+                        'season-green-medium': '#CDDC39',
+                    },
+                    fontFamily: {
+                        'raleway': ['"Raleway"', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- Select2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+    
+    <!-- IntlTelInput CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
+    
+    <!-- Custom CSS (بعد تحميل تيلويند) -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components/inquiry_modal.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mobile_home.css' %}">
+    
+    <!-- Toastr CSS and JS -->
+    {% include 'includes/toastr.html' %}
+    
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        /* تأكيد ظهور القائمة الرئيسية */
+        #main-header .main-nav {
+            display: flex !important;
+            visibility: visible !important;
+        }
+        
+        /* تأكيد ظهور الروابط داخل القائمة */
+        #main-header .main-nav ul {
+            display: flex !important;
+        }
+        
+        #main-header .nav-item {
+            display: block !important;
+        }
+        
+        /* تنسيقات Select2 لتتناسب مع تصميم الموقع */
+        .select2-container--default .select2-selection--single {
+            height: 45px !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 0.375rem !important;
+            background-color: #f8fafc !important;
+        }
+        
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 45px !important;
+            padding-left: 12px !important;
+        }
+        
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 43px !important;
+        }
+        
+        /* تعديل موضع زر مسح الاختيار ليكون في منتصف الارتفاع */
+        .select2-container--default .select2-selection--single .select2-selection__clear {
+            height: 45px !important;
+            line-height: 45px !important;
+            margin-top: 0 !important;
+            position: absolute !important;
+            right: 25px !important;
+            top: 0 !important;
+            font-size: 16px !important;
+            margin-right: 0 !important;
+            color: #777 !important;
+            z-index: 10 !important;
+        }
+        
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #27ae60 !important;
+        }
+        
+        /* تنسيقات مكتبة intl-tel-input للتناسب مع تصميم الموقع */
+        .iti {
+            width: 100% !important;
+        }
+        
+        .iti__flag-container {
+            display: flex !important;
+            align-items: center !important;
+        }
+        
+        .iti__selected-flag {
+            height: 45px !important;
+            padding: 0 12px 0 12px !important;
+            background-color: #f8fafc !important;
+            border-right: 1px solid #e2e8f0 !important;
+        }
+        
+        /* قم بإظهار رسالة الخطأ أسفل حقل الهاتف */
+        #phone-error {
+            font-size: 12px;
+            color: #ef4444;
+            margin-top: 4px;
+            display: none;
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="font-raleway text-gray-800 flex flex-col h-screen no-scroll {% block body_class %}{% endblock %}">
+    <!-- Header -->
+    {% include 'components/header.html' %}
+    
+    <!-- Main Content -->
+    <main class="flex-grow overflow-hidden">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer - عرض الفوتر في كل الصفحات ما عدا الصفحة الرئيسية -->
+    {% if request.path != '/' %}
+        {% include 'components/footer.html' %}
+    {% endif %}
+    
+    <!-- مودال الاستفسارات -->
+    {% include 'components/inquiry_modal.html' %}
+    
+    <!-- jQuery (للتوافق) -->
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    
+    <!-- Select2 JS (بعد jQuery) -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    
+    <!-- IntlTelInput JS -->
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/mobile_menu.js' %}"></script>
+    <script src="{% static 'js/components/inquiry_modal.js' %}"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html> 

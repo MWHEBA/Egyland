@@ -1,0 +1,253 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}
+    Product Packaging Types - Egyland Dashboard
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/plugins/datatables.min.css' %}">
+{% endblock %}
+
+{% block header_title %}
+    <!-- Header title removed -->
+{% endblock %}
+
+{% block breadcrumbs %}
+    <!-- Breadcrumbs moved to content -->
+{% endblock %}
+
+{% block header_actions %}
+    <!-- Header actions moved to content -->
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- New improved header and breadcrumbs design -->
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">
+                    Product Packaging Types
+                </h1>
+                <nav class="flex flex-wrap items-center text-sm text-gray-600">
+                    <a href="{% url 'dashboard:home' %}" class="hover:text-primary transition">
+                        <i class="fas fa-home"></i>
+                        <span class="hidden sm:inline">Dashboard</span>
+                    </a>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <span class="font-medium">Products</span>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <span class="text-primary font-medium">Product Packaging Types</span>
+                </nav>
+            </div>
+            <div class="mt-4 md:mt-0">
+                <a href="{% url 'dashboard:product_packaging_type_add' %}" class="btn btn-primary">
+                    <i class="fas fa-plus mr-1"></i> Add New Product Packaging
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- End of improved header and breadcrumbs -->
+
+    <!-- Filters -->
+    <div class="dashboard-card bg-white shadow rounded-lg mb-6">
+        <div class="p-6 border-b border-gray-200">
+            <form method="get" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label for="product" class="block text-sm font-medium text-gray-700 mb-1">Product</label>
+                        <select name="product" id="product" class="form-input">
+                            <option value="">All Products</option>
+                            {% for product in all_products %}
+                                <option value="{{ product.id }}" {% if request.GET.product == product.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ product.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="packaging_type" class="block text-sm font-medium text-gray-700 mb-1">Packaging Type</label>
+                        <select name="packaging_type" id="packaging_type" class="form-input">
+                            <option value="">All Packaging Types</option>
+                            {% for packaging_type in all_packaging_types %}
+                                <option value="{{ packaging_type.id }}" {% if request.GET.packaging_type == packaging_type.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ packaging_type.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="product_type" class="block text-sm font-medium text-gray-700 mb-1">Product Type</label>
+                        <select name="product_type" id="product_type" class="form-input">
+                            <option value="">All Types</option>
+                            {% for type_value, type_label in product_types.items %}
+                                <option value="{{ type_value }}" {% if request.GET.product_type == type_value %}selected{% endif %}>
+                                    {{ type_label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-2">
+                    <a href="{% url 'dashboard:product_packaging_types' %}" class="btn btn-outline">
+                        <i class="fas fa-redo mr-1"></i> Reset
+                    </a>
+                    <button type="submit" class="btn btn-secondary">
+                        <i class="fas fa-filter mr-1"></i> Apply Filters
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Product Packaging Types List -->
+    {% if product_packaging_types %}
+        <div class="dashboard-card bg-white shadow rounded-lg">
+            <div class="overflow-x-auto">
+                <table class="table-auto w-full" id="productPackagingTypeTable">
+                    <thead>
+                        <tr class="text-left bg-gray-50">
+                            <th class="p-3">Product</th>
+                            <th class="p-3">Packaging Type</th>
+                            <th class="p-3">Type</th>
+                            <th class="p-3">Items/Pallet</th>
+                            <th class="p-3">Pallets/Container</th>
+                            <th class="p-3 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product_packaging in product_packaging_types %}
+                        <tr class="border-b border-gray-200 hover:bg-gray-50">
+                            <td class="p-3">
+                                <a href="{% url 'dashboard:product_packaging_type_edit' product_packaging.id %}" class="hover:text-blue-600 transition-colors">
+                                    <div class="font-medium hover:text-blue-600">{{ product_packaging.product.name }}</div>
+                                </a>
+                            </td>
+                            <td class="p-3">
+                                <a href="{% url 'dashboard:product_packaging_type_edit' product_packaging.id %}" class="hover:text-blue-600 transition-colors">
+                                    <div class="flex items-center">
+                                        {% if product_packaging.packaging_type.image %}
+                                            <img src="{{ product_packaging.packaging_type.image.url }}" alt="{{ product_packaging.packaging_type.name }}" class="w-8 h-8 object-contain mr-2 hover:opacity-80 transition-opacity">
+                                        {% else %}
+                                            <div class="w-8 h-8 bg-gray-100 flex items-center justify-center rounded">
+                                                <i class="fas fa-box text-gray-400"></i>
+                                            </div>
+                                        {% endif %}
+                                        <span class="hover:text-blue-600">{{ product_packaging.packaging_type.name }}</span>
+                                    </div>
+                                </a>
+                            </td>
+                            <td class="p-3">{{ product_packaging.get_type_display }}</td>
+                            <td class="p-3">
+                                {% if product_packaging.type == 'iqf' %}
+                                    &mdash;
+                                {% else %}
+                                    {{ product_packaging.items_per_pallet }} {{ product_packaging.packaging_type.key_word }}
+                                {% endif %}
+                            </td>
+                            <td class="p-3">
+                                {% if product_packaging.type == 'iqf' %}
+                                    &mdash;
+                                {% else %}
+                                    {{ product_packaging.pallets_per_container }}
+                                {% endif %}
+                            </td>
+                            <td class="p-3 text-center whitespace-nowrap">
+                                <div class="inline-flex items-center space-x-3">
+                                    <a href="{% url 'dashboard:product_packaging_type_edit' product_packaging.id %}" class="w-7 h-7 rounded-full bg-gray-100 text-gray-600 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center transition-colors" title="Edit">
+                                        <i class="fas fa-edit text-xs"></i>
+                                    </a>
+                                    <a href="{% url 'dashboard:product_packaging_type_delete' product_packaging.id %}" class="w-7 h-7 rounded-full bg-gray-100 text-gray-600 hover:bg-red-50 hover:text-red-600 flex items-center justify-center transition-colors" title="Delete">
+                                        <i class="fas fa-trash-alt text-xs"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            {% if product_packaging_types.has_other_pages %}
+            <div class="p-6 border-t border-gray-200">
+                <div class="pagination flex justify-between items-center">
+                    <div>
+                        <span class="text-sm text-gray-600">Showing page {{ product_packaging_types.number }} of {{ product_packaging_types.paginator.num_pages }}</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        {% if product_packaging_types.has_previous %}
+                            <a href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline btn-sm">
+                                <i class="fas fa-angle-double-left"></i>
+                            </a>
+                            <a href="?page={{ product_packaging_types.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline btn-sm">
+                                <i class="fas fa-chevron-left mr-1"></i> Previous
+                            </a>
+                        {% else %}
+                            <button class="btn btn-outline btn-sm opacity-50" disabled>
+                                <i class="fas fa-chevron-left mr-1"></i> Previous
+                            </button>
+                        {% endif %}
+                        
+                        <span class="px-3 py-1 rounded-md mx-1 bg-primary text-white">
+                            {{ product_packaging_types.number }} of {{ product_packaging_types.paginator.num_pages }}
+                        </span>
+                        
+                        {% if product_packaging_types.has_next %}
+                            <a href="?page={{ product_packaging_types.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline btn-sm">
+                                Next <i class="fas fa-chevron-right ml-1"></i>
+                            </a>
+                            <a href="?page={{ product_packaging_types.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline btn-sm">
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                        {% else %}
+                            <button class="btn btn-outline btn-sm opacity-50" disabled>
+                                Next <i class="fas fa-chevron-right ml-1"></i>
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="dashboard-card bg-white shadow rounded-lg p-6 text-center">
+            <div class="py-6">
+                <div class="flex flex-col items-center justify-center text-gray-500">
+                    <i class="fas fa-box-open text-3xl mb-2"></i>
+                    <p>No product packaging types found.</p>
+                    <a href="{% url 'dashboard:product_packaging_type_add' %}" class="text-primary hover:underline mt-1">Add your first product packaging type</a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/plugins/datatables.min.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+            // Enhance select inputs
+            $('#product, #packaging_type, #product_type').select2({
+                width: '100%',
+                placeholder: 'Select...',
+                allowClear: true
+            });
+            
+            // Initialize DataTable
+            $('#productPackagingTypeTable').DataTable({
+                paging: false,
+                searching: false,
+                info: false,
+                responsive: true,
+                language: {
+                    url: "{% static 'js/plugins/datatables-en.json' %}"
+                }
+            });
+        });
+    </script>
+{% endblock %} 

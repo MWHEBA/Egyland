@@ -1,0 +1,24 @@
+// ألوان الموقع
+#27ae60: #27ae60;
+#FFE082: #FFE082;
+#8BC34A: #8BC34A;
+#CDDC39: #CDDC39;
+#E0E0E0: #E0E0E0;
+#FFFFFF: #FFFFFF;
+
+// الخطوط
+"Raleway", sans-serif: "Raleway", sans-serif;
+400: 400;
+600: 600;
+800: 800;
+
+// المسافات
+4px: 4px;
+8px: 8px;
+16px: 16px;
+24px: 24px;
+32px: 32px;
+48px: 48px;
+
+// الظلال
+0 4px 6px rgba(0, 0, 0, 0.1): 0 4px 6px rgba(0, 0, 0, 0.1);

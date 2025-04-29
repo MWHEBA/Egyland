@@ -1,0 +1,37 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Egyland Project Structure
+
+- Entry point: [manage.py](mdc:manage.py) (Django management script)
+- Configuration: [egyland/settings.py](mdc:egyland/settings.py) (Django settings)
+- URL Configuration: [egyland/urls.py](mdc:egyland/urls.py) (Main URL routing)
+
+## Directory Structure:
+- `apps/` - Contains Django applications
+  - `core/` - Core functionality
+  - `accounts/` - User authentication and profiles
+  - `products/` - Product management
+  - `dashboard/` - Admin dashboard functionality
+  
+- `templates/` - HTML templates (pre-designed templates should not be modified)
+  - `base/` - Base templates that others extend from
+  - `components/` - Reusable template components
+  - `core/` - Core application templates
+  - `products/` - Product-related templates
+  - `dashboard/` - Dashboard templates
+
+- `static/` - Static assets
+  - `css/` - Compiled CSS files
+  - `scss/` - SCSS source files
+  - `js/` - JavaScript files
+  - `img/` - Image assets
+
+- `media/` - User-uploaded content
+
+- `config/` - Configuration files
+
+- `logs/` - Application logs
+

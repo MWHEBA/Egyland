@@ -1,0 +1,64 @@
+{% load static %}
+
+<!-- Transparent Navbar for Homepage -->
+<header id="main-header" class="relative w-full z-50 transition-all bg-white">
+    <div class="max-w-[1300px] mx-auto py-4 px-4 md:px-6">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center">
+                <a href="{% url 'core:home' %}" class="text-2xl font-bold">
+                    <img src="{% static 'img/logo.png' %}" alt="{{company_info.name}}" class="h-12">
+                </a>
+            </div>
+            
+            <!-- Desktop Navigation (ONLY SHOWN ON DESKTOP) -->
+            <div class="hidden lg:block">
+                <nav class="flex">
+                    <ul class="flex space-x-8">
+                        <li>
+                            <a href="{% url 'core:home' %}" class="{% if request.path == '/' %}header-link-active border-b-2 border-green-500 pb-1{% else %}header-link{% endif %} mx-4 md:mx-8 lg:mx-16">Home</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'core:about' %}" class="{% if 'about' in request.path %}header-link-active border-b-2 border-green-500 pb-1{% else %}header-link{% endif %} mx-4 md:mx-8 lg:mx-16">About Us</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'products:product_list' %}" class="{% if 'products' in request.path %}header-link-active border-b-2 border-green-500 pb-1{% else %}header-link{% endif %} mx-4 md:mx-8 lg:mx-16">Products</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'core:contact' %}" class="{% if 'contact' in request.path %}header-link-active border-b-2 border-green-500 pb-1{% else %}header-link{% endif %} mx-4 md:mx-8 lg:mx-16">Contact Us</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            
+            <!-- Mobile Menu Button (ONLY SHOWN ON MOBILE) -->
+            <button id="mobile-menu-button" class="block lg:hidden text-black focus:outline-none" aria-label="Menu" aria-expanded="false">
+                <!-- Hamburger icon with pure CSS - thinner lines -->
+                <div class="flex flex-col justify-center items-center">
+                    <span class="bg-black rounded-sm"></span>
+                    <span class="bg-black rounded-sm"></span>
+                    <span class="bg-black rounded-sm"></span>
+                </div>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Mobile Menu (ONLY SHOWN ON MOBILE) -->
+    <div id="mobile-menu" class="hidden lg:hidden bg-white shadow-lg absolute w-full z-50">
+        <div class="max-w-[1300px] mx-auto px-4 py-3">
+            <ul class="space-y-3">
+                <li>
+                    <a href="{% url 'core:home' %}" class="block py-2 px-4 {% if request.path == '/' %}text-green-500 font-extrabold text-xl{% else %}text-gray-800 hover:text-green-700{% endif %}">Home</a>
+                </li>
+                <li>
+                    <a href="{% url 'core:about' %}" class="block py-2 px-4 {% if 'about' in request.path %}text-green-500 font-extrabold text-xl{% else %}text-gray-800 hover:text-green-700{% endif %}">About Us</a>
+                </li>
+                <li>
+                    <a href="{% url 'products:product_list' %}" class="block py-2 px-4 {% if 'products' in request.path %}text-green-500 font-extrabold text-xl{% else %}text-gray-800 hover:text-green-700{% endif %}">Products</a>
+                </li>
+                <li>
+                    <a href="{% url 'core:contact' %}" class="block py-2 px-4 {% if 'contact' in request.path %}text-green-500 font-extrabold text-xl{% else %}text-gray-800 hover:text-green-700{% endif %}">Contact Us</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header> 

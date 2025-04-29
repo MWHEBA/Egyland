@@ -1,0 +1,212 @@
+{% extends "base/home_base.html" %}
+{% load static %}
+
+{% block title %}Products - Egyland{% endblock %}
+{% block meta_description %}Explore Egyland's range of high-quality agricultural products for export.{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* إلغاء تأثير منع التمرير في صفحة المنتجات */
+    html, body {
+        overflow: auto !important;
+        height: auto !important;
+        overflow-x: hidden !important;
+    }
+    
+    main.flex-grow {
+        overflow: visible !important;
+        overflow-y: auto !important;
+    }
+
+    /* إلغاء ستايل الهيدر والفوتر الثابت */
+    #main-header {
+        position: relative !important;
+    }
+    
+    footer {
+        position: relative !important;
+        bottom: auto !important;
+    }
+
+    /* تصميم العنوان الرئيسي */
+    .page-title {
+        text-align: center;
+        margin-top: 2.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .page-title h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+    
+    .page-title span {
+        color: #39AE68;
+    }
+
+    /* تصميم المنتجات */
+    .products-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    @media (max-width: 1200px) {
+        .product-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+
+    @media (max-width: 992px) {
+        .product-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .product-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 480px) {
+        .product-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        .product-image {
+            width: 120px;
+            height: 120px;
+        }
+    }
+
+    .product-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+
+    .product-item:hover {
+        transform: translateY(-5px);
+    }
+
+    .product-image {
+        width: 160px;
+        height: 160px;
+        object-fit: cover;
+        margin-bottom: 1rem;
+        transition: transform 0.3s ease;
+    }
+
+    .product-image:hover {
+        transform: scale(1.05);
+    }
+
+    .product-button {
+        display: block;
+        width: 100%;
+        padding: 0.5rem 1rem;
+        border-radius: 999px;
+        text-align: center;
+        color: white;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .product-button:hover {
+        filter: brightness(0.9);
+    }
+
+    /* ألوان مميزة لكل نوع من المنتجات */
+    .button-fresh { background-color: #5cbcaa; }
+    .button-fresh:hover { background-color: #4da797; }
+    
+    .button-iqf { background-color: #5a6b77; }
+    .button-iqf:hover { background-color: #4a5b67; }
+    
+    .button-both { background-color: #513c6d; }
+    .button-both:hover { background-color: #413058; }
+
+    /* تصميم روابط المنتجات */
+    .product-link {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        width: 100%;
+    }
+
+    /* رسالة عندما لا توجد منتجات */
+    .no-products {
+        text-align: center;
+        padding: 2rem;
+        background-color: #f9f9f9;
+        border-radius: 0.5rem;
+        margin: 2rem 0;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // تفعيل التمرير في الصفحة
+    document.addEventListener('DOMContentLoaded', function() {
+        document.documentElement.style.overflow = 'auto';
+        document.body.style.overflow = 'auto';
+        document.body.style.height = 'auto';
+        document.querySelector('main').style.overflow = 'visible';
+        
+        // إلغاء تثبيت الفوتر
+        document.querySelector('footer').style.position = 'relative';
+        document.querySelector('footer').style.bottom = 'auto';
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="page-title">
+    <h1>Our <span>Products</span></h1>
+</div>
+
+<div class="products-container">
+    {% if products %}
+        <div class="product-grid">
+            {% for product in products %}
+                <div class="product-item">
+                    {% if product.slug %}
+                    <a href="{% url 'products:product_detail' slug=product.slug %}" class="product-link">
+                    {% else %}
+                    <a href="#" class="product-link">
+                    {% endif %}
+                        {% if product.list_image %}
+                            <img src="{{ product.list_image.url }}" alt="{{ product.name }}" class="product-image">
+                        {% elif product.icon %}
+                            <img src="{{ product.icon.url }}" alt="{{ product.name }}" class="product-image">
+                        {% else %}
+                            <img src="{% static 'img/products/default.png' %}" alt="{{ product.name }}" class="product-image">
+                        {% endif %}
+                        <span class="product-button {% if product.button_color %}{% else %}{% if product.product_type == 'fresh' %}button-fresh{% elif product.product_type == 'iqf' %}button-iqf{% else %}button-both{% endif %}{% endif %}"
+                            {% if product.button_color %}style="background-color: {{ product.button_color }};"{% endif %}>
+                            {{ product.name }}
+                        </span>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-products">
+            <p>No products available at the moment. Please check back later.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 

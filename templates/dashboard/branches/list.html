@@ -1,0 +1,705 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}
+    Branches - Egyland Dashboard
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/plugins/datatables.min.css' %}">
+    <style>
+        /* إصلاح مشاكل المودال */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1050;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        
+        .modal.show {
+            display: block;
+        }
+        
+        .modal-dialog {
+            position: relative;
+            width: auto;
+            margin: 1.75rem auto;
+            max-width: 800px;
+        }
+        
+        .modal-content {
+            position: relative;
+            background-color: #fff;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            outline: 0;
+        }
+        
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .modal-title {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .modal-body {
+            position: relative;
+            padding: 1rem;
+        }
+        
+        .modal-footer {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .close {
+            float: right;
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1;
+            color: #000;
+            text-shadow: 0 1px 0 #fff;
+            opacity: .5;
+            background: transparent;
+            border: 0;
+            cursor: pointer;
+        }
+        
+        /* الانيميشن للمودال */
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+        
+        .fade {
+            opacity: 0;
+            transition: opacity 0.15s linear;
+        }
+        
+        .fade.show {
+            opacity: 1;
+        }
+    </style>
+{% endblock %}
+
+{% block header_title %}
+    <!-- Header title removed -->
+{% endblock %}
+
+{% block breadcrumbs %}
+    <!-- Breadcrumbs moved to content -->
+{% endblock %}
+
+{% block header_actions %}
+    <!-- Header actions moved to content -->
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- New improved header and breadcrumbs design -->
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">
+                    Branches
+                </h1>
+                <nav class="flex flex-wrap items-center text-sm text-gray-600">
+                    <a href="{% url 'dashboard:home' %}" class="hover:text-primary transition">
+                        <i class="fas fa-home"></i>
+                        <span class="hidden sm:inline">Dashboard</span>
+                    </a>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <span class="text-primary font-medium">Branches</span>
+                </nav>
+            </div>
+            <div class="mt-4 md:mt-0">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addBranchModal">
+                    <i class="fas fa-plus mr-1"></i> Add New Branch
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- End of improved header and breadcrumbs -->
+
+    <!-- Main Branch Information Card -->
+    <div class="bg-white shadow rounded-lg mb-6">
+        <div class="p-6 border-b border-gray-200">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-700">Egypt (Head Office)</h3>
+                <a href="{% url 'dashboard:main_branch' %}" class="btn btn-primary mt-3 md:mt-0">
+                    <i class="fas fa-edit mr-1"></i> Edit Head Office Info
+                </a>
+            </div>
+            
+            <div class="text-sm text-gray-600 mb-4">
+                You can manage your company's head office information here. This information will appear in various parts of the website such as contact page and footer.
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {% if main_branch %}
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 w-10 h-10 bg-primary-50 rounded-full flex items-center justify-center text-primary">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h4 class="text-sm font-medium text-gray-700">Office Name</h4>
+                            <p class="text-sm text-gray-600">{{ main_branch.company_name }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 w-10 h-10 bg-primary-50 rounded-full flex items-center justify-center text-primary">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h4 class="text-sm font-medium text-gray-700">Phone Number</h4>
+                            <p class="text-sm text-gray-600">{{ main_branch.phone }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 w-10 h-10 bg-primary-50 rounded-full flex items-center justify-center text-primary">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h4 class="text-sm font-medium text-gray-700">Email</h4>
+                            <p class="text-sm text-gray-600">{{ main_branch.email }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 w-10 h-10 bg-primary-50 rounded-full flex items-center justify-center text-primary">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h4 class="text-sm font-medium text-gray-700">Address</h4>
+                            <p class="text-sm text-gray-600">{{ main_branch.address|truncatechars:50 }}</p>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="col-span-full">
+                        <div class="flex flex-col items-center justify-center py-6 text-center">
+                            <i class="fas fa-exclamation-circle text-3xl mb-2 text-yellow-500"></i>
+                            <p class="text-gray-500">Head office information hasn't been added yet.</p>
+                            <a href="{% url 'dashboard:main_branch' %}" class="text-primary hover:underline mt-2">Add information now</a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Branches List -->
+    {% if branches %}
+        <div class="bg-white shadow rounded-lg">
+            <div class="overflow-x-auto">
+                <table class="table-auto w-full" id="branchesTable">
+                    <thead>
+                        <tr class="text-left bg-gray-50">
+                            <th class="p-3">Country</th>
+                            <th class="p-3">Address</th>
+                            <th class="p-3">Phone</th>
+                            <th class="p-3">Email</th>
+                            <th class="p-3">Display Order</th>
+                            <th class="p-3">Status</th>
+                            <th class="p-3 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for branch in branches %}
+                        <tr class="border-b border-gray-200 hover:bg-gray-50">
+                            <td class="p-3">
+                                <button class="hover:text-blue-600 transition-colors" data-toggle="modal" data-target="#editBranchModal" data-id="{{ branch.id }}" onclick="editBranch({{ branch.id }})">
+                                    <div class="flex items-center">
+                                        {% if branch.flag_image %}
+                                            <img src="{{ branch.flag_image.url }}" alt="{{ branch.country_name }}" class="w-8 h-6 object-contain mr-2 hover:opacity-80 transition-opacity">
+                                        {% else %}
+                                            <div class="w-8 h-6 bg-gray-100 flex items-center justify-center rounded">
+                                                <i class="fas fa-flag text-gray-400"></i>
+                                            </div>
+                                        {% endif %}
+                                        <span class="hover:text-blue-600">{{ branch.country_name }}</span>
+                                    </div>
+                                </button>
+                            </td>
+                            <td class="p-3">{{ branch.address|truncatechars:40 }}</td>
+                            <td class="p-3">{{ branch.phone }}</td>
+                            <td class="p-3">{{ branch.email }}</td>
+                            <td class="p-3">{{ branch.display_order }}</td>
+                            <td class="p-3">
+                                {% if branch.is_active %}
+                                    <span class="badge badge-success">Active</span>
+                                {% else %}
+                                    <span class="badge badge-danger">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td class="p-3 text-center whitespace-nowrap">
+                                <div class="inline-flex items-center space-x-3">
+                                    <button class="w-7 h-7 rounded-full bg-gray-100 text-gray-600 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center transition-colors" title="Edit" data-toggle="modal" data-target="#editBranchModal" data-id="{{ branch.id }}" onclick="editBranch({{ branch.id }})">
+                                        <i class="fas fa-edit text-xs"></i>
+                                    </button>
+                                    <button class="w-7 h-7 rounded-full bg-gray-100 text-gray-600 hover:bg-red-50 hover:text-red-600 flex items-center justify-center transition-colors" title="Delete" data-toggle="modal" data-target="#deleteBranchModal" data-id="{{ branch.id }}" data-name="{{ branch.country_name }}" onclick="deleteBranch({{ branch.id }}, '{{ branch.country_name }}')">
+                                        <i class="fas fa-trash-alt text-xs"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            {% if branches.has_other_pages %}
+            <div class="p-6 border-t border-gray-200">
+                <div class="pagination flex justify-between items-center">
+                    <div>
+                        <span class="text-sm text-gray-600">Showing page {{ branches.number }} of {{ branches.paginator.num_pages }}</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        {% if branches.has_previous %}
+                            <a href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline btn-sm">
+                                <i class="fas fa-angle-double-left"></i>
+                            </a>
+                            <a href="?page={{ branches.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline btn-sm">
+                                <i class="fas fa-chevron-left mr-1"></i> Previous
+                            </a>
+                        {% else %}
+                            <button class="btn btn-outline btn-sm opacity-50" disabled>
+                                <i class="fas fa-chevron-left mr-1"></i> Previous
+                            </button>
+                        {% endif %}
+                        
+                        <span class="px-3 py-1 rounded-md mx-1 bg-primary text-white">
+                            {{ branches.number }} of {{ branches.paginator.num_pages }}
+                        </span>
+                        
+                        {% if branches.has_next %}
+                            <a href="?page={{ branches.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline btn-sm">
+                                Next <i class="fas fa-chevron-right ml-1"></i>
+                            </a>
+                            <a href="?page={{ branches.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline btn-sm">
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                        {% else %}
+                            <button class="btn btn-outline btn-sm opacity-50" disabled>
+                                Next <i class="fas fa-chevron-right ml-1"></i>
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="bg-white shadow rounded-lg p-6 text-center">
+            <div class="py-6">
+                <div class="flex flex-col items-center justify-center text-gray-500">
+                    <i class="fas fa-building text-3xl mb-2"></i>
+                    <p>No branches found.</p>
+                    <button type="button" class="text-primary hover:underline mt-1" data-toggle="modal" data-target="#addBranchModal">
+                        Add your first branch
+                    </button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Add Branch Modal -->
+<div class="modal fade" id="addBranchModal" tabindex="-1" role="dialog" aria-labelledby="addBranchModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addBranchModalLabel">إضافة فرع جديد</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="post" action="{% url 'dashboard:branch_add' %}" enctype="multipart/form-data" id="addBranchForm">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    
+                    <div class="grid grid-cols-1 gap-4">
+                        <!-- Country Name and Flag in one row -->
+                        <div class="grid grid-cols-3 gap-3">
+                            <!-- Country Name -->
+                            <div class="col-span-2">
+                                <label for="id_country_name" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Country Name <span class="text-red-600">*</span>
+                                </label>
+                                <input type="text" name="country_name" id="id_country_name" class="form-input" placeholder="Enter country name" required>
+                            </div>
+                            
+                            <!-- Country Flag -->
+                            <div>
+                                <label for="id_flag_image" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Flag
+                                </label>
+                                <div class="flex items-center">
+                                    <input type="file" name="flag_image" id="id_flag_image" class="hidden" accept="image/*">
+                                    <label for="id_flag_image" class="btn btn-outline btn-sm cursor-pointer w-full">
+                                        <i class="fas fa-upload mr-1"></i> Upload
+                                    </label>
+                                </div>
+                                <span class="text-xs text-gray-500 file-name truncate block"></span>
+                            </div>
+                        </div>
+                        
+                        <!-- Address -->
+                        <div>
+                            <label for="id_address" class="block text-sm font-medium text-gray-700 mb-1">
+                                Address <span class="text-red-600">*</span>
+                            </label>
+                            <textarea name="address" id="id_address" rows="2" class="form-input" placeholder="Enter branch address" required></textarea>
+                        </div>
+                        
+                        <!-- Contact Details in flex layout -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <!-- Phone -->
+                            <div>
+                                <label for="id_phone" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Phone <span class="text-red-600">*</span>
+                                </label>
+                                <input type="text" name="phone" id="id_phone" class="form-input" placeholder="Phone number" required>
+                            </div>
+                            
+                            <!-- Email -->
+                            <div>
+                                <label for="id_email" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Email <span class="text-red-600">*</span>
+                                </label>
+                                <input type="email" name="email" id="id_email" class="form-input" placeholder="Email address" required>
+                            </div>
+                        </div>
+                        
+                        <!-- Settings in flex layout -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <!-- Display Order -->
+                            <div>
+                                <label for="id_display_order" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Display Order
+                                </label>
+                                <input type="number" name="display_order" id="id_display_order" class="form-input" value="0">
+                            </div>
+                            
+                            <!-- Is Active -->
+                            <div class="flex items-center h-full">
+                                <div class="flex items-center mt-7">
+                                    <input type="checkbox" name="is_active" id="id_is_active" class="form-checkbox" checked>
+                                    <label for="id_is_active" class="ml-2 block text-sm font-medium text-gray-700">
+                                        Active
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline btn-sm" data-dismiss="modal">
+                        <i class="fas fa-times mr-1"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary btn-sm" id="addBranchSubmitBtn">
+                        <i class="fas fa-save mr-1"></i> Create Branch
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Branch Modal -->
+<div class="modal fade" id="editBranchModal" tabindex="-1" role="dialog" aria-labelledby="editBranchModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editBranchModalLabel">تعديل الفرع</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="post" enctype="multipart/form-data" id="editBranchForm">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <div id="editBranchLoading" class="text-center py-6">
+                        <i class="fas fa-spinner fa-spin text-primary"></i>
+                        <p class="mt-2 text-sm text-gray-600">Loading branch information...</p>
+                    </div>
+                    
+                    <div id="editBranchContent" class="hidden">
+                        <div class="grid grid-cols-1 gap-4">
+                            <!-- Country Name and Flag in one row -->
+                            <div class="grid grid-cols-3 gap-3">
+                                <!-- Country Name -->
+                                <div class="col-span-2">
+                                    <label for="edit_country_name" class="block text-sm font-medium text-gray-700 mb-1">
+                                        Country Name <span class="text-red-600">*</span>
+                                    </label>
+                                    <input type="text" name="country_name" id="edit_country_name" class="form-input" placeholder="Enter country name" required>
+                                </div>
+                                
+                                <!-- Country Flag -->
+                                <div>
+                                    <label for="edit_flag_image" class="block text-sm font-medium text-gray-700 mb-1">
+                                        Flag
+                                    </label>
+                                    <div id="edit_current_flag" class="mb-1 flex items-center hidden">
+                                        <img src="" alt="" class="w-10 h-6 object-cover rounded" id="edit_flag_preview">
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="file" name="flag_image" id="edit_flag_image" class="hidden" accept="image/*">
+                                        <label for="edit_flag_image" class="btn btn-outline btn-sm cursor-pointer w-full">
+                                            <i class="fas fa-upload mr-1"></i> <span id="edit_flag_button_text">Upload</span>
+                                        </label>
+                                    </div>
+                                    <span class="text-xs text-gray-500 edit-file-name truncate block"></span>
+                                </div>
+                            </div>
+                            
+                            <!-- Address -->
+                            <div>
+                                <label for="edit_address" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Address <span class="text-red-600">*</span>
+                                </label>
+                                <textarea name="address" id="edit_address" rows="2" class="form-input" placeholder="Enter branch address" required></textarea>
+                            </div>
+                            
+                            <!-- Contact Details in flex layout -->
+                            <div class="grid grid-cols-2 gap-3">
+                                <!-- Phone -->
+                                <div>
+                                    <label for="edit_phone" class="block text-sm font-medium text-gray-700 mb-1">
+                                        Phone <span class="text-red-600">*</span>
+                                    </label>
+                                    <input type="text" name="phone" id="edit_phone" class="form-input" placeholder="Phone number" required>
+                                </div>
+                                
+                                <!-- Email -->
+                                <div>
+                                    <label for="edit_email" class="block text-sm font-medium text-gray-700 mb-1">
+                                        Email <span class="text-red-600">*</span>
+                                    </label>
+                                    <input type="email" name="email" id="edit_email" class="form-input" placeholder="Email address" required>
+                                </div>
+                            </div>
+                            
+                            <!-- Settings in flex layout -->
+                            <div class="grid grid-cols-2 gap-3">
+                                <!-- Display Order -->
+                                <div>
+                                    <label for="edit_display_order" class="block text-sm font-medium text-gray-700 mb-1">
+                                        Display Order
+                                    </label>
+                                    <input type="number" name="display_order" id="edit_display_order" class="form-input" value="0">
+                                </div>
+                                
+                                <!-- Is Active -->
+                                <div class="flex items-center h-full">
+                                    <div class="flex items-center mt-7">
+                                        <input type="checkbox" name="is_active" id="edit_is_active" class="form-checkbox">
+                                        <label for="edit_is_active" class="ml-2 block text-sm font-medium text-gray-700">
+                                            Active
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline btn-sm" data-dismiss="modal">
+                        <i class="fas fa-times mr-1"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary btn-sm" id="editBranchSubmitBtn">
+                        <i class="fas fa-save mr-1"></i> Update Branch
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Branch Modal -->
+<div class="modal fade" id="deleteBranchModal" tabindex="-1" role="dialog" aria-labelledby="deleteBranchModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteBranchModalLabel">Delete Branch</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning mb-4 p-4 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    <span>This action cannot be undone. Deleting this branch will remove it from the contact page.</span>
+                </div>
+                
+                <p class="text-gray-700">Are you sure you want to delete the branch <strong id="deleteBranchName"></strong>?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" data-dismiss="modal">
+                    <i class="fas fa-times mr-1"></i> Cancel
+                </button>
+                <form method="post" id="deleteBranchForm">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash-alt mr-1"></i> Delete Branch
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/plugins/datatables.min.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTable
+            $('#branchesTable').DataTable({
+                paging: false,
+                searching: false,
+                info: false,
+                responsive: true,
+                language: {
+                    url: "{% static 'js/plugins/datatables-en.json' %}"
+                }
+            });
+            
+            // Show filename when file is selected in the add form
+            const addFileInput = document.getElementById('id_flag_image');
+            if (addFileInput) {
+                const addFileName = document.querySelector('#addBranchModal .file-name');
+                addFileInput.addEventListener('change', function() {
+                    if (addFileInput.files.length > 0) {
+                        addFileName.textContent = addFileInput.files[0].name;
+                    } else {
+                        addFileName.textContent = '';
+                    }
+                });
+            }
+            
+            // Show filename when file is selected in the edit form
+            const editFileInput = document.getElementById('edit_flag_image');
+            if (editFileInput) {
+                const editFileName = document.querySelector('#editBranchModal .edit-file-name');
+                editFileInput.addEventListener('change', function() {
+                    if (editFileInput.files.length > 0) {
+                        editFileName.textContent = editFileInput.files[0].name;
+                    } else {
+                        editFileName.textContent = '';
+                    }
+                });
+            }
+            
+            // تعديل سلوك المودال - إضافة كود لفتح وإغلاق المودال
+            // تحديد جميع الأزرار التي تفتح المودالات
+            const modalTriggers = document.querySelectorAll('[data-toggle="modal"]');
+            modalTriggers.forEach(trigger => {
+                trigger.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const modal = document.querySelector(targetId);
+                    
+                    if (modal) {
+                        modal.classList.add('show');
+                        document.body.style.overflow = 'hidden'; // منع التمرير في الخلفية
+                    }
+                });
+            });
+            
+            // إضافة وظيفة إغلاق المودال
+            const closeButtons = document.querySelectorAll('[data-dismiss="modal"]');
+            closeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const modal = this.closest('.modal');
+                    if (modal) {
+                        modal.classList.remove('show');
+                        document.body.style.overflow = ''; // إعادة التمرير
+                    }
+                });
+            });
+            
+            // إغلاق المودال عند النقر خارجه
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                modal.addEventListener('click', function(event) {
+                    if (event.target === this) {
+                        this.classList.remove('show');
+                        document.body.style.overflow = '';
+                    }
+                });
+            });
+        });
+        
+        // Function to fetch branch details for editing
+        function editBranch(branchId) {
+            // Show loading and hide content
+            document.getElementById('editBranchLoading').classList.remove('hidden');
+            document.getElementById('editBranchContent').classList.add('hidden');
+            
+            // Set the form action URL
+            document.getElementById('editBranchForm').action = `/dashboard/branches/${branchId}/edit/`;
+            
+            // Fetch branch data using AJAX
+            fetch(`/dashboard/branches/${branchId}/get-data/`)
+                .then(response => response.json())
+                .then(data => {
+                    // Fill form with branch data
+                    document.getElementById('edit_country_name').value = data.country_name;
+                    document.getElementById('edit_address').value = data.address;
+                    document.getElementById('edit_phone').value = data.phone;
+                    document.getElementById('edit_email').value = data.email;
+                    document.getElementById('edit_display_order').value = data.display_order;
+                    document.getElementById('edit_is_active').checked = data.is_active;
+                    
+                    // Handle flag image
+                    if (data.flag_image) {
+                        document.getElementById('edit_current_flag').classList.remove('hidden');
+                        document.getElementById('edit_flag_preview').src = data.flag_image;
+                        document.getElementById('edit_flag_preview').alt = data.country_name;
+                        document.getElementById('edit_flag_button_text').textContent = 'Change Flag';
+                    } else {
+                        document.getElementById('edit_current_flag').classList.add('hidden');
+                        document.getElementById('edit_flag_button_text').textContent = 'Upload Flag';
+                    }
+                    
+                    // Hide loading and show content
+                    document.getElementById('editBranchLoading').classList.add('hidden');
+                    document.getElementById('editBranchContent').classList.remove('hidden');
+                })
+                .catch(error => {
+                    console.error('Error fetching branch data:', error);
+                    // Show error message
+                    alert('An error occurred while loading branch data. Please try again.');
+                    // Close the modal
+                    const modal = document.getElementById('editBranchModal');
+                    if (modal) {
+                        modal.classList.remove('show');
+                        document.body.style.overflow = '';
+                    }
+                });
+        }
+        
+        // Function to set up delete branch modal
+        function deleteBranch(branchId, branchName) {
+            document.getElementById('deleteBranchName').textContent = branchName;
+            document.getElementById('deleteBranchForm').action = `/dashboard/branches/${branchId}/delete/`;
+        }
+    </script>
+{% endblock %} 

@@ -1,0 +1,383 @@
+{% extends "base/home_base.html" %}
+{% load static %}
+
+{% block title %}Request a Quote - Egyland{% endblock %}
+{% block meta_description %}Request a customized quote for our premium agricultural products. Get tailored offers for your specific market requirements.{% endblock %}
+{% block meta_keywords %}quote request, price quotation, agricultural exports, product pricing{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* تمكين التمرير في الصفحة */
+    html, body {
+        overflow: auto !important;
+        height: auto !important;
+    }
+    
+    main {
+        overflow: visible !important;
+    }
+    
+    /* تنسيق الصفحة */
+    .quote-page {
+        background-color: #f9fafb;
+        padding-top: 8rem;
+        padding-bottom: 6rem;
+    }
+    
+    .form-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+    
+    .form-header {
+        background-color: #27ae60;
+        padding: 2rem;
+        text-align: center;
+        color: white;
+    }
+    
+    .form-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-header p {
+        opacity: 0.9;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    
+    .form-body {
+        padding: 3rem 2rem;
+    }
+    
+    /* تنسيق حقول النموذج - متوافق مع صفحة الاتصال */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #4b5563;
+    }
+    
+    .form-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.375rem;
+        background-color: #f8fafc;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+    }
+    
+    .form-input:focus {
+        outline: none;
+        border-color: #27ae60;
+        box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.2);
+        background-color: #ffffff;
+    }
+    
+    .form-select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.375rem;
+        background-color: #f8fafc;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 0.5rem center;
+        background-repeat: no-repeat;
+        background-size: 1.5em 1.5em;
+        font-size: 0.95rem;
+    }
+    
+    .form-select:focus {
+        outline: none;
+        border-color: #27ae60;
+        box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.2);
+    }
+    
+    .form-hint {
+        font-size: 0.875rem;
+        color: #6b7280;
+        margin-top: 0.25rem;
+    }
+    
+    .form-error {
+        color: #dc2626;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+    
+    /* تنسيق زر الإرسال */
+    .submit-btn {
+        background-color: #27ae60;
+        color: white;
+        font-weight: 600;
+        padding: 0.75rem 2rem;
+        border-radius: 0.375rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+    }
+    
+    .submit-btn:hover {
+        background-color: #219653;
+    }
+    
+    .submit-btn:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.3);
+    }
+    
+    .submit-icon {
+        margin-left: 0.5rem;
+    }
+    
+    /* تحسين تصميم اختيار المنتجات */
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 1rem;
+    }
+    
+    .product-option {
+        padding: 0.75rem;
+        background-color: #f8fafc;
+        border-radius: 0.375rem;
+        border: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        transition: all 0.2s;
+    }
+    
+    .product-option:hover {
+        background-color: #f3f4f6;
+        border-color: #d1d5db;
+    }
+    
+    .product-option input[type="checkbox"] {
+        width: 1rem;
+        height: 1rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.25rem;
+        margin-right: 0.625rem;
+        cursor: pointer;
+    }
+    
+    /* تنسيق لخيارات المنتجات عند تحديدها */
+    .product-option input:checked + label {
+        font-weight: 600;
+        color: #27ae60;
+    }
+    
+    /* تصميم تفاعلي عند مرور المؤشر */
+    .product-option:hover label {
+        cursor: pointer;
+    }
+    
+    /* تنسيق textarea */
+    textarea.form-input {
+        min-height: 120px;
+        resize: vertical;
+        line-height: 1.5;
+    }
+    
+    /* تنسيق placeholder */
+    ::placeholder {
+        color: #a0aec0;
+        opacity: 1;
+    }
+    
+    /* تنسيق لون النجمة (الحقل المطلوب) */
+    .required-mark {
+        color: #dc2626;
+        font-weight: bold;
+    }
+    
+    /* تنسيق عنوان الأقسام */
+    .form-section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #e5e7eb;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="quote-page">
+    <div class="form-container">
+        <!-- رأس النموذج -->
+        <div class="form-header">
+            <h1>Request a Quote</h1>
+            <p>Complete this form to receive a customized quotation for our products</p>
+    </div>
+
+        <!-- جسم النموذج -->
+        <div class="form-body">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- بيانات العميل -->
+                <div class="form-section-title">Contact Information</div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="form-group">
+                        <label for="{{ form.name.id_for_label }}" class="form-label">Your Name <span class="required-mark">*</span></label>
+                        <input type="text" id="{{ form.name.id_for_label }}" name="name" value="{{ form.name.value|default:'' }}" 
+                            class="form-input" placeholder="Enter your full name" required>
+                        {% if form.name.errors %}
+                            <p class="form-error">{{ form.name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.company.id_for_label }}" class="form-label">Company Name <span class="required-mark">*</span></label>
+                        <input type="text" id="{{ form.company.id_for_label }}" name="company" value="{{ form.company.value|default:'' }}" 
+                            class="form-input" placeholder="Enter your company name" required>
+                        {% if form.company.errors %}
+                            <p class="form-error">{{ form.company.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">Email Address <span class="required-mark">*</span></label>
+                        <input type="email" id="{{ form.email.id_for_label }}" name="email" value="{{ form.email.value|default:'' }}" 
+                            class="form-input" placeholder="Ex: company@example.com" required>
+                        {% if form.email.errors %}
+                            <p class="form-error">{{ form.email.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.phone.id_for_label }}" class="form-label">Phone Number <span class="required-mark">*</span></label>
+                        <input type="tel" id="{{ form.phone.id_for_label }}" name="phone" value="{{ form.phone.value|default:'' }}" 
+                            class="form-input" placeholder="Enter your phone number with country code" required>
+                        {% if form.phone.errors %}
+                            <p class="form-error">{{ form.phone.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.country.id_for_label }}" class="form-label">Country <span class="required-mark">*</span></label>
+                        <select id="{{ form.country.id_for_label }}" name="country" class="form-select" required>
+                            <option value="" disabled {% if not form.country.value %}selected{% endif %}>Select your country</option>
+                            {% for country_code, country_name in form.fields.country.choices %}
+                                <option value="{{ country_code }}" {% if form.country.value == country_code %}selected{% endif %}>
+                                    {{ country_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        {% if form.country.errors %}
+                            <p class="form-error">{{ form.country.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- اختيار المنتجات -->
+                <div class="mb-8">
+                    <div class="form-section-title">Products of Interest</div>
+                    <p class="form-hint mb-4">Select the products you're interested in receiving a quote for <span class="required-mark">*</span></p>
+                    
+                    <div class="products-grid">
+                        {% for choice in form.products %}
+                        <div class="product-option">
+                            {{ choice.tag }}
+                            <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    {% if form.products.errors %}
+                        <p class="form-error mt-2">{{ form.products.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- تفاصيل إضافية -->
+                <div class="mb-8">
+                    <div class="form-section-title">Additional Requirements</div>
+                    <label for="{{ form.message.id_for_label }}" class="form-label">Message <span class="required-mark">*</span></label>
+                    <p class="form-hint mb-2">Please provide details about quantities, packaging preferences, delivery timeline, etc.</p>
+                    <textarea id="{{ form.message.id_for_label }}" name="message" class="form-input" placeholder="Enter your specific requirements here..." required>{{ form.message.value|default:'' }}</textarea>
+                    {% if form.message.errors %}
+                        <p class="form-error">{{ form.message.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- زر الإرسال -->
+                <div class="flex justify-end">
+                    <button type="submit" class="submit-btn">
+                        Submit Request
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 submit-icon" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // إزالة كلاس no-scroll من الـ body
+        document.body.classList.remove('no-scroll');
+        
+        // عرض رسائل النجاح أو الفشل باستخدام toastr
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                    toastr.success('{{ message }}');
+                {% elif message.tags == 'error' %}
+                    toastr.error('{{ message }}');
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        
+        // تحسين مظهر حقول الاختيار
+        const productOptions = document.querySelectorAll('.product-option');
+        productOptions.forEach(option => {
+            const checkbox = option.querySelector('input[type="checkbox"]');
+            
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    option.style.backgroundColor = 'rgba(39, 174, 96, 0.1)';
+                    option.style.borderColor = '#27ae60';
+                } else {
+                    option.style.backgroundColor = '#f8fafc';
+                    option.style.borderColor = '#e2e8f0';
+                }
+            });
+            
+            // تفعيل النقر على الـ label والـ div للاختيار
+            option.addEventListener('click', function(e) {
+                // تجنب التكرار إذا تم النقر على الـ checkbox نفسه
+                if (e.target !== checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                    
+                    // تشغيل حدث التغيير يدوياً
+                    const event = new Event('change');
+                    checkbox.dispatchEvent(event);
+                }
+            });
+        });
+    });
+</script>
+{% endblock %} 

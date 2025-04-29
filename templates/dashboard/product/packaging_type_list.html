@@ -1,0 +1,771 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}
+    Packaging Types - Egyland Dashboard
+{% endblock %}
+
+{% block header_title %}
+    <!-- Header title removed -->
+{% endblock %}
+
+{% block breadcrumbs %}
+    <!-- Breadcrumbs moved to content -->
+{% endblock %}
+
+{% block header_actions %}
+    <!-- Header actions moved to content -->
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Modal Styles */
+    .modal-overlay {
+        display: none;
+    }
+    .modal-container {
+        display: none;
+    }
+    .modal-container.is-active {
+        display: flex;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- New improved header and breadcrumbs design -->
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">
+                    Packaging Types
+                </h1>
+                <nav class="flex flex-wrap items-center text-sm text-gray-600">
+                    <a href="{% url 'dashboard:home' %}" class="hover:text-primary transition">
+                        <i class="fas fa-home"></i>
+                        <span class="hidden sm:inline">Dashboard</span>
+                    </a>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <span class="font-medium">Products</span>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <span class="text-primary font-medium">Packaging Types</span>
+                </nav>
+            </div>
+            <div class="mt-4 md:mt-0">
+                <button type="button" class="btn btn-primary" onclick="openAddModal()">
+                    <i class="fas fa-plus mr-1"></i> Add New Packaging Type
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- End of improved header and breadcrumbs -->
+
+    <!-- Filters -->
+    <div class="dashboard-card bg-white shadow rounded-lg mb-6">
+        <div class="p-6 border-b border-gray-200">
+            <form method="get" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-1 gap-4">
+                    <div>
+                        <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search Packaging Types</label>
+                        <input type="text" id="search" name="search" value="{{ request.GET.search }}" 
+                            class="form-input w-full" placeholder="Search by name or key word...">
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-2">
+                    <a href="{% url 'dashboard:packaging_types' %}" class="btn btn-outline">
+                        <i class="fas fa-redo mr-1"></i> Reset
+                    </a>
+                    <button type="submit" class="btn btn-secondary">
+                        <i class="fas fa-search mr-1"></i> Search
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Packaging Types List -->
+    <div class="dashboard-card bg-white shadow rounded-lg">
+        <div class="overflow-x-auto">
+            <table class="table-auto w-full">
+                <thead>
+                    <tr class="text-left bg-gray-50">
+                        <th class="p-3">Name</th>
+                        <th class="p-3">Image</th>
+                        <th class="p-3">Key Word</th>
+                        <th class="p-3">Fresh</th>
+                        <th class="p-3">IQF</th>
+                        <th class="p-3">Created</th>
+                        <th class="p-3 text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for packaging_type in packaging_types %}
+                    <tr class="border-b border-gray-200 hover:bg-gray-50">
+                        <td class="p-3">
+                            <a href="#" onclick="openEditModal('{{ packaging_type.id }}'); return false;" class="hover:text-blue-600 transition-colors">
+                                <div class="font-medium hover:text-blue-600">{{ packaging_type.name }}</div>
+                                <div class="text-gray-500 text-sm truncate max-w-xs">{{ packaging_type.description|truncatechars:75 }}</div>
+                            </a>
+                        </td>
+                        <td class="p-3">
+                            <a href="#" onclick="openEditModal('{{ packaging_type.id }}'); return false;" class="hover:opacity-80 transition-opacity">
+                                {% if packaging_type.image %}
+                                    <img src="{{ packaging_type.image.url }}" alt="{{ packaging_type.name }}" class="w-12 h-12 object-contain">
+                                {% else %}
+                                    <div class="w-12 h-12 bg-gray-100 flex items-center justify-center rounded">
+                                        <i class="fas fa-box text-gray-400"></i>
+                                    </div>
+                                {% endif %}
+                            </a>
+                        </td>
+                        <td class="p-3">{{ packaging_type.key_word }}</td>
+                        <td class="p-3">
+                            {% if packaging_type.is_fresh %}
+                                <span class="badge badge-success"><i class="fas fa-check"></i></span>
+                            {% else %}
+                                <span class="badge badge-light"><i class="fas fa-times"></i></span>
+                            {% endif %}
+                        </td>
+                        <td class="p-3">
+                            {% if packaging_type.is_iqf %}
+                                <span class="badge badge-success"><i class="fas fa-check"></i></span>
+                            {% else %}
+                                <span class="badge badge-light"><i class="fas fa-times"></i></span>
+                            {% endif %}
+                        </td>
+                        <td class="p-3">{{ packaging_type.created_at|date:"M d, Y" }}</td>
+                        <td class="p-3 text-center whitespace-nowrap">
+                            <div class="inline-flex items-center space-x-3">
+                                <a href="#" onclick="openEditModal('{{ packaging_type.id }}'); return false;" class="w-7 h-7 rounded-full bg-gray-100 text-gray-600 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center transition-colors" title="Edit">
+                                    <i class="fas fa-edit text-xs"></i>
+                                </a>
+                                <a href="#" onclick="openDeleteModal('{{ packaging_type.id }}', '{{ packaging_type.name }}'); return false;" class="w-7 h-7 rounded-full bg-gray-100 text-gray-600 hover:bg-red-50 hover:text-red-600 flex items-center justify-center transition-colors" title="Delete">
+                                    <i class="fas fa-trash-alt text-xs"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr class="border-b border-gray-200">
+                        <td colspan="7" class="p-3 text-center text-gray-500">
+                            <div class="flex flex-col items-center justify-center py-6">
+                                <i class="fas fa-box text-3xl mb-2 text-blue-500"></i>
+                                <p>No packaging types found.</p>
+                                <button type="button" onclick="openAddModal()" class="text-primary hover:underline mt-1">Add your first packaging type</button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        {% if packaging_types.has_other_pages %}
+        <div class="p-6 border-t border-gray-200">
+            <div class="pagination flex justify-between items-center">
+                <div>
+                    <span class="text-sm text-gray-600">Showing page {{ packaging_types.number }} of {{ packaging_types.paginator.num_pages }}</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    {% if packaging_types.has_previous %}
+                        <a href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline btn-sm">
+                            <i class="fas fa-angle-double-left"></i>
+                        </a>
+                        <a href="?page={{ packaging_types.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline btn-sm">
+                            <i class="fas fa-chevron-left mr-1"></i> Previous
+                        </a>
+                    {% else %}
+                        <button class="btn btn-outline btn-sm opacity-50" disabled>
+                            <i class="fas fa-chevron-left mr-1"></i> Previous
+                        </button>
+                    {% endif %}
+                    
+                    <span class="px-3 py-1 rounded-md mx-1 bg-primary text-white">
+                        {{ packaging_types.number }} of {{ packaging_types.paginator.num_pages }}
+                    </span>
+                    
+                    {% if packaging_types.has_next %}
+                        <a href="?page={{ packaging_types.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline btn-sm">
+                            Next <i class="fas fa-chevron-right ml-1"></i>
+                        </a>
+                        <a href="?page={{ packaging_types.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline btn-sm">
+                            <i class="fas fa-angle-double-right"></i>
+                        </a>
+                    {% else %}
+                        <button class="btn btn-outline btn-sm opacity-50" disabled>
+                            Next <i class="fas fa-chevron-right ml-1"></i>
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Add Modal -->
+<div id="addModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 modal-container flex items-center justify-center">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-semibold text-gray-800">Add New Packaging Type</h3>
+            <button type="button" onclick="closeAddModal()" class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <form id="addPackagingTypeForm" method="post" action="{% url 'dashboard:packaging_type_modal_add' %}" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            
+            <!-- سنستخدم هذا الحقل المخفي للتحكم في إرسال Key Word -->
+            <input type="hidden" name="is_key_word_required" id="add_is_key_word_required" value="false">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <!-- Packaging Name Field -->
+                <div class="form-field md:col-span-2" id="add-name-field-container">
+                    <label for="id_name" class="block text-sm font-medium text-gray-700 mb-1">
+                        Packaging Name <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="name" id="id_name" required class="form-input w-full" placeholder="Enter the packaging type name">
+                    <div class="mt-1 text-xs text-gray-600">
+                        Enter the name of this packaging type
+                    </div>
+                </div>
+
+                <!-- Key Word Field - Hidden by default -->
+                <div id="add-key-word-field-container" class="hidden">
+                    <label for="id_key_word" class="block text-sm font-medium text-gray-700 mb-1">
+                        Key Word <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="key_word" id="id_key_word" class="form-input w-full" placeholder="e.g. carton-box">
+                    <div class="mt-1 text-xs text-gray-600">
+                        Used for tracking (e.g. carton-box)
+                    </div>
+                    <p class="text-red-600 text-xs mt-1 font-medium hidden" id="add-key-word-error">This field is required when Fresh Products is selected</p>
+                </div>
+            </div>
+            
+            <!-- Description Field -->
+            <div class="form-field mb-4">
+                <label for="id_description" class="block text-sm font-medium text-gray-700 mb-1">
+                    Description
+                </label>
+                <textarea name="description" id="id_description" rows="2" style="height: 5rem;" class="form-input w-full" placeholder="Enter packaging type description"></textarea>
+                <div class="mt-1 text-xs text-gray-600">
+                    Optional: Provide additional details about this packaging type
+                </div>
+            </div>
+            
+            <!-- Image Field -->
+            <div class="form-field mb-4">
+                <label for="id_image" class="block text-sm font-medium text-gray-700 mb-1">
+                    Image
+                </label>
+                <input type="file" name="image" id="id_image" class="block w-full text-sm text-gray-600
+                    file:mr-3 file:py-2 file:px-4
+                    file:rounded-md file:border-0
+                    file:text-xs file:font-medium
+                    file:bg-primary file:text-white
+                    hover:file:bg-primary-dark cursor-pointer">
+                <div class="mt-1 text-xs text-gray-600">
+                    Optional: Upload an image of this packaging type
+                </div>
+            </div>
+            
+            <!-- Availability Options -->
+            <div class="form-field mb-4">
+                <p class="block text-sm font-medium text-gray-700 mb-2">
+                    Available for:
+                </p>
+                
+                <div class="bg-gray-50 p-3 rounded-lg">
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Fresh Option -->
+                        <div>
+                            <div class="custom-checkbox-wrapper mb-1">
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" name="is_fresh" id="id_is_fresh" class="custom-checkbox sr-only">
+                                    <span class="checkbox-display w-4 h-4 rounded border border-gray-400 flex items-center justify-center mr-2 bg-white">
+                                        <i class="fas fa-check text-primary text-xs transition-opacity opacity-0"></i>
+                                    </span>
+                                    <span class="text-sm font-medium text-gray-700">Fresh Products</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- IQF Option -->
+                        <div>
+                            <div class="custom-checkbox-wrapper mb-1">
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" name="is_iqf" id="id_is_iqf" class="custom-checkbox sr-only">
+                                    <span class="checkbox-display w-4 h-4 rounded border border-gray-400 flex items-center justify-center mr-2 bg-white">
+                                        <i class="fas fa-check text-primary text-xs transition-opacity opacity-0"></i>
+                                    </span>
+                                    <span class="text-sm font-medium text-gray-700">IQF Products</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-1 text-xs text-gray-600">
+                    Select which product types can use this packaging
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-2 mt-6">
+                <button type="button" onclick="closeAddModal()" class="btn btn-outline">Cancel</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus mr-1"></i> Add Packaging Type
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 modal-container flex items-center justify-center">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-semibold text-gray-800">Edit Packaging Type</h3>
+            <button type="button" onclick="closeEditModal()" class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div id="editModalContent">
+            <!-- سيتم تحميل المحتوى هنا بواسطة AJAX -->
+            <div class="flex items-center justify-center p-6">
+                <i class="fas fa-spinner fa-spin text-primary text-2xl mr-2"></i>
+                <span>جاري التحميل...</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 modal-container flex items-center justify-center">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-semibold text-gray-800">Delete Packaging Type</h3>
+            <button type="button" onclick="closeDeleteModal()" class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="bg-red-50 text-red-600 p-4 mb-4 rounded-md">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium">Warning</h3>
+                    <p class="text-sm mt-1" id="deleteWarningText">
+                        Are you sure you want to delete this packaging type?
+                        <br>
+                        This action cannot be undone and may affect products using this packaging type.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <form id="deletePackagingTypeForm" method="post" action="">
+            {% csrf_token %}
+            
+            <div class="flex justify-end space-x-2 mt-6">
+                <button type="button" onclick="closeDeleteModal()" class="btn btn-outline">Cancel</button>
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash-alt mr-1"></i> Confirm Delete
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function openAddModal() {
+        document.getElementById('addModal').classList.add('is-active');
+        document.getElementById('id_name').focus();
+    }
+    
+    function closeAddModal() {
+        document.getElementById('addModal').classList.remove('is-active');
+        document.getElementById('addPackagingTypeForm').reset();
+        
+        // إزالة رسائل الخطأ وإعادة تعيين أنماط الحقول
+        const errorMessages = document.querySelectorAll('#addPackagingTypeForm .text-red-600:not(#add-key-word-error)');
+        errorMessages.forEach(element => element.remove());
+        
+        // إزالة تنسيق الحدود الحمراء من حقول الإدخال
+        const inputFields = document.querySelectorAll('#addPackagingTypeForm input, #addPackagingTypeForm textarea');
+        inputFields.forEach(field => {
+            field.classList.remove('border-red-500');
+        });
+        
+        // إعادة تعيين الشيك بوكس الخاصة بالتوفر
+        document.querySelectorAll('#addPackagingTypeForm .custom-checkbox').forEach(checkbox => {
+            checkbox.checked = false;
+            const icon = checkbox.parentElement.querySelector('i');
+            icon.classList.remove('opacity-100');
+            icon.classList.add('opacity-0');
+        });
+        
+        // إعادة تعيين حالة حقل Key Word
+        toggleAddKeyWordField(false);
+    }
+    
+    // الدالة المسؤولة عن إظهار/إخفاء حقل Key Word في نموذج الإضافة
+    function toggleAddKeyWordField(isFreshSelected) {
+        const keyWordContainer = document.getElementById('add-key-word-field-container');
+        const nameContainer = document.getElementById('add-name-field-container');
+        const keyWordInput = document.getElementById('id_key_word');
+        const keyWordRequiredField = document.getElementById('add_is_key_word_required');
+        const keyWordError = document.getElementById('add-key-word-error');
+        
+        if (isFreshSelected) {
+            // إظهار حقل Key Word وجعله إجباري
+            keyWordContainer.classList.remove('hidden');
+            keyWordInput.setAttribute('required', 'required');
+            keyWordRequiredField.value = 'true';
+            keyWordError.classList.add('hidden');
+            
+            // تعديل عرض حقل الاسم
+            nameContainer.classList.remove('md:col-span-2');
+        } else {
+            // إخفاء حقل Key Word وإلغاء الإجباري
+            keyWordContainer.classList.add('hidden');
+            keyWordInput.removeAttribute('required');
+            keyWordRequiredField.value = 'false';
+            keyWordInput.value = '';
+            
+            // إعادة حقل الاسم ليأخذ العرض الكامل
+            nameContainer.classList.add('md:col-span-2');
+        }
+    }
+    
+    function openEditModal(packagingTypeId) {
+        document.getElementById('editModal').classList.add('is-active');
+        
+        // تحميل بيانات نوع التغليف بواسطة AJAX
+        fetch("{% url 'dashboard:packaging_type_modal_edit' 0 %}".replace('0', packagingTypeId))
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('editModalContent').innerHTML = html;
+                
+                // تفعيل الشيك بوكس بعد تحميل المحتوى
+                setTimeout(() => {
+                    // تحديث عمل الشيك بوكس
+                    document.querySelectorAll('#editModalContent .custom-checkbox').forEach(function(checkbox) {
+                        checkbox.addEventListener('change', function() {
+                            const icon = this.parentElement.querySelector('i');
+                            if (this.checked) {
+                                icon.classList.remove('opacity-0');
+                                icon.classList.add('opacity-100');
+                            } else {
+                                icon.classList.remove('opacity-100');
+                                icon.classList.add('opacity-0');
+                            }
+                        });
+                        
+                        // تفعيل حالة الشيك بوكس الحالية
+                        const icon = checkbox.parentElement.querySelector('i');
+                        if (checkbox.checked) {
+                            icon.classList.remove('opacity-0');
+                            icon.classList.add('opacity-100');
+                        } else {
+                            icon.classList.remove('opacity-100');
+                            icon.classList.add('opacity-0');
+                        }
+                    });
+                    
+                    // التركيز على حقل الاسم
+                    const nameField = document.querySelector('#editModalContent input[name="name"]');
+                    if (nameField) nameField.focus();
+                }, 100);
+            })
+            .catch(error => {
+                console.error('Error loading edit form:', error);
+                document.getElementById('editModalContent').innerHTML = `
+                    <div class="bg-red-50 text-red-600 p-4 rounded-md">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium">Error</h3>
+                                <p class="text-sm mt-1">Failed to load the packaging type data. Please try again.</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+    }
+    
+    function closeEditModal() {
+        document.getElementById('editModal').classList.remove('is-active');
+        document.getElementById('editModalContent').innerHTML = `
+            <div class="flex items-center justify-center p-6">
+                <i class="fas fa-spinner fa-spin text-primary text-2xl mr-2"></i>
+                <span>جاري التحميل...</span>
+            </div>
+        `;
+    }
+    
+    function openDeleteModal(packagingTypeId, packagingTypeName) {
+        document.getElementById('deleteModal').classList.add('is-active');
+        document.getElementById('deleteWarningText').innerHTML = 
+            'Are you sure you want to delete the packaging type "<strong>' + packagingTypeName + '</strong>"?<br>' +
+            'This action cannot be undone and may affect products using this packaging type.';
+        document.getElementById('deletePackagingTypeForm').action = "{% url 'dashboard:packaging_type_modal_delete' 0 %}".replace('0', packagingTypeId);
+    }
+    
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.remove('is-active');
+    }
+    
+    // Close modals when clicking outside
+    document.addEventListener('click', function(e) {
+        if (e.target.id === 'addModal') {
+            closeAddModal();
+        }
+        if (e.target.id === 'editModal') {
+            closeEditModal();
+        }
+        if (e.target.id === 'deleteModal') {
+            closeDeleteModal();
+        }
+    });
+
+    // معالجة الشيك بوكس للتغيير من خلال الجافاسكريبت
+    document.querySelectorAll('.custom-checkbox').forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            const icon = this.parentElement.querySelector('i');
+            if (this.checked) {
+                icon.classList.remove('opacity-0');
+                icon.classList.add('opacity-100');
+            } else {
+                icon.classList.remove('opacity-100');
+                icon.classList.add('opacity-0');
+            }
+            
+            // التحقق مما إذا كان الشيك بوكس هو خيار Fresh Products في نموذج الإضافة
+            if (this.id === 'id_is_fresh') {
+                toggleAddKeyWordField(this.checked);
+            }
+        });
+    });
+    
+    // تحويل النماذج إلى طلبات AJAX وإظهار التوستر
+    document.addEventListener('DOMContentLoaded', function() {
+        // تفعيل وظيفة معاينة الصورة في نموذج الإضافة
+        const addImageInput = document.getElementById('id_image');
+        if (addImageInput) {
+            addImageInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        // البحث عن عنصر معاينة الصورة الحالي أو إنشاء عنصر جديد إذا لم يكن موجودًا
+                        let imagePreview = document.getElementById('add-image-preview');
+                        if (!imagePreview) {
+                            const previewContainer = document.createElement('div');
+                            previewContainer.className = 'mb-2 flex items-center bg-gray-50 p-2 rounded-lg';
+                            previewContainer.innerHTML = `
+                                <img src="${e.target.result}" alt="Preview" class="w-12 h-12 object-contain border rounded-md" id="add-image-preview">
+                                <span class="ml-2 text-xs text-gray-600">Selected image</span>
+                            `;
+                            addImageInput.parentNode.insertBefore(previewContainer, addImageInput);
+                        } else {
+                            // تحديث الصورة الموجودة
+                            imagePreview.src = e.target.result;
+                            imagePreview.parentNode.classList.remove('hidden');
+                        }
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        }
+
+        // نموذج إضافة نوع التغليف
+        const addForm = document.getElementById('addPackagingTypeForm');
+        addForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // التحقق من حالة Key Word قبل الإرسال
+            const isFreshSelected = document.getElementById('id_is_fresh').checked;
+            const keyWordInput = document.getElementById('id_key_word');
+            const keyWordRequiredField = document.getElementById('add_is_key_word_required');
+            const keyWordError = document.getElementById('add-key-word-error');
+            
+            // تعيين إجبارية الحقل بناءً على اختيار Fresh Products
+            if (isFreshSelected) {
+                keyWordRequiredField.value = 'true';
+                
+                // التحقق من أن القيمة مدخلة
+                if (!keyWordInput.value.trim()) {
+                    keyWordInput.classList.add('border-red-500');
+                    keyWordError.classList.remove('hidden');
+                    keyWordInput.focus();
+                    return;
+                } else {
+                    keyWordError.classList.add('hidden');
+                    keyWordInput.classList.remove('border-red-500');
+                }
+            } else {
+                // إذا لم يتم اختيار Fresh Products، نقوم بإلغاء إجبارية الحقل
+                keyWordRequiredField.value = 'false';
+                keyWordInput.value = ''; // تفريغ قيمة الحقل
+                keyWordInput.removeAttribute('required');
+            }
+            
+            const formData = new FormData(this);
+            
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                if (response.redirected) {
+                    // إذا تم إعادة التوجيه، فقد نجحت العملية
+                    closeAddModal();
+                    toastr.success('Packaging type added successfully!');
+                    
+                    // إعادة تحميل الصفحة بعد فترة قصيرة
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                    return;
+                }
+                
+                // في حالة وجود مشاكل، نقوم بطباعة المحتوى الذي تم إرجاعه
+                return response.text();
+            })
+            .then(html => {
+                if (html) {
+                    // هنا يمكننا تحليل استجابة الخطأ وعرض رسائل الخطأ المناسبة
+                    toastr.error('There were errors in your submission. Please check the form.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                toastr.error('Failed to add packaging type. Please try again.');
+            });
+        });
+        
+        // نضيف مستمع أحداث للنموذج الذي يتم تحميله عن طريق AJAX
+        document.addEventListener('submit', function(e) {
+            // إذا كان النموذج هو نموذج التعديل
+            if (e.target.closest('#editModalContent form')) {
+                e.preventDefault();
+                
+                const editForm = e.target.closest('#editModalContent form');
+                const formData = new FormData(editForm);
+                
+                fetch(editForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        // إذا تم إعادة التوجيه، فقد نجحت العملية
+                        closeEditModal();
+                        toastr.success('Packaging type updated successfully!');
+                        
+                        // إعادة تحميل الصفحة بعد فترة قصيرة
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                        return;
+                    }
+                    
+                    // في حالة وجود مشاكل، نقوم بعرض الرد
+                    return response.text();
+                })
+                .then(html => {
+                    if (html) {
+                        // تحديث محتوى المودال بالرد من الخادم (مع رسائل الخطأ)
+                        document.getElementById('editModalContent').innerHTML = html;
+                        
+                        // تحديث عمل الشيك بوكس
+                        setTimeout(() => {
+                            document.querySelectorAll('#editModalContent .custom-checkbox').forEach(function(checkbox) {
+                                checkbox.addEventListener('change', function() {
+                                    const icon = this.parentElement.querySelector('i');
+                                    if (this.checked) {
+                                        icon.classList.remove('opacity-0');
+                                        icon.classList.add('opacity-100');
+                                    } else {
+                                        icon.classList.remove('opacity-100');
+                                        icon.classList.add('opacity-0');
+                                    }
+                                });
+                                
+                                // تحديث حالة الأيقونة بناءً على حالة الشيك بوكس
+                                const icon = checkbox.parentElement.querySelector('i');
+                                if (checkbox.checked) {
+                                    icon.classList.remove('opacity-0');
+                                    icon.classList.add('opacity-100');
+                                } else {
+                                    icon.classList.remove('opacity-100');
+                                    icon.classList.add('opacity-0');
+                                }
+                            });
+                        }, 100);
+                        
+                        toastr.error('There were errors in your submission. Please check the form.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    toastr.error('Failed to update packaging type. Please try again.');
+                });
+            }
+        });
+        
+        // نموذج حذف نوع التغليف
+        const deleteForm = document.getElementById('deletePackagingTypeForm');
+        deleteForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            fetch(this.action, {
+                method: 'POST',
+                body: new FormData(this),
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                if (response.redirected) {
+                    closeDeleteModal();
+                    toastr.success('Packaging type deleted successfully!');
+                    
+                    // إعادة تحميل الصفحة بعد فترة قصيرة
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                    return;
+                }
+                
+                return response.text();
+            })
+            .then(html => {
+                if (html) {
+                    toastr.error('Failed to delete packaging type. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                toastr.error('Failed to delete packaging type. Please try again.');
+            });
+        });
+    });
+</script>
+{% endblock %} 

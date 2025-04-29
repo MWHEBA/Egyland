@@ -1,0 +1,11 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+- Mobile version uses typical and didnt change any of desktop items.
+- Do not modify any of the pre-designed templates located in `templates/` (home, about, products, contact).
+- App is English only (one language).
+- Organize forms with crispy-forms or custom template blocks.
+- Implement logging with different levels (info, warning, error).
+- Use django-environ for managing settings safely.

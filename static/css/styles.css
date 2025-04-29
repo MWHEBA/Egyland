@@ -1,0 +1,370 @@
+/* 
+ * Main stylesheet for Egyland website
+ */
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #aaa;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #888;
+}
+
+/* Header Styles */
+#main-header {
+    background-color: transparent !important;
+}
+
+#main-header .main-nav {
+    display: flex !important;
+    visibility: visible !important;
+}
+
+#main-header .header-link {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+    transition: color 0.3s ease;
+    position: relative;
+}
+
+#main-header .header-link:hover {
+    color: #15803d;
+}
+
+#main-header .header-link-active {
+    font-size: 18px;
+    font-weight: 800;
+    /* extra-bold */
+    color: #22c55e !important;
+}
+
+#main-header .nav-home {
+    color: #22c55e !important;
+    font-weight: 800;
+}
+
+#main-header .nav-link-underline::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 3px;
+    background-color: #27ae60;
+    bottom: -12px;
+    left: 0;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+#main-header .nav-link-underline:hover::after {
+    transform: scaleX(1);
+}
+
+/* Custom form styling */
+.form-input,
+.form-textarea,
+.form-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    background-color: #f8fafc;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+    outline: none;
+    border-color: #27ae60;
+    box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.2);
+}
+
+.form-textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.form-checkbox {
+    width: 18px;
+    height: 18px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    accent-color: #27ae60;
+}
+
+/* Transitions */
+.transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+}
+
+.transition-colors {
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+}
+
+.transition-opacity {
+    transition-property: opacity;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+}
+
+.transition-transform {
+    transition-property: transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+}
+
+.transition-shadow {
+    transition-property: box-shadow;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+}
+
+/* Hero slider customizations */
+.hero-slider .slider-item {
+    position: relative;
+}
+
+.hero-slider .slider-item::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3));
+    z-index: 1;
+}
+
+.hero-slider .slider-item>div {
+    position: relative;
+    z-index: 2;
+}
+
+/* Smooth Page Transition */
+body {
+    opacity: 1;
+    transition: opacity 0.5s;
+}
+
+.page-exit {
+    opacity: 0;
+}
+
+/* Line clamp utilities */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Country Picker Styling */
+.phonenumber-container select {
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem 0 0 0.5rem;
+    background-color: #f8fafc;
+}
+
+.phonenumber-container input {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
+/* Print styles */
+@media print {
+
+    header,
+    footer,
+    .no-print {
+        display: none;
+    }
+
+    body {
+        background-color: white;
+    }
+
+    .container {
+        width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+}
+
+/* Form styling */
+.form-control {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+    border-color: #27ae60;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #1a202c;
+}
+
+/* Hero slider customizations */
+.slider-pagination {
+    bottom: 1.5rem !important;
+}
+
+.slider-pagination .swiper-pagination-bullet {
+    width: 12px;
+    height: 12px;
+    background-color: white;
+    opacity: 0.5;
+}
+
+.slider-pagination .swiper-pagination-bullet-active {
+    opacity: 1;
+    background-color: white;
+}
+
+/* Smooth page transitions */
+.page-transition-enter {
+    opacity: 0;
+}
+
+.page-transition-enter-active {
+    opacity: 1;
+    transition: opacity 400ms;
+}
+
+.page-transition-exit {
+    opacity: 1;
+}
+
+.page-transition-exit-active {
+    opacity: 0;
+    transition: opacity 400ms;
+}
+
+/* Country picker styling */
+.country-dropdown {
+    position: relative;
+}
+
+.country-dropdown-toggle {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+}
+
+.country-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 10;
+    margin-top: 0.5rem;
+    min-width: 10rem;
+    border-radius: 0.375rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    background-color: white;
+    overflow: hidden;
+    display: none;
+}
+
+.country-dropdown-menu.show {
+    display: block;
+}
+
+.country-option {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+
+.country-option:hover {
+    background-color: #f7fafc;
+}
+
+.country-flag {
+    width: 24px;
+    height: 16px;
+    object-fit: cover;
+    margin-right: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .slider-pagination {
+        bottom: 1rem !important;
+    }
+
+    .slider-pagination .swiper-pagination-bullet {
+        width: 8px;
+        height: 8px;
+    }
+}
+
+/* Print styles */
+@media print {
+
+    .header,
+    .footer,
+    .no-print {
+        display: none !important;
+    }
+
+    body {
+        font-size: 12pt;
+    }
+}
+
+/* Seasonality Table Colors */
+.bg-season-yellow {
+    background-color: #ffc107;
+}
+
+.bg-season-green-light {
+    background-color: #8bc34a;
+}
+
+.bg-season-green-medium {
+    background-color: #4caf50;
+}

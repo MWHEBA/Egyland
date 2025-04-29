@@ -1,0 +1,1031 @@
+/* إلغاء تأثير منع التمرير في صفحة تفاصيل المنتج */
+html,
+body {
+    overflow: auto !important;
+    height: auto !important;
+    overflow-x: hidden !important;
+}
+
+main.flex-grow {
+    overflow: visible !important;
+    overflow-y: auto !important;
+}
+
+/* إلغاء ستايل الهيدر والفوتر الثابت */
+#main-header {
+    position: relative !important;
+}
+
+footer {
+    position: relative !important;
+    bottom: auto !important;
+}
+
+/* تصميم أقسام المنتج */
+.product-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* صور الخلفية */
+.background-left {
+    position: absolute;
+    left: 0;
+    top: 30%;
+    max-width: 30%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.background-right {
+    position: absolute;
+    right: 0;
+    bottom: -150%;
+    max-width: 30%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.product-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 4rem;
+    gap: 10%;
+    justify-content: center;
+}
+
+/* محاذاة المنتج من نوع جنرال لليسار */
+.product-row-general {
+    justify-content: flex-start;
+    margin-bottom: 2rem;
+    align-items: flex-start;
+}
+
+.product-row-general .product-col {
+    min-width: 60% !important;
+    padding-right: 0;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+.product-row-general .product-image-container {
+    float: right;
+    width: 35%;
+    height: auto;
+    margin-left: 2rem;
+    margin-bottom: 1rem;
+    justify-content: flex-end;
+    max-height: none;
+    order: 2;
+    position: absolute;
+    right: 0;
+    top: -15px;
+}
+
+.product-row-general .product-image {
+    max-width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+}
+
+.product-row-general .product-description {
+    min-height: unset;
+    text-align: justify;
+    margin-top: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-row-general span {
+    text-align: justify;
+    display: inline-block;
+}
+
+.product-row-general strong,
+.product-row-general b {
+    color: #39ae68;
+    font-weight: bold;
+}
+
+.product-row-general h2 {
+    font-weight: bold;
+}
+
+.product-row-general .product-type-title {
+    text-align: left;
+    margin-top: 0;
+    width: 100%;
+    margin-bottom: 1.5rem;
+    font-size: 2.5rem;
+    color: #39ae68;
+    font-weight: bold;
+}
+
+.general-inquiry-button {
+    margin-left: 0;
+    margin-top: 1rem;
+    background-color: #39ae68;
+    padding: 10px 20px;
+    border-radius: 5px;
+    width: auto;
+}
+
+/* تنسيقات المنتجات الطازجة */
+.product-col-fresh {
+    min-width: 60% !important;
+    padding-right: 0;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+.product-col-fresh .product-image-container {
+    float: right;
+    width: 35%;
+    height: auto;
+    margin-left: 2rem;
+    margin-bottom: 1rem;
+    justify-content: flex-end;
+    max-height: none;
+    order: 2;
+    position: absolute;
+    right: 0;
+    top: -15px;
+}
+
+.product-col-fresh .product-image {
+    max-width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+}
+
+.product-col-fresh .product-description {
+    min-height: unset;
+    text-align: justify;
+    margin-top: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+}
+
+.product-col-fresh span {
+    text-align: justify;
+    display: inline-block;
+}
+
+.product-col-fresh strong,
+.product-col-fresh b {
+    color: #39ae68;
+    font-weight: bold;
+}
+
+.product-col-fresh h2 {
+    font-weight: bold;
+}
+
+.product-col-fresh .product-type-title {
+    text-align: left;
+    margin-top: 0;
+    width: 100%;
+    margin-bottom: 1.5rem;
+    font-size: 2.5rem;
+    color: #39ae68;
+    font-weight: bold;
+}
+
+.fresh-inquiry-button {
+    margin-left: 0;
+    margin-top: 1rem;
+    background-color: #39ae68;
+    padding: 10px 20px;
+    border-radius: 5px;
+    width: auto;
+}
+
+.product-image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    height: 220px;
+}
+
+.product-type-title {
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    color: #333;
+    text-align: center;
+}
+
+.count-item {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 8px;
+    min-width: 50px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.count-item span {
+    display: block;
+}
+
+
+/* محاذاة بوكسات التغليف للشمال */
+.packaging-section .product-row {
+    justify-content: flex-start;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.product-col {
+    flex: 0 0 calc(45% - 25px);
+    min-width: 300px;
+    max-width: 600px;
+    padding: 0;
+    margin-bottom: 2rem;
+}
+
+.product-image {
+    width: auto;
+    max-width: 250px;
+    max-height: 220px;
+    margin-bottom: 1rem;
+    border-radius: 10px;
+    object-fit: contain;
+}
+
+.product-description {
+    min-height: 200px;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    text-align: justify;
+    font-size: 20px;
+}
+
+.inquiry-button {
+    display: block;
+    width: 150px;
+    margin-left: auto;
+    background-color: #39ae68;
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    text-align: center;
+}
+
+.inquiry-button:hover {
+    background-color: #2d8a52;
+}
+
+/* تصميم قسم الموسمية */
+.seasonality-section,
+.counts-section,
+.packaging-section,
+.varieties-section {
+    margin-bottom: 3rem;
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    color: #333;
+    text-align: left;
+}
+
+.sub-section-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #39ae68;
+    text-align: left;
+}
+
+/* نسخة الموبايل للموسمية */
+.mobile-seasonality-section {
+    display: none;
+}
+
+.mobile-seasonality-wrapper {
+    margin-bottom: 1.5rem;
+}
+
+.mobile-variety-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: #333;
+}
+
+.mobile-sub-title {
+    margin-bottom: 0.5rem;
+}
+
+.mobile-months-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.mobile-month-item {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e0e0e0; /* غير منشط */
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.mobile-month-item.month-active {
+    background-color: #39ae68; /* منشط */
+    color: white;
+}
+
+.mobile-varieties-seasonality {
+    margin-bottom: 1.5rem;
+}
+
+/* للديسكتوب */
+.seasonality-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.seasonality-table th {
+    background-color: #4caf50;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    font-weight: 600;
+}
+
+.seasonality-table th:first-child {
+    text-align: left;
+    padding-left: 15px;
+}
+
+.seasonality-table td {
+    text-align: center;
+    padding: 10px;
+    height: 60px;
+    border: 1px solid #e0e0e0;
+    vertical-align: middle;
+}
+
+.seasonality-table tr.seasonality-row td:first-child {
+    background-color: #f2f2f2;
+    font-weight: 600;
+    text-align: left;
+    min-width: 150px;
+    padding-left: 15px;
+}
+
+.seasonality-table tr.seasonality-row td:first-child a {
+    color: #333;
+    text-decoration: none;
+}
+
+.seasonality-table tr.seasonality-row td:first-child a:hover {
+    color: #39ae68;
+    text-decoration: underline;
+}
+
+.month-active-fresh,
+.month-active-iqf {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin: 0 auto;
+    display: block;
+}
+
+.month-active-fresh {
+    background-color: #39ae68;
+}
+
+.month-active-iqf {
+    background-color: #5a6b77;
+}
+
+.month-icon {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
+
+.month-available {
+    background-color: rgba(76, 175, 80, 0.05);
+}
+
+/* تصميم قسم الأصناف */
+.varieties-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start;
+}
+
+.variety-item {
+    width: 180px;
+    text-decoration: none;
+    color: #333;
+    text-align: center;
+    transition: transform 0.2s;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.variety-item:hover {
+    transform: translateY(-5px);
+    background-color: rgba(57, 174, 104, 0.05);
+}
+
+.variety-image-container {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.variety-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.variety-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* تصميم قسم العد */
+.counts-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: flex-start;
+    margin-top: 20px;
+}
+
+
+
+.count-value {
+    font-weight: 600;
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.count-check {
+    color: #4caf50;
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+/* تصميم قسم التغليف */
+.packaging-type {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #333;
+    text-align: left;
+}
+
+.packaging-box {
+    background-color: #f3f8f3;
+    padding: 2.5rem 1.5rem;
+    border-radius: 15px;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+/* تصميم بوكس التعبئة الجديد للفريش */
+.fresh-packaging-box {
+    border-radius: 20px !important;
+    background-color: #f5faf5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 45px;
+    text-align: center;
+    border-radius: 0;
+    box-shadow: none;
+    max-width: 600px;
+    width: 100%;
+}
+
+.open-box-container {
+    margin-bottom: 20px;
+    width: 100%;
+    text-align: center;
+    display: block;
+    position: relative;
+}
+
+.open-box-image {
+    max-height: 180px;
+    height: auto;
+    width: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.packaging-title-container {
+    margin-bottom: 40px;
+    width: 100%;
+    text-align: center;
+}
+
+.packaging-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #000;
+    margin: 0;
+    text-align: center;
+    line-height: 1.4;
+    padding: 0 10px;
+}
+
+.packaging-info-row {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0;
+    padding: 0 10px;
+}
+
+.info-left,
+.info-right {
+    font-size: 12px;
+    color: #444;
+    font-weight: 600;
+}
+
+.packaging-numbers-row {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    margin-bottom: 30px;
+    padding: 0 10px;
+}
+
+.number-left,
+.number-right {
+    font-size: 32px;
+    font-weight: 600;
+    color: #000;
+}
+
+.fresh-packaging-box .packaging-customize {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #666;
+    font-style: italic;
+    text-align: center;
+    font-weight: 600;
+}
+
+/* تنسيقات للعناصر الجديدة - الأرقام في نفس المكان مع العناوين */
+.packaging-metrics {
+    min-width: -webkit-fill-available;
+    display: flex;
+    justify-content: space-around;
+    padding: 0 20px;
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+.packaging-metric {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 48%;
+}
+
+.metric-label {
+    font-size: 12px;
+    color: #444;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.metric-value {
+    font-size: 32px;
+    font-weight: 600;
+    color: #000;
+}
+
+/* تنسيق بوكس IQF */
+.iqf-packaging-box {
+    background-color: #f5faf5;
+    width: 100%;
+}
+
+.packaging-description {
+    margin: 0 0 40px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.packaging-description p {
+    margin: 5px 0;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* أضاف تصميم العنوان الرئيسي */
+.page-title {
+    text-align: center;
+    margin-top: 2.5rem;
+    margin-bottom: 2rem;
+}
+
+.page-title h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.page-title span {
+    color: #39ae68;
+}
+
+/* نضيف تصميمات لعنصر الوصف في قسم العد والأحجام */
+.count-description {
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    margin-top: 5px;
+    max-width: 150px;
+}
+
+/* إخفاء عنوان الصفحة للمنتجات الجنرال */
+.general-product-page .page-title {
+    display: none;
+}
+
+/* إخفاء عنوان الصفحة للمنتجات الطازجة */
+.fresh-product-page .page-title {
+    display: none;
+}
+
+.product-row.product-row-general {
+    margin-top: 90px;
+}
+
+/* محاذاة المنتج من نوع طازج لليسار */
+.product-row-fresh {
+    justify-content: flex-start;
+    margin-bottom: 2rem;
+    align-items: flex-start;
+    margin-top: 90px;
+}
+
+/* تصميم الصورة العائمة للمنتجات الطازجة فقط */
+.fresh-product-float-image {
+    position: absolute;
+    right: 0;
+    top: 60px;
+    height: auto;
+    max-height: 80vh;
+    max-width: 40%;
+    object-fit: contain;
+    z-index: 1;
+}
+
+/* تصميم صورة المنتج للموبايل للمنتجات الطازجة فقط */
+.fresh-product-mobile-image {
+    display: none; /* مخفية بشكل افتراضي */
+    margin: 0 auto 1.5rem;
+    max-width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+}
+
+/* تنسيق خاص بهيكل وصف المنتجات */
+.product-description h2 {
+    margin-top: 30px !important;
+    margin-bottom: 15px !important;
+    clear: both;
+    font-size: 1.3em;
+    color: #333;
+    font-weight: bold;
+}
+
+/* تحسينات للشاشات الصغيرة */
+@media (max-width: 768px) {
+
+    .product-row.product-row-general {
+        margin-top: unset;
+    }
+
+    .product-row-general {
+        margin-bottom: unset;
+    }
+
+    .product-row-fresh {
+        margin-top: unset;
+    }
+
+    /* تعديل ترتيب العناصر في منتجات general للموبايل */
+    .product-row-general .product-col {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .product-row-general .product-image-container {
+        position: relative;
+        float: none;
+        width: 100%;
+        margin-left: 0;
+        top: 0;
+        order: 1; /* صورة المنتج أولاً */
+        margin-bottom: unset;
+    }
+    
+    .product-row-general .product-type-title {
+        order: 2; /* العنوان ثانياً */
+        width: 100%;
+        text-align: center !important;
+        margin-top: unset;
+        margin-bottom: unset;
+    }
+    
+    .product-row-general .product-description {
+        order: 3; /* الوصف ثالثاً */
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    /* إضافة مسافة بين الوصف وقائمة الأنواع في نسخة الموبايل */
+    .product-description h3,
+    .product-description h4 {
+        margin-top: 20px;
+    }
+    
+    .product-row-general .inquiry-button {
+        order: 4; /* زر الاستعلام رابعاً */
+    }
+
+    .product-col-fresh .product-image-container {
+        position: relative;
+        float: none;
+        width: 100%;
+        margin-left: 0;
+        top: 0;
+        order: 1;
+    }
+
+    .product-row-general .product-description,
+    .product-col-fresh .product-description {
+        width: 100%;
+    }
+    
+    .product-image-container {
+        margin-bottom: 1rem;
+    }
+    
+    .product-type-title {
+        margin-bottom: 1rem;
+        text-align: center !important;
+        font-size: 2rem !important;
+        margin-top: 0.5rem;
+    }
+
+    .count-item {
+        font-size: 1rem;
+        min-width: 20px !important;
+        padding: 3px;
+    }
+
+    .page-title {
+        margin-bottom: 1rem;
+    }
+    
+    .product-description {
+        font-size: 16px;
+    }
+    
+    .product-col-fresh .product-image-container {
+        position: relative;
+        float: none;
+        width: 100%;
+        margin-left: 0;
+        top: 0;
+        order: 1;
+    }
+
+    .product-row-general .product-description,
+    .product-col-fresh .product-description {
+        width: 100%;
+    }
+    
+    .product-image-container {
+        margin-bottom: 1rem;
+    }
+    
+    .product-type-title {
+        margin-bottom: 1rem;
+    }
+
+    .count-item {
+        min-width: 20px !important;
+    }
+    
+    /* إظهار قسم موسمية الموبايل وإخفاء قسم الديسكتوب */
+    .mobile-seasonality-section {
+        display: block;
+    }
+    
+    .desktop-seasonality-section {
+        display: none;
+    }
+    
+    .mobile-month-item {
+        width: 35px;
+        height: 35px;
+        font-size: 14px;
+    }
+    
+    .section-title {
+        font-size: 1.6rem;
+        margin-bottom: 1rem;
+    }
+    
+    .mobile-sub-title {
+        font-size: 1.2rem;
+    }
+    
+    .mobile-variety-name {
+        font-size: 1.1rem;
+    }
+    
+    .product-col {
+        flex: unset;
+    }
+
+    .fresh-product-float-image {
+        display: none; /* إخفاء الصورة العائمة في الموبايل */
+    }
+    
+    .fresh-product-mobile-image {
+        display: block; /* إظهار صورة المنتج في الموبايل */
+    }
+    
+    .fresh-product-page {
+        padding-top: 20px; /* إضافة مساحة في الأعلى للصورة */
+    }
+
+    /* جعل ألوان النص بارزة أكثر في نسخة الموبايل */
+    .product-description strong {
+        color: #39ae68;
+        font-weight: bold;
+        display: inline-block;
+        margin-bottom: 3px;
+    }
+    
+
+    /* تنسيقات خاصة بالموبايل لقسم أنواع المنتج */
+    .product-description h2 {
+        margin-top: 20px !important;
+        margin-bottom: unset !important;
+        text-align: center;
+        font-size: 1.2em;
+        width: 100%;
+    }
+    
+    /* تنسيق لكل نوع من أنواع المنتج على الموبايل */
+    .product-description div.variety-description {
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px dashed #e0e0e0;
+    }
+    
+    /* إبراز اسم النوع (Red Garlic, White Garlic) */
+    .product-description div.variety-description b,
+    .product-description div.variety-description strong {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 1.1em;
+    }
+    
+    /* إضافة مسافة بين الفقرات الأصلية في الوصف وقائمة الأنواع */
+    .product-description > span:first-of-type {
+        margin-bottom: 25px;
+        display: block;
+    }
+    
+}
+
+/* تنسيق لفقرات وصف المنتج */
+.product-description p {
+    margin-bottom: 15px;
+}
+
+/* محتوى أنواع المنتج (مثل أنواع الثوم) تحت الوصف */
+.product-description h3,
+.product-description h4 {
+    margin-top: 15px;
+    margin-bottom: 10px;
+    color: #333;
+    font-weight: bold;
+}
+
+.product-description ul {
+    margin-bottom: 15px;
+}
+
+/* ترتيب معلومات المنتج مثل varieties */
+.product-varieties-info {
+    margin-top: 20px;
+    display: block;
+    width: 100%;
+}
+
+/* تنسيق للأنواع المختلفة (مثل Red Garlic, White Garlic) */
+.product-description strong {
+    color: #39ae68;
+    font-weight: bold;
+}
+
+
+/* تنسيق للفقرات التي تحتوي على عناوين فرعية لأنواع المنتجات */
+.product-description h4 {
+    margin-top: 20px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* خاص بفقرة أنواع المنتجات */
+.product-description h3 + p {
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+
+/* تنسيق للفقرات التي تحتوي على وصف الأنواع المختلفة */
+.product-description p strong {
+    display: inline-block;
+    margin-bottom: 3px;
+}
+
+/* تحسين مسافات ما بين الأنواع المختلفة في القوائم */
+.product-description ul li {
+    margin-bottom: 10px;
+}
+
+/* إضافة مساحة خاصة للنص الذي يبدأ بـ "Among the finest varieties" */
+.product-varieties-title {
+    margin-top: 25px !important;
+    font-weight: bold !important;
+    color: #333 !important;
+    font-size: 1.1em !important;
+}
+
+/* تنسيق special للـ varieties */
+.variety-description {
+    margin-bottom: 15px !important;
+    display: block;
+}
+
+
+
+/* النص الأساسي لوصف المنتج قبل القوائم */
+.product-description > span:first-of-type {
+    display: block;
+    margin-bottom: 20px;
+}

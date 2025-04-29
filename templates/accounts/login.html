@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+{% load static %}
+{% load crispy_forms_tags %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Egyland - Login</title>
+    
+    <!-- Local Fonts -->
+    <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
+    <link rel="stylesheet" href="{% static 'css/font-fallback.css' %}">
+    
+    <!-- Tailwind CSS (Local Fallback) -->
+    <link rel="stylesheet" href="{% static 'css/tailwind.min.css' %}">
+    
+    <!-- Custom Tailwind CSS -->
+    <link rel="stylesheet" href="{% static 'css/tailwind-custom.css' %}">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    
+    {% include 'includes/toastr.html' %}
+    
+</head>
+<body class="font-poppins bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex items-center justify-center p-6">
+    <div class="flex w-full max-w-5xl h-[600px] bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <!-- Left Panel - Image -->
+        <div class="hidden lg:block w-1/2 bg-cover bg-center relative" style="background-image: url('{% static 'img/slider/slide3.jpg' %}')">
+            <div class="absolute inset-0 bg-gradient-to-r from-primary/80 to-primary-dark/80"></div>
+            <div class="absolute inset-0 flex flex-col justify-center items-center p-12 text-white">
+                <div class="animate-fade-in-up">
+                    <div class="text-center">
+                        <h1 class="text-5xl font-bold mb-2">EGYLAND</h1>
+                        <div class="h-1 w-20 bg-white mx-auto mb-6"></div>
+                    </div>
+                    <h2 class="text-3xl font-bold mb-4">Welcome Back</h2>
+                    <p class="text-lg opacity-90 mb-6">Premium Agricultural Exports from Egypt to the World</p>
+                    <div class="flex space-x-3">
+                        <span class="inline-block w-3 h-3 bg-white rounded-full animate-pulse delay-100"></span>
+                        <span class="inline-block w-3 h-3 bg-white rounded-full animate-pulse delay-300"></span>
+                        <span class="inline-block w-3 h-3 bg-white rounded-full animate-pulse delay-500"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Panel - Login Form -->
+        <div class="w-full lg:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+            <div class="mb-10 text-center lg:text-left">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Login to Your Account</h1>
+                <p class="text-gray-600">Welcome back! Please enter your credentials.</p>
+            </div>
+            
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                {% if form.errors %}
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        toastr.error('بيانات تسجيل الدخول غير صحيحة. برجاء المحاولة مرة أخرى.');
+                    });
+                </script>
+                {% endif %}
+                
+                {% if messages %}
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        {% for message in messages %}
+                            {% if message.tags == 'success' %}
+                                toastr.success('{{ message }}');
+                            {% elif message.tags == 'error' %}
+                                toastr.error('{{ message }}');
+                            {% elif message.tags == 'warning' %}
+                                toastr.warning('{{ message }}');
+                            {% else %}
+                                toastr.info('{{ message }}');
+                            {% endif %}
+                        {% endfor %}
+                    });
+                </script>
+                {% endif %}
+                
+                <div class="space-y-6">
+                    <div class="group relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <input type="text" name="username" id="id_username" required placeholder="Username" 
+                               class="pl-10 w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                               autocomplete="username">
+                    </div>
+                    
+                    <div class="group relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400 group-focus-within:text-primary transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <input type="password" name="password" id="id_password" required placeholder="Password" 
+                               class="pl-10 w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                               autocomplete="current-password">
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="remember" name="remember" class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                        <label for="remember" class="ml-2 block text-sm text-gray-600">Remember me</label>
+                    </div>
+                    <a href="{% url 'accounts:password_reset' %}" class="text-sm font-medium text-primary hover:text-primary-dark transition-colors">Forgot password?</a>
+                </div>
+                
+                <div>
+                    <button type="submit" class="login-btn relative w-full py-3 px-4 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all overflow-hidden">
+                        <span class="relative z-10">Sign in</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Floating Elements -->
+    <div class="fixed w-64 h-64 bg-primary/10 rounded-full -top-32 -left-32 blur-3xl"></div>
+    <div class="fixed w-96 h-96 bg-primary-light/10 rounded-full -bottom-48 -right-48 blur-3xl"></div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Button animation effect
+            const loginButton = document.querySelector('.login-btn');
+            
+            loginButton.addEventListener('mouseenter', function(e) {
+                loginButton.style.transform = 'translateY(-2px)';
+                const rect = this.getBoundingClientRect();
+                
+                // Create ripple effect
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple-effect';
+                ripple.style.left = e.clientX - rect.left + 'px';
+                ripple.style.top = e.clientY - rect.top + 'px';
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+            
+            loginButton.addEventListener('mouseleave', function(e) {
+                loginButton.style.transform = 'translateY(0)';
+            });
+            
+            // Focus animation
+            const inputFields = document.querySelectorAll('input[type="text"], input[type="password"]');
+            
+            inputFields.forEach(field => {
+                field.addEventListener('focus', function() {
+                    this.parentElement.classList.add('scale-105');
+                    this.parentElement.style.transition = 'all 0.3s ease';
+                });
+                
+                field.addEventListener('blur', function() {
+                    this.parentElement.classList.remove('scale-105');
+                });
+            });
+        });
+    </script>
+    
+    <style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        .delay-100 {
+            animation-delay: 0.1s;
+        }
+        
+        .delay-300 {
+            animation-delay: 0.3s;
+        }
+        
+        .delay-500 {
+            animation-delay: 0.5s;
+        }
+        
+        /* Ripple effect */
+        .login-btn {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ripple-effect {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.4);
+            width: 100px;
+            height: 100px;
+            margin-top: -50px;
+            margin-left: -50px;
+            animation: ripple 0.6s ease-out;
+            transform: scale(0);
+            pointer-events: none;
+        }
+        
+        @keyframes ripple {
+            to {
+                transform: scale(3);
+                opacity: 0;
+            }
+        }
+        
+        /* Gradient animation */
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.6s;
+        }
+        
+        .login-btn:hover::before {
+            left: 100%;
+        }
+    </style>
+</body>
+</html> 

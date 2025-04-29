@@ -1,0 +1,480 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}Product Varieties - Egyland Admin{% endblock %}
+{% block header_title %}
+    <!-- Header title removed -->
+{% endblock %}
+
+{% block breadcrumbs %}
+    <!-- Breadcrumbs moved to content -->
+{% endblock %}
+
+{% block header_actions %}
+    <!-- Header actions moved to content -->
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- New improved header and breadcrumbs design -->
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">
+                    Product Varieties
+                </h1>
+                <nav class="flex flex-wrap items-center text-sm text-gray-600">
+                    <a href="{% url 'dashboard:home' %}" class="hover:text-primary transition">
+                        <i class="fas fa-home"></i>
+                        <span class="hidden sm:inline">Dashboard</span>
+                    </a>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <span class="font-medium">Products</span>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <span class="text-primary font-medium">Varieties</span>
+                </nav>
+            </div>
+            <div class="mt-4 md:mt-0">
+                <button id="openAddModal" class="btn btn-primary">
+                    <i class="fas fa-plus mr-1"></i> Add New Variety
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- End of improved header and breadcrumbs -->
+
+    <!-- Filters -->
+    <div class="dashboard-card bg-white shadow rounded-lg mb-6">
+        <div class="p-6 border-b border-gray-200">
+            <form method="get" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="product" class="block text-sm font-medium text-gray-700 mb-1">Filter by Product</label>
+                        <select id="product" name="product" class="form-input">
+                            <option value="">All Products</option>
+                            {% for product in products %}
+                                <option value="{{ product.id }}" {% if request.GET.product|add:"0" == product.id %}selected{% endif %}>
+                                    {{ product.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+                        <input type="text" id="search" name="search" value="{{ request.GET.search|default:'' }}" 
+                               placeholder="Search by variety or product name" class="form-input w-full">
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-2">
+                    <a href="{% url 'dashboard:varieties' %}" class="btn btn-outline">
+                        <i class="fas fa-redo mr-1"></i> Reset
+                    </a>
+                    <button type="submit" class="btn btn-secondary">
+                        <i class="fas fa-filter mr-1"></i> Apply Filters
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Varieties List -->
+    <div class="dashboard-card bg-white shadow rounded-lg">
+        <div class="overflow-x-auto">
+            <table class="table-auto w-full">
+                <thead>
+                    <tr class="text-left bg-gray-50">
+                        <th class="p-3">Product</th>
+                        <th class="p-3">Variety Name</th>
+                        <th class="p-3">Image</th>
+                        <th class="p-3 text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if varieties %}
+                        {% for variety in varieties %}
+                            <tr class="border-b border-gray-200 hover:bg-gray-50">
+                                <td class="p-3">{{ variety.product.name }}</td>
+                                <td class="p-3">
+                                    <div class="font-medium text-gray-800">{{ variety.name }}</div>
+                                </td>
+                                <td class="p-3">
+                                    {% if variety.image %}
+                                        <img src="{{ variety.image.url }}" alt="{{ variety.name }}" class="w-12 h-12 object-contain rounded">
+                                    {% else %}
+                                        <div class="w-12 h-12 bg-gray-100 flex items-center justify-center rounded">
+                                            <i class="fas fa-seedling text-green-500"></i>
+                                        </div>
+                                    {% endif %}
+                                </td>
+                                <td class="p-3 text-center whitespace-nowrap">
+                                    <div class="inline-flex items-center space-x-3">
+                                        <button onclick="openEditModal({{ variety.id }})" class="w-7 h-7 rounded-full bg-gray-100 text-gray-600 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center transition-colors" title="Edit">
+                                            <i class="fas fa-edit text-xs"></i>
+                                        </button>
+                                        <button onclick="openDeleteModal({{ variety.id }}, '{{ variety.name|escapejs }}')" class="w-7 h-7 rounded-full bg-gray-100 text-gray-600 hover:bg-red-50 hover:text-red-600 flex items-center justify-center transition-colors" title="Delete">
+                                            <i class="fas fa-trash-alt text-xs"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr class="border-b border-gray-200">
+                            <td colspan="4" class="p-3 text-center text-gray-500">
+                                <div class="flex flex-col items-center justify-center py-6">
+                                    <i class="fas fa-seedling text-3xl mb-2 text-green-500"></i>
+                                    <p>No varieties found.</p>
+                                    <button id="openAddModalEmpty" class="text-primary hover:underline mt-1">Add your first variety</button>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if is_paginated %}
+        <div class="p-6 border-t border-gray-200">
+            <div class="pagination flex justify-between items-center">
+                <div>
+                    <span class="text-sm text-gray-600">Showing page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1{% if get_params %}&{{ get_params }}{% endif %}" class="btn btn-outline btn-sm">
+                            <i class="fas fa-angle-double-left"></i>
+                        </a>
+                        <a href="?page={{ page_obj.previous_page_number }}{% if get_params %}&{{ get_params }}{% endif %}" class="btn btn-outline btn-sm">
+                            <i class="fas fa-chevron-left mr-1"></i> Previous
+                        </a>
+                    {% else %}
+                        <button class="btn btn-outline btn-sm opacity-50" disabled>
+                            <i class="fas fa-chevron-left mr-1"></i> Previous
+                        </button>
+                    {% endif %}
+                    
+                    <span class="px-3 py-1 rounded-md mx-1 bg-primary text-white">
+                        {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
+                    
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}{% if get_params %}&{{ get_params }}{% endif %}" class="btn btn-outline btn-sm">
+                            Next <i class="fas fa-chevron-right ml-1"></i>
+                        </a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}{% if get_params %}&{{ get_params }}{% endif %}" class="btn btn-outline btn-sm">
+                            <i class="fas fa-angle-double-right"></i>
+                        </a>
+                    {% else %}
+                        <button class="btn btn-outline btn-sm opacity-50" disabled>
+                            Next <i class="fas fa-chevron-right ml-1"></i>
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Add Variety Modal -->
+<div id="addModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+            <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+        </div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                            Add New Variety
+                        </h3>
+                        <form id="addForm" action="{% url 'dashboard:variety_add' %}" method="post" enctype="multipart/form-data" class="space-y-4 w-full">
+                            {% csrf_token %}
+                            <div>
+                                <label for="modal_product" class="block text-sm font-medium text-gray-700 mb-1">Product <span class="text-red-600">*</span></label>
+                                <select name="product" id="modal_product" class="form-input w-full" required>
+                                    <option value="">---------</option>
+                                    {% for product in products %}
+                                        <option value="{{ product.id }}">{{ product.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <p class="error-message text-red-600 text-sm mt-1 hidden"></p>
+                            </div>
+                            
+                            <div>
+                                <label for="modal_name" class="block text-sm font-medium text-gray-700 mb-1">Variety Name <span class="text-red-600">*</span></label>
+                                <input type="text" name="name" id="modal_name" class="form-input w-full" required>
+                                <p class="error-message text-red-600 text-sm mt-1 hidden"></p>
+                            </div>
+                            
+                            <div>
+                                <label for="modal_image" class="block text-sm font-medium text-gray-700 mb-1">Image</label>
+                                <input type="file" name="image" id="modal_image" class="form-input w-full" accept="image/*">
+                                <p class="error-message text-red-600 text-sm mt-1 hidden"></p>
+                                
+                                <div id="image_preview" class="mt-3 hidden">
+                                    <div class="flex items-center">
+                                        <div class="mr-4">
+                                            <img id="preview_img" src="" alt="Preview" class="w-24 h-24 object-cover rounded">
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium">Image Preview</p>
+                                            <p id="preview_details" class="text-xs text-gray-500"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button type="button" id="submitAddForm" class="btn btn-primary w-full sm:w-auto sm:ml-3">
+                    <i class="fas fa-save mr-1"></i> Create Variety
+                </button>
+                <button type="button" id="closeAddModal" class="btn btn-outline mt-3 sm:mt-0 w-full sm:w-auto">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Variety Modal -->
+<div id="editModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+            <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+        </div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                            Edit Variety
+                        </h3>
+                        <form id="editForm" method="post" enctype="multipart/form-data" class="space-y-4 w-full">
+                            {% csrf_token %}
+                            <div>
+                                <label for="edit_product" class="block text-sm font-medium text-gray-700 mb-1">Product <span class="text-red-600">*</span></label>
+                                <select name="product" id="edit_product" class="form-input w-full" required>
+                                    <option value="">---------</option>
+                                    {% for product in products %}
+                                        <option value="{{ product.id }}">{{ product.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <p class="error-message text-red-600 text-sm mt-1 hidden"></p>
+                            </div>
+                            
+                            <div>
+                                <label for="edit_name" class="block text-sm font-medium text-gray-700 mb-1">Variety Name <span class="text-red-600">*</span></label>
+                                <input type="text" name="name" id="edit_name" class="form-input w-full" required>
+                                <p class="error-message text-red-600 text-sm mt-1 hidden"></p>
+                            </div>
+                            
+                            <div>
+                                <label for="edit_image" class="block text-sm font-medium text-gray-700 mb-1">Image</label>
+                                <input type="file" name="image" id="edit_image" class="form-input w-full" accept="image/*">
+                                <p class="error-message text-red-600 text-sm mt-1 hidden"></p>
+                                
+                                <div id="edit_image_preview" class="mt-3 hidden">
+                                    <div class="flex items-center">
+                                        <div class="mr-4">
+                                            <img id="edit_preview_img" src="" alt="Preview" class="w-24 h-24 object-cover rounded">
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium">Current Image</p>
+                                            <p class="text-xs text-gray-500">Upload a new image to replace it</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button type="button" id="submitEditForm" class="btn btn-primary w-full sm:w-auto sm:ml-3">
+                    <i class="fas fa-save mr-1"></i> Update Variety
+                </button>
+                <button type="button" id="closeEditModal" class="btn btn-outline mt-3 sm:mt-0 w-full sm:w-auto">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Variety Modal -->
+<div id="deleteModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+            <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+        </div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <i class="fas fa-exclamation-triangle text-red-600"></i>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">
+                            Delete Variety
+                        </h3>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500">
+                                Are you sure you want to delete variety <span id="varietyName" class="font-semibold"></span>? This action cannot be undone.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <form id="deleteForm" method="post" class="w-full sm:w-auto sm:ml-3">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger w-full">
+                        <i class="fas fa-trash-alt mr-1"></i> Delete
+                    </button>
+                </form>
+                <button type="button" id="closeDeleteModal" class="btn btn-outline mt-3 sm:mt-0 w-full sm:w-auto">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Modal control functions
+    function openModal(modalId) {
+        document.getElementById(modalId).classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+    }
+    
+    function closeModal(modalId) {
+        document.getElementById(modalId).classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+        
+        // For add/edit modals, clear form when closing
+        if (modalId === 'addModal' || modalId === 'editModal') {
+            const form = document.getElementById(modalId === 'addModal' ? 'addForm' : 'editForm');
+            form.reset();
+            
+            // Hide previews
+            if (modalId === 'addModal') {
+                document.getElementById('image_preview').classList.add('hidden');
+            } else {
+                document.getElementById('edit_image_preview').classList.add('hidden');
+            }
+            
+            // Clear error messages
+            form.querySelectorAll('.error-message').forEach(msg => {
+                msg.classList.add('hidden');
+                msg.textContent = '';
+            });
+        }
+    }
+
+    // Add variety modal
+    document.getElementById('openAddModal').addEventListener('click', () => openModal('addModal'));
+    document.getElementById('closeAddModal').addEventListener('click', () => closeModal('addModal'));
+    
+    if (document.getElementById('openAddModalEmpty')) {
+        document.getElementById('openAddModalEmpty').addEventListener('click', () => openModal('addModal'));
+    }
+
+    // Image preview for add modal
+    document.getElementById('modal_image').addEventListener('change', function(e) {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const previewContainer = document.getElementById('image_preview');
+                const previewImg = document.getElementById('preview_img');
+                const previewDetails = document.getElementById('preview_details');
+                
+                previewImg.src = event.target.result;
+                previewDetails.textContent = `${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+                previewContainer.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Submit add form
+    document.getElementById('submitAddForm').addEventListener('click', function() {
+        document.getElementById('addForm').submit();
+    });
+
+    // Edit variety modal
+    function openEditModal(varietyId) {
+        // Fetch variety data
+        fetch(`/dashboard/api/varieties/${varietyId}/`)
+            .then(response => response.json())
+            .then(variety => {
+                const form = document.getElementById('editForm');
+                form.action = `/dashboard/products/varieties/${varietyId}/edit/`;
+                
+                document.getElementById('edit_product').value = variety.product_id;
+                document.getElementById('edit_name').value = variety.name;
+                
+                // Show current image if exists
+                const previewContainer = document.getElementById('edit_image_preview');
+                const previewImg = document.getElementById('edit_preview_img');
+                
+                if (variety.image) {
+                    previewImg.src = variety.image;
+                    previewContainer.classList.remove('hidden');
+                } else {
+                    previewContainer.classList.add('hidden');
+                }
+                
+                openModal('editModal');
+            })
+            .catch(error => {
+                console.error('Error fetching variety data:', error);
+                alert('Failed to load variety data. Please try again.');
+            });
+    }
+    
+    document.getElementById('closeEditModal').addEventListener('click', () => closeModal('editModal'));
+    
+    // Image preview for edit modal
+    document.getElementById('edit_image').addEventListener('change', function(e) {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const previewContainer = document.getElementById('edit_image_preview');
+                const previewImg = document.getElementById('edit_preview_img');
+                
+                previewImg.src = event.target.result;
+                previewContainer.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    // Submit edit form
+    document.getElementById('submitEditForm').addEventListener('click', function() {
+        document.getElementById('editForm').submit();
+    });
+
+    // Delete variety modal
+    function openDeleteModal(varietyId, varietyName) {
+        document.getElementById('varietyName').textContent = varietyName;
+        document.getElementById('deleteForm').action = `/dashboard/products/varieties/${varietyId}/delete/`;
+        openModal('deleteModal');
+    }
+    
+    document.getElementById('closeDeleteModal').addEventListener('click', () => closeModal('deleteModal'));
+</script>
+{% endblock %} 

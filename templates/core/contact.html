@@ -1,0 +1,702 @@
+{% extends "base/home_base.html" %}
+{% load static %}
+
+{% block title %}Contact Us - Egyland{% endblock %}
+{% block meta_description %}Get in touch with Egyland for inquiries about our products or services.{% endblock %}
+
+{% block extra_css %}
+<!-- مكتبة Select2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+<style>
+    /* تفعيل التمرير في صفحة الاتصال */
+    html, body {
+        overflow: auto !important;
+        height: auto !important;
+        overflow-x: hidden !important;
+    }
+    
+    main.flex-grow {
+        overflow: visible !important;
+        overflow-y: auto !important;
+        background-image: url('{% static "img/map.png" %}');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    
+    /* إلغاء ستايل الهيدر والفوتر الثابت */
+    #main-header {
+        position: relative !important;
+    }
+    
+    footer {
+        position: relative !important;
+        bottom: auto !important;
+    }
+    
+    /* تصميم العنوان الرئيسي */
+    .page-title {
+        text-align: center;
+        margin-top: 2.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .page-title h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+    
+    .page-title span {
+        color: #39AE68;
+    }
+    
+    /* التصميم الرئيسي للمحتوى */
+    .contact-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+        display: flex;
+        flex-direction: row;
+    }
+
+    /* تصميم قسم معلومات الدول */
+    .country-info {
+        width: 50%;
+        padding-right: 2rem;
+    }
+
+    /* تصميم قسم النموذج */
+    .contact-form {
+        width: 50%;
+    }
+
+    @media (max-width: 768px) {
+        .contact-container {
+            flex-direction: column;
+            padding: 0 1.5rem;
+        }
+        .country-info {
+            width: 100%;
+            padding-right: unset;
+        }
+        .contact-form {
+            width: 100%;
+            margin-top: 2rem;
+        }
+
+    }
+    
+
+    
+
+    
+    /* تصميم بطاقة الدولة */
+    .country-card {
+        margin-bottom: 1.25rem;
+    }
+    
+    /* مكتب فرعي منزاح للجهة اليمنى */
+    .branch-office {
+        padding-left: 1.5rem;
+    }
+    
+    .country-name {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    
+    .country-flag {
+        width: 2rem;
+        height: 1.5rem;
+        margin-right: 0.75rem;
+    }
+    
+    .country-name h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+    
+    .country-details {
+        margin-left: 2.75rem;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+    
+    /* أيقونات معلومات الاتصال */
+    .contact-icon {
+        display: inline-flex;
+        width: 1rem;
+        height: 1rem;
+        margin-right: 0.5rem;
+        color: #6B7280;
+    }
+    
+    .address-item, .phone-item, .email-item {
+        display: flex;
+        align-items: center;
+    }
+    
+    /* تصميم النموذج */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+    
+    .form-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.375rem;
+        background-color: #f8fafc;
+    }
+    
+    .form-select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.375rem;
+        background-color: #f8fafc;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 0.5rem center;
+        background-repeat: no-repeat;
+        background-size: 1.5em 1.5em;
+    }
+    
+    /* تصميم حقل رقم الهاتف */
+    .phone-group {
+        display: flex;
+    }
+    
+    .phone-code {
+        width: 4rem;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+    
+    .phone-number {
+        flex: 1;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+    
+    /* تصميم زر الإرسال */
+    .submit-btn {
+        width: 100%;
+        background-color: #39AE68;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    .submit-btn:hover {
+        background-color: #2d8a52;
+    }
+    
+    /* تصميم قسم التواصل الاجتماعي */
+    .follow-us {
+        text-align: center;
+        margin-top: 3rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .follow-us h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    
+    .social-icons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+    
+    .social-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        background-color: white;
+        color: #39AE68;
+        transition: all 0.3s;
+    }
+    
+    .social-icon:hover {
+        background-color: #39AE68;
+        color: white;
+    }
+    
+    /* تصميم حقول النموذج عند التركيز */
+    .form-input:focus, .form-select:focus {
+        outline: none;
+        border-color: #39AE68;
+        box-shadow: 0 0 0 3px rgba(57, 174, 104, 0.2);
+    }
+    
+    /* تنسيق رسائل الخطأ */
+    .text-xs {
+        font-size: 0.75rem;
+    }
+    
+    .text-red-500 {
+        color: #ef4444;
+    }
+    
+    .mt-1 {
+        margin-top: 0.25rem;
+    }
+    
+    /* تنسيق خاص بـ intlTelInput */
+    .iti {
+        width: 100%;
+    }
+    
+    /* تنسيق خاص بـ Select2 */
+    .select2-container .select2-selection--single {
+        height: 47px !important;
+        padding: 0.5rem 0.5rem;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 0.375rem !important;
+    }
+    
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 1.5 !important;
+    }
+    
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 45px !important;
+    }
+    
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+        background-color: #39AE68 !important;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    // تفعيل التمرير في الصفحة
+    document.addEventListener('DOMContentLoaded', function() {
+        document.documentElement.style.overflow = 'auto';
+        document.body.style.overflow = 'auto';
+        document.body.style.height = 'auto';
+        document.querySelector('main').style.overflow = 'visible';
+        
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: '{{ message }}',
+                        confirmButtonColor: '#39AE68',
+                        confirmButtonText: 'OK',
+                        timer: 7000,
+                        timerProgressBar: true
+                    });
+                {% elif message.tags == 'error' %}
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: '{{ message }}',
+                        confirmButtonColor: '#39AE68',
+                        confirmButtonText: 'OK'
+                    });
+                {% elif message.tags == 'warning' %}
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Warning',
+                        text: '{{ message }}',
+                        confirmButtonColor: '#39AE68',
+                        confirmButtonText: 'OK'
+                    });
+                {% else %}
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Information',
+                        text: '{{ message }}',
+                        confirmButtonColor: '#39AE68',
+                        confirmButtonText: 'OK'
+                    });
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    });
+</script>
+<script src="{% static 'js/contact_form.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen">
+    <div class="page-title">
+        <h1>Contact <span>Us</span></h1>
+    </div>
+
+    <div class="contact-container">
+        <!-- معلومات الاتصال للبلدان -->
+        <div class="country-info">
+            <!-- المقر الرئيسي -->
+            {% if main_branch %}
+            <div class="country-card">
+                <div class="country-name">
+                    {% if main_branch.logo %}
+                    <img src="{{ main_branch.logo.url }}" alt="{{ main_branch.company_name }}" class="country-flag">
+                    {% else %}
+                    <img src="{% static 'img/flags/egypt.png' %}" alt="Egypt Flag" class="country-flag">
+                    {% endif %}
+                    <h3>{{ main_branch.company_name }} (Head Office)</h3>
+                </div>
+                <div class="country-details">
+                    <p class="address-item">
+                        <svg class="contact-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                        </svg>
+                        {{ main_branch.address }}
+                    </p>
+                    <p class="phone-item">
+                        <svg class="contact-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                        </svg>
+                        {{ main_branch.phone }}
+                    </p>
+                    <p class="email-item">
+                        <svg class="contact-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                        </svg>
+                        {{ main_branch.email }}
+                    </p>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- الفروع -->
+            {% for branch in branches %}
+            <div class="country-card branch-office">
+                <div class="country-name">
+                    {% if branch.flag_image %}
+                    <img src="{{ branch.flag_image.url }}" alt="{{ branch.country_name }} Flag" class="country-flag">
+                    {% else %}
+                    <img src="{% static 'img/flags/default-flag.png' %}" alt="{{ branch.country_name }} Flag" class="country-flag">
+                    {% endif %}
+                    <h3>{{ branch.country_name }}</h3>
+                </div>
+                <div class="country-details">
+                    <p class="address-item">
+                        <svg class="contact-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                        </svg>
+                        {{ branch.address }}
+                    </p>
+                    <p class="phone-item">
+                        <svg class="contact-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                        </svg>
+                        {{ branch.phone }}
+                    </p>
+                    <p class="email-item">
+                        <svg class="contact-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                        </svg>
+                        {{ branch.email }}
+                    </p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- نموذج الاتصال -->
+        <div class="contact-form">
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- الاسم -->
+                <div class="form-group">
+                    <label class="form-label">Name <span class="text-xs text-red-500">*</span></label>
+                    <input type="text" name="name" class="form-input" placeholder="Enter Name" required>
+                </div>
+                
+                <!-- الشركة -->
+                <div class="form-group">
+                    <label class="form-label">Company <span class="text-xs text-red-500">*</span></label>
+                    <input type="text" name="company" class="form-input" placeholder="Enter Company" required>
+                </div>
+                
+                <!-- الدولة -->
+                <div class="form-group">
+                    <label class="form-label">Country <span class="text-xs text-red-500">*</span></label>
+                    <select name="country" id="select2-country-wm-container" class="form-select" required>
+                        <option value="">Select Country</option>
+                        <option value="Afghanistan">Afghanistan</option>
+                        <option value="Albania">Albania</option>
+                        <option value="Algeria">Algeria</option>
+                        <option value="Andorra">Andorra</option>
+                        <option value="Angola">Angola</option>
+                        <option value="Antigua and Barbuda">Antigua and Barbuda</option>
+                        <option value="Argentina">Argentina</option>
+                        <option value="Armenia">Armenia</option>
+                        <option value="Australia">Australia</option>
+                        <option value="Austria">Austria</option>
+                        <option value="Azerbaijan">Azerbaijan</option>
+                        <option value="Bahamas">Bahamas</option>
+                        <option value="Bahrain">Bahrain</option>
+                        <option value="Bangladesh">Bangladesh</option>
+                        <option value="Barbados">Barbados</option>
+                        <option value="Belarus">Belarus</option>
+                        <option value="Belgium">Belgium</option>
+                        <option value="Belize">Belize</option>
+                        <option value="Benin">Benin</option>
+                        <option value="Bhutan">Bhutan</option>
+                        <option value="Bolivia">Bolivia</option>
+                        <option value="Bosnia and Herzegovina">Bosnia and Herzegovina</option>
+                        <option value="Botswana">Botswana</option>
+                        <option value="Brazil">Brazil</option>
+                        <option value="Brunei">Brunei</option>
+                        <option value="Bulgaria">Bulgaria</option>
+                        <option value="Burkina Faso">Burkina Faso</option>
+                        <option value="Burundi">Burundi</option>
+                        <option value="Cabo Verde">Cabo Verde</option>
+                        <option value="Cambodia">Cambodia</option>
+                        <option value="Cameroon">Cameroon</option>
+                        <option value="Canada">Canada</option>
+                        <option value="Central African Republic">Central African Republic</option>
+                        <option value="Chad">Chad</option>
+                        <option value="Chile">Chile</option>
+                        <option value="China">China</option>
+                        <option value="Colombia">Colombia</option>
+                        <option value="Comoros">Comoros</option>
+                        <option value="Congo">Congo</option>
+                        <option value="Costa Rica">Costa Rica</option>
+                        <option value="Croatia">Croatia</option>
+                        <option value="Cuba">Cuba</option>
+                        <option value="Cyprus">Cyprus</option>
+                        <option value="Czech Republic">Czech Republic</option>
+                        <option value="Denmark">Denmark</option>
+                        <option value="Djibouti">Djibouti</option>
+                        <option value="Dominica">Dominica</option>
+                        <option value="Dominican Republic">Dominican Republic</option>
+                        <option value="East Timor">East Timor</option>
+                        <option value="Ecuador">Ecuador</option>
+                        <option value="Egypt">Egypt</option>
+                        <option value="El Salvador">El Salvador</option>
+                        <option value="Equatorial Guinea">Equatorial Guinea</option>
+                        <option value="Eritrea">Eritrea</option>
+                        <option value="Estonia">Estonia</option>
+                        <option value="Eswatini">Eswatini</option>
+                        <option value="Ethiopia">Ethiopia</option>
+                        <option value="Fiji">Fiji</option>
+                        <option value="Finland">Finland</option>
+                        <option value="France">France</option>
+                        <option value="Gabon">Gabon</option>
+                        <option value="Gambia">Gambia</option>
+                        <option value="Georgia">Georgia</option>
+                        <option value="Germany">Germany</option>
+                        <option value="Ghana">Ghana</option>
+                        <option value="Greece">Greece</option>
+                        <option value="Grenada">Grenada</option>
+                        <option value="Guatemala">Guatemala</option>
+                        <option value="Guinea">Guinea</option>
+                        <option value="Guinea-Bissau">Guinea-Bissau</option>
+                        <option value="Guyana">Guyana</option>
+                        <option value="Haiti">Haiti</option>
+                        <option value="Honduras">Honduras</option>
+                        <option value="Hungary">Hungary</option>
+                        <option value="Iceland">Iceland</option>
+                        <option value="India">India</option>
+                        <option value="Indonesia">Indonesia</option>
+                        <option value="Iran">Iran</option>
+                        <option value="Iraq">Iraq</option>
+                        <option value="Ireland">Ireland</option>
+                        <option value="Israel">Israel</option>
+                        <option value="Italy">Italy</option>
+                        <option value="Jamaica">Jamaica</option>
+                        <option value="Japan">Japan</option>
+                        <option value="Jordan">Jordan</option>
+                        <option value="Kazakhstan">Kazakhstan</option>
+                        <option value="Kenya">Kenya</option>
+                        <option value="Kiribati">Kiribati</option>
+                        <option value="Korea, North">Korea, North</option>
+                        <option value="Korea, South">Korea, South</option>
+                        <option value="Kosovo">Kosovo</option>
+                        <option value="Kuwait">Kuwait</option>
+                        <option value="Kyrgyzstan">Kyrgyzstan</option>
+                        <option value="Laos">Laos</option>
+                        <option value="Latvia">Latvia</option>
+                        <option value="Lebanon">Lebanon</option>
+                        <option value="Lesotho">Lesotho</option>
+                        <option value="Liberia">Liberia</option>
+                        <option value="Libya">Libya</option>
+                        <option value="Liechtenstein">Liechtenstein</option>
+                        <option value="Lithuania">Lithuania</option>
+                        <option value="Luxembourg">Luxembourg</option>
+                        <option value="Madagascar">Madagascar</option>
+                        <option value="Malawi">Malawi</option>
+                        <option value="Malaysia">Malaysia</option>
+                        <option value="Maldives">Maldives</option>
+                        <option value="Mali">Mali</option>
+                        <option value="Malta">Malta</option>
+                        <option value="Marshall Islands">Marshall Islands</option>
+                        <option value="Mauritania">Mauritania</option>
+                        <option value="Mauritius">Mauritius</option>
+                        <option value="Mexico">Mexico</option>
+                        <option value="Micronesia">Micronesia</option>
+                        <option value="Moldova">Moldova</option>
+                        <option value="Monaco">Monaco</option>
+                        <option value="Mongolia">Mongolia</option>
+                        <option value="Montenegro">Montenegro</option>
+                        <option value="Morocco">Morocco</option>
+                        <option value="Mozambique">Mozambique</option>
+                        <option value="Myanmar">Myanmar</option>
+                        <option value="Namibia">Namibia</option>
+                        <option value="Nauru">Nauru</option>
+                        <option value="Nepal">Nepal</option>
+                        <option value="Netherlands">Netherlands</option>
+                        <option value="New Zealand">New Zealand</option>
+                        <option value="Nicaragua">Nicaragua</option>
+                        <option value="Niger">Niger</option>
+                        <option value="Nigeria">Nigeria</option>
+                        <option value="North Macedonia">North Macedonia</option>
+                        <option value="Norway">Norway</option>
+                        <option value="Oman">Oman</option>
+                        <option value="Pakistan">Pakistan</option>
+                        <option value="Palau">Palau</option>
+                        <option value="Palestine">Palestine</option>
+                        <option value="Panama">Panama</option>
+                        <option value="Papua New Guinea">Papua New Guinea</option>
+                        <option value="Paraguay">Paraguay</option>
+                        <option value="Peru">Peru</option>
+                        <option value="Philippines">Philippines</option>
+                        <option value="Poland">Poland</option>
+                        <option value="Portugal">Portugal</option>
+                        <option value="Qatar">Qatar</option>
+                        <option value="Romania">Romania</option>
+                        <option value="Russia">Russia</option>
+                        <option value="Rwanda">Rwanda</option>
+                        <option value="Saint Kitts and Nevis">Saint Kitts and Nevis</option>
+                        <option value="Saint Lucia">Saint Lucia</option>
+                        <option value="Saint Vincent and the Grenadines">Saint Vincent and the Grenadines</option>
+                        <option value="Samoa">Samoa</option>
+                        <option value="San Marino">San Marino</option>
+                        <option value="Sao Tome and Principe">Sao Tome and Principe</option>
+                        <option value="Saudi Arabia">Saudi Arabia</option>
+                        <option value="Senegal">Senegal</option>
+                        <option value="Serbia">Serbia</option>
+                        <option value="Seychelles">Seychelles</option>
+                        <option value="Sierra Leone">Sierra Leone</option>
+                        <option value="Singapore">Singapore</option>
+                        <option value="Slovakia">Slovakia</option>
+                        <option value="Slovenia">Slovenia</option>
+                        <option value="Solomon Islands">Solomon Islands</option>
+                        <option value="Somalia">Somalia</option>
+                        <option value="South Africa">South Africa</option>
+                        <option value="South Sudan">South Sudan</option>
+                        <option value="Spain">Spain</option>
+                        <option value="Sri Lanka">Sri Lanka</option>
+                        <option value="Sudan">Sudan</option>
+                        <option value="Suriname">Suriname</option>
+                        <option value="Sweden">Sweden</option>
+                        <option value="Switzerland">Switzerland</option>
+                        <option value="Syria">Syria</option>
+                        <option value="Taiwan">Taiwan</option>
+                        <option value="Tajikistan">Tajikistan</option>
+                        <option value="Tanzania">Tanzania</option>
+                        <option value="Thailand">Thailand</option>
+                        <option value="Togo">Togo</option>
+                        <option value="Tonga">Tonga</option>
+                        <option value="Trinidad and Tobago">Trinidad and Tobago</option>
+                        <option value="Tunisia">Tunisia</option>
+                        <option value="Turkey">Turkey</option>
+                        <option value="Turkmenistan">Turkmenistan</option>
+                        <option value="Tuvalu">Tuvalu</option>
+                        <option value="Uganda">Uganda</option>
+                        <option value="Ukraine">Ukraine</option>
+                        <option value="United Arab Emirates">United Arab Emirates</option>
+                        <option value="United Kingdom">United Kingdom</option>
+                        <option value="United States">United States</option>
+                        <option value="Uruguay">Uruguay</option>
+                        <option value="Uzbekistan">Uzbekistan</option>
+                        <option value="Vanuatu">Vanuatu</option>
+                        <option value="Vatican City">Vatican City</option>
+                        <option value="Venezuela">Venezuela</option>
+                        <option value="Vietnam">Vietnam</option>
+                        <option value="Yemen">Yemen</option>
+                        <option value="Zambia">Zambia</option>
+                        <option value="Zimbabwe">Zimbabwe</option>
+                    </select>
+                </div>
+                
+                <!-- البريد الإلكتروني -->
+                <div class="form-group">
+                    <label class="form-label">Email <span class="text-xs text-red-500">*</span></label>
+                    <input type="email" name="email" class="form-input" placeholder="Ex : Egyland@gmail.com" required>
+                    <div id="email-error" class="text-xs text-red-500 mt-1" style="display: none;"></div>
+                </div>
+                
+                <!-- رقم الهاتف -->
+                <div class="form-group">
+                    <label class="form-label">Mobile</label>
+                    <!-- إزالة phone-group والاعتماد على intlTelInput -->
+                    <input type="tel" name="phone" class="form-input" placeholder="Enter Mobile">
+                    <div id="phone-error" class="text-xs text-red-500 mt-1" style="display: none;"></div>
+                    <!-- احتفاظ بحقل رمز الدولة المخفي للتوافقية مع النظام القديم -->
+                    <select name="country_code" style="display: none;">
+                        <option value="20">+20</option>
+                        <option value="44">+44</option>
+                        <option value="971">+971</option>
+                        <option value="1">+1</option>
+                        <option value="966">+966</option>
+                    </select>
+                </div>
+                
+                <!-- الرسالة -->
+                <div class="form-group">
+                    <label class="form-label">Message <span class="text-xs text-red-500">*</span></label>
+                    <textarea name="message" rows="4" class="form-input" placeholder="Enter Message" required></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn">
+                    Submit
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- روابط التواصل الاجتماعي -->
+    <div class="follow-us">
+        <h3>Follow Us</h3>
+        <div class="social-icons">
+            <a href="#" class="social-icon" aria-label="Instagram">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+            </a>
+            <a href="#" class="social-icon" aria-label="LinkedIn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                </svg>
+            </a>
+            <a href="#" class="social-icon" aria-label="Facebook">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,383 @@
+{% extends "base/home_base.html" %}
+{% load static %}
+
+{% block title %}Product Request - Egyland{% endblock %}
+{% block meta_description %}Request a product quote or sample from Egyland{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* تفعيل التمرير في الصفحة */
+    html, body {
+        overflow: auto !important;
+        height: auto !important;
+        overflow-x: hidden !important;
+    }
+    
+    main.flex-grow {
+        overflow: visible !important;
+        overflow-y: auto !important;
+    }
+    
+    /* إلغاء ستايل الهيدر والفوتر الثابت */
+    #main-header {
+        position: relative !important;
+    }
+    
+    footer {
+        position: relative !important;
+        bottom: auto !important;
+    }
+    
+    /* تصميم العنوان الرئيسي */
+    .page-title {
+        text-align: center;
+        margin-top: 2.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .page-title h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+    
+    .page-title span {
+        color: #39AE68;
+    }
+    
+    /* تصميم المحتوى الرئيسي */
+    .request-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* تصميم النموذج */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+    
+    .form-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.375rem;
+        background-color: #f8fafc;
+    }
+    
+    .form-select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.375rem;
+        background-color: #f8fafc;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 0.5rem center;
+        background-repeat: no-repeat;
+        background-size: 1.5em 1.5em;
+    }
+    
+    /* تصميم زر الإرسال */
+    .submit-btn {
+        width: 100%;
+        background-color: #39AE68;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    .submit-btn:hover {
+        background-color: #2d8a52;
+    }
+    
+    /* تصميم حقول النموذج عند التركيز */
+    .form-input:focus, .form-select:focus {
+        outline: none;
+        border-color: #39AE68;
+        box-shadow: 0 0 0 3px rgba(57, 174, 104, 0.2);
+    }
+    
+    /* تصميم اختيار نوع الاستفسار */
+    .inquiry-type-selector {
+        display: flex;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.375rem;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+    
+    .inquiry-type-option {
+        flex: 1;
+        text-align: center;
+        padding: 1rem;
+        background-color: #f8fafc;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .inquiry-type-option.active {
+        background-color: #39AE68;
+        color: white;
+    }
+    
+    /* قسم اختيار المنتجات */
+    .products-section {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.375rem;
+        background-color: #f8fafc;
+    }
+    
+    /* قسم تفاصيل الطلب */
+    .request-details {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.375rem;
+        background-color: #f8fafc;
+    }
+    
+    .hidden {
+        display: none;
+    }
+    
+    /* تنسيق الأقسام الرئيسية */
+    .form-section {
+        border-top: 1px solid #e2e8f0;
+        padding-top: 1.5rem;
+        margin-top: 1.5rem;
+    }
+    
+    .form-section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #39AE68;
+    }
+    
+    /* تنسيق التقويم */
+    input[type="date"] {
+        appearance: none;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // تفعيل التمرير في الصفحة
+        document.documentElement.style.overflow = 'auto';
+        document.body.style.overflow = 'auto';
+        document.body.style.height = 'auto';
+        document.querySelector('main').style.overflow = 'visible';
+        
+        // التبديل بين أنواع الاستفسار
+        const inquiryTypeInputs = document.querySelectorAll('input[name="inquiry_type"]');
+        const productsSection = document.getElementById('products-section');
+        const requestDetailsSection = document.getElementById('request-details-section');
+        
+        inquiryTypeInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                if (this.value === 'product_specific') {
+                    productsSection.classList.remove('hidden');
+                    requestDetailsSection.classList.remove('hidden');
+                } else {
+                    productsSection.classList.add('hidden');
+                    requestDetailsSection.classList.add('hidden');
+                }
+            });
+        });
+        
+        // إظهار الأقسام المناسبة إذا كان نوع الاستفسار هو خاص بالمنتج
+        const currentInquiryType = document.querySelector('input[name="inquiry_type"]:checked').value;
+        if (currentInquiryType === 'product_specific') {
+            productsSection.classList.remove('hidden');
+            requestDetailsSection.classList.remove('hidden');
+        }
+        
+        // تنشيط الخلفية بالنقر
+        const typeOptions = document.querySelectorAll('.inquiry-type-option');
+        typeOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                typeOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                
+                // تحديد الراديو
+                const radio = this.querySelector('input[type="radio"]');
+                radio.checked = true;
+                
+                // إظهار/إخفاء الأقسام
+                if (radio.value === 'product_specific') {
+                    productsSection.classList.remove('hidden');
+                    requestDetailsSection.classList.remove('hidden');
+                } else {
+                    productsSection.classList.add('hidden');
+                    requestDetailsSection.classList.add('hidden');
+                }
+            });
+        });
+        
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                    toastr.success('{{ message }}');
+                {% elif message.tags == 'error' %}
+                    toastr.error('{{ message }}');
+                {% elif message.tags == 'warning' %}
+                    toastr.warning('{{ message }}');
+                {% else %}
+                    toastr.info('{{ message }}');
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen">
+    <div class="page-title">
+        <h1>Product <span>Request</span></h1>
+    </div>
+
+    <div class="request-container">
+        <form method="post">
+            {% csrf_token %}
+            
+            <!-- Inquiry Type Selection -->
+            <div class="form-group">
+                <label class="form-label">Request Type</label>
+                <div class="inquiry-type-selector">
+                    <label class="inquiry-type-option {% if form.inquiry_type.value == 'general' or not form.inquiry_type.value %}active{% endif %}">
+                        <input type="radio" name="inquiry_type" value="general" {% if form.inquiry_type.value == 'general' or not form.inquiry_type.value %}checked{% endif %} class="hidden">
+                        General Request
+                    </label>
+                    <label class="inquiry-type-option {% if form.inquiry_type.value == 'product_specific' %}active{% endif %}">
+                        <input type="radio" name="inquiry_type" value="product_specific" {% if form.inquiry_type.value == 'product_specific' %}checked{% endif %} class="hidden">
+                        Product Request
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Products Selection (initially hidden for general inquiries) -->
+            <div id="products-section" class="form-group products-section {% if form.inquiry_type.value != 'product_specific' %}hidden{% endif %}">
+                <label class="form-label">Select Product(s) <span class="text-xs text-red-500">*</span></label>
+                <select name="products" multiple class="form-select" style="height: 150px;">
+                    {% for product in form.fields.products.queryset %}
+                        <option value="{{ product.id }}" {% if product.id|stringformat:"i" in form.products.value %}selected{% endif %}>
+                            {{ product.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+                {% if form.products.errors %}
+                    <div class="text-red-500 text-xs mt-1">{{ form.products.errors.0 }}</div>
+                {% endif %}
+            </div>
+            
+            <!-- Request Details Section -->
+            <div id="request-details-section" class="form-group request-details {% if form.inquiry_type.value != 'product_specific' %}hidden{% endif %}">
+                <div class="form-section-title">Request Details</div>
+                
+                <div class="form-group">
+                    <label class="form-label">Quantity</label>
+                    <input type="text" name="product_quantity" class="form-input" value="{{ form.product_quantity.value|default:'' }}" placeholder="e.g., 1000 kg, 500 units, etc.">
+                    {% if form.product_quantity.errors %}
+                        <div class="text-red-500 text-xs mt-1">{{ form.product_quantity.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Target Price Range</label>
+                    <input type="text" name="target_price_range" class="form-input" value="{{ form.target_price_range.value|default:'' }}" placeholder="e.g., $10-15 per kg">
+                    {% if form.target_price_range.errors %}
+                        <div class="text-red-500 text-xs mt-1">{{ form.target_price_range.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Preferred Delivery Date</label>
+                    <input type="date" name="preferred_delivery_date" class="form-input" value="{{ form.preferred_delivery_date.value|date:'Y-m-d'|default:'' }}">
+                    {% if form.preferred_delivery_date.errors %}
+                        <div class="text-red-500 text-xs mt-1">{{ form.preferred_delivery_date.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Contact Information -->
+            <div class="form-section">
+                <div class="form-section-title">Contact Information</div>
+                
+                <div class="form-group">
+                    <label class="form-label">Full Name <span class="text-xs text-red-500">*</span></label>
+                    <input type="text" name="name" required class="form-input" value="{{ form.name.value|default:'' }}">
+                    {% if form.name.errors %}
+                        <div class="text-red-500 text-xs mt-1">{{ form.name.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Company <span class="text-xs text-red-500">*</span></label>
+                    <input type="text" name="company" required class="form-input" value="{{ form.company.value|default:'' }}">
+                    {% if form.company.errors %}
+                        <div class="text-red-500 text-xs mt-1">{{ form.company.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Email <span class="text-xs text-red-500">*</span></label>
+                    <input type="email" name="email" required class="form-input" value="{{ form.email.value|default:'' }}">
+                    {% if form.email.errors %}
+                        <div class="text-red-500 text-xs mt-1">{{ form.email.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Phone <span class="text-xs text-red-500">*</span></label>
+                    <input type="tel" name="phone" required class="form-input" value="{{ form.phone.value|default:'' }}">
+                    {% if form.phone.errors %}
+                        <div class="text-red-500 text-xs mt-1">{{ form.phone.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Country <span class="text-xs text-red-500">*</span></label>
+                    <input type="text" name="country" required class="form-input" value="{{ form.country.value|default:'' }}">
+                    {% if form.country.errors %}
+                        <div class="text-red-500 text-xs mt-1">{{ form.country.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Additional Details -->
+            <div class="form-section">
+                <div class="form-section-title">Additional Information</div>
+                
+                <div class="form-group">
+                    <textarea name="message" rows="6" class="form-input" placeholder="Any additional details about your request...">{{ form.message.value|default:'' }}</textarea>
+                    {% if form.message.errors %}
+                        <div class="text-red-500 text-xs mt-1">{{ form.message.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <button type="submit" class="submit-btn">
+                Submit Request
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %} 

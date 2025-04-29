@@ -1,0 +1,312 @@
+/**
+ * مودال الاستفسارات
+ */
+
+/* متغيرات الألوان من خلال قيم مباشرة */
+
+/* مودال الاستفسارات */
+.inquiry-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.inquiry-modal.active {
+  display: block;
+}
+
+.inquiry-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1001;
+}
+
+.inquiry-modal-container {
+  position: relative;
+  max-width: 800px;
+  width: 90%;
+  margin: 2rem auto;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 1002;
+}
+
+@media (max-width: 768px) {
+  .inquiry-modal-container {
+    width: 95%;
+    margin: 1rem auto;
+  }
+}
+
+.inquiry-modal-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.inquiry-modal-header h2 {
+  font-size: 1.75rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.inquiry-modal-header h2 span {
+  color: #39AE68;
+}
+
+.inquiry-modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+  transition: color 0.3s;
+}
+
+.inquiry-modal-close:hover {
+  color: #333;
+}
+
+.inquiry-modal-body {
+  padding: 1.5rem;
+}
+
+/* ستايل النموذج داخل المودال */
+#inquiryForm .form-group {
+  margin-bottom: 1.5rem;
+}
+
+#inquiryForm .form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333333;
+}
+
+#inquiryForm .form-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.375rem;
+  background-color: #f8fafc;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#inquiryForm .form-input:focus {
+  outline: none;
+  border-color: #39AE68;
+  box-shadow: 0 0 0 3px rgba(57, 174, 104, 0.2);
+}
+
+#inquiryForm .submit-btn {
+  width: 100%;
+  background-color: #39AE68;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#inquiryForm .submit-btn:hover {
+  background-color: #2d8a52;
+}
+
+/* تصميم محسن لقائمة المنتجات */
+#inquiryForm .form-select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.375rem;
+  background-color: var(--bg-color);
+  appearance: none;
+  background-image: none;
+}
+
+#inquiryForm .form-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(57, 174, 104, 0.2);
+}
+
+/* تصميم قائمة المنتجات المحسنة */
+#products-select {
+  height: 120px !important;
+  overflow-y: auto;
+}
+
+#products-select option {
+  padding: 8px 10px;
+  margin: 2px 0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#products-select option:hover {
+  background-color: #f0f9f4;
+}
+
+#products-select option:checked {
+  background-color: var(--primary-color) !important;
+  color: white;
+  font-weight: 500;
+  position: relative;
+}
+
+/* تصميم اختيار نوع الاستفسار */
+.inquiry-type-selector {
+  display: flex;
+  border: 1px solid var(--border-color);
+  border-radius: 0.375rem;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.inquiry-type-option {
+  flex: 1;
+  text-align: center;
+  padding: 1rem;
+  background-color: var(--bg-color);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.inquiry-type-option.active {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* قسم اختيار المنتجات */
+.products-section {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.375rem;
+  background-color: var(--bg-color);
+}
+
+.hidden {
+  display: none;
+}
+
+/* انيميشن للمودال */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.inquiry-modal.active .inquiry-modal-overlay {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.inquiry-modal.active .inquiry-modal-container {
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+/* تخصيص تنسيق إشعارات toastr للنافذة المنبثقة */
+.inquiry-toast {
+  max-width: 400px !important;
+  width: auto !important;
+  border-radius: 6px !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  padding: 16px !important;
+  font-family: inherit !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+  opacity: 1 !important;
+}
+
+.toast-success.inquiry-toast {
+  background-color: #10b981 !important;
+  color: #ffffff !important;
+}
+
+.toast-error.inquiry-toast {
+  background-color: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+.toast-info.inquiry-toast {
+  background-color: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+.toast-warning.inquiry-toast {
+  background-color: #f59e0b !important;
+  color: #ffffff !important;
+}
+
+/* تنسيق لزر الإغلاق في الإشعارات */
+.inquiry-toast .toast-close-button {
+  right: 12px !important;
+  top: 12px !important;
+  opacity: 0.8 !important;
+  text-shadow: none !important;
+  color: #ffffff !important;
+}
+
+.inquiry-toast .toast-close-button:hover {
+  opacity: 1 !important;
+}
+
+/* تنسيق لشريط التقدم في الإشعارات */
+.inquiry-toast .toast-progress {
+  height: 4px !important;
+  bottom: 0 !important;
+  opacity: 0.6 !important;
+}
+
+/* تحديد موضع ظهور الإشعارات */
+.toast-top-center {
+  top: 12px !important;
+}
+
+.toast-top-center > div {
+  margin: 0 auto !important;
+}
+
+/* تعديل حجم مربع النص */
+#inquiryForm textarea.form-input {
+  height: 100px;
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* تحسين سكرول بار القائمة */
+#products-select::-webkit-scrollbar {
+  width: 6px;
+}
+
+#products-select::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+#products-select::-webkit-scrollbar-thumb {
+  background: #c5c5c5;
+  border-radius: 10px;
+}
+
+#products-select::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color);
+} 

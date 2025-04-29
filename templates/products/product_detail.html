@@ -1,0 +1,1027 @@
+﻿{% extends "base/home_base.html" %}
+{% load static %}
+
+{% block title %}
+{% if variety %}
+{{ variety.product.meta_title|default:variety.product.name }} - {{ variety.name }} - Egyland
+{% else %}
+{{ product.meta_title|default:product.name }} - Egyland
+{% endif %}
+{% endblock title %}
+
+{% block meta_description %}
+{% if variety %}
+{{ variety.description|default:variety.product.meta_description }}
+{% else %}
+{{ product.meta_description }}
+{% endif %}
+{% endblock meta_description %}
+
+{% block meta_keywords %}
+{{ product.meta_keywords }}
+{% endblock meta_keywords %}
+
+{% block extra_meta %}
+<meta name="product-icon" content="{% if product.icon %}{{ product.icon.url }}{% else %}{% static 'img/products/Strawberry/strawberry-icon.png' %}{% endif %}">
+{% endblock extra_meta %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/products/product_detail.css' %}?v={% now 'U' %}">
+<link rel="stylesheet" href="{% static 'css/components/inquiry_modal.css' %}">
+{% if product.is_special %}
+<link rel="stylesheet" href="{% static 'css/special_product.css' %}">
+{% endif %}
+<style>
+  .fresh-product-float-image {
+    position: absolute;
+    right: 0;
+    top: 60px;
+    height: auto;
+    max-height: 80vh;
+    max-width: 40%;
+    object-fit: contain;
+    z-index: 1;
+  }
+</style>
+{% endblock extra_css %}
+
+{% block html_class %}{% if product.is_special %}special-product-page{% endif %}{% endblock %}
+{% block body_class %}{% if product.is_special %}special-product-page{% endif %}{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/products/product_detail.js' %}?v={% now 'U' %}"></script>
+<script src="{% static 'js/components/inquiry_modal.js' %}"></script>
+{% if product.is_special %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // إضافة كلاس خاص بالصفحة
+        document.documentElement.classList.add('special-product-page');
+        
+        // ضبط حجم القسم الرئيسي
+        var specialSection = document.querySelector('.special-product-section');
+        var header = document.querySelector('header');
+        var footer = document.querySelector('footer');
+        
+        if (specialSection && header && footer) {
+            function adjustHeight() {
+                // حساب ارتفاع الهيدر والفوتر تلقائيًا
+                var headerHeight = header.offsetHeight;
+                var footerHeight = footer.offsetHeight;
+                var windowHeight = window.innerHeight;
+                
+                // احتساب المساحة المتاحة
+                var availableHeight = windowHeight - headerHeight - 50; // نأخذ في الاعتبار هامش إضافي
+                
+                // ضبط ارتفاع القسم بحيث لا يكون أطول من المساحة المتاحة
+                specialSection.style.maxHeight = `${availableHeight}px`;
+                specialSection.style.minHeight = 'auto';
+                
+                // تحديث موضع المحتوى
+                var container = document.querySelector('.special-product-container');
+                if (container) {
+                    container.style.position = 'relative';
+                    container.style.top = '-15px';  // رفع المحتوى للأعلى قليلاً
+                }
+            }
+            
+            // ضبط الارتفاع عند تحميل الصفحة
+            adjustHeight();
+            
+            // إعادة ضبط الارتفاع عند تغيير حجم النافذة
+            window.addEventListener('resize', adjustHeight);
+        }
+        
+        // التأكد من ظهور الفوتر
+        if (footer) {
+            footer.style.display = 'block';
+            footer.style.position = 'relative';
+            footer.style.zIndex = '10';
+        }
+    });
+</script>
+{% endif %}
+{% endblock extra_js %}
+
+{% block content %}
+{% if product.is_special %}
+    <!-- Special product template -->
+    <div class="special-product-section">
+        <div class="special-product-container">
+            <div class="special-product-content">
+                <div class="special-product-header">
+                    <h1>{{ product.name }}</h1>
+                </div>
+                <div class="special-product-description">
+                    {{ product.description|safe }}
+                </div>
+                <a href="#" class="special-product-button inquiry-button" data-product-id="{{ product.id }}">
+                    More inquiries
+                </a>
+            </div>
+        </div>
+        <div class="special-product-image">
+            {% if product.bg_image %}
+                <img src="{{ product.bg_image.url }}" alt="{{ product.name }}" class="right-bottom-img" />
+            {% endif %}
+        </div>
+    </div>
+{% else %}
+    <!-- صور الخلفية -->
+    {% if product.background_left %}
+    <img
+      src="{{ product.background_left.url }}"
+      alt="Background"
+      class="background-left"
+    />
+    {% endif %}
+    {% if product.background_right %}
+    <img
+      src="{{ product.background_right.url }}"
+      alt="Background"
+      class="background-right"
+    />
+    {% endif %}
+    
+    <!-- صورة المنتج للمنتجات الطازجة فقط - خارج الديف الرئيسي -->
+    {% if product.product_type == 'fresh' %}
+      {% if variety and variety.image %}
+      <img
+        src="{{ variety.image.url }}"
+        alt="{{ variety.name }} Fresh"
+        class="fresh-product-float-image"
+      />
+      {% elif product.fresh_image %}
+      <img
+        src="{{ product.fresh_image.url }}"
+        alt="{{ product.name }} Fresh"
+        class="fresh-product-float-image"
+      />
+      {% endif %}
+    {% endif %}
+
+    <div class="{% if product.product_type == 'general' %}general-product-page{% elif product.product_type == 'fresh' %}fresh-product-page{% endif %}">
+    <!-- عنوان الصفحة -->
+    <div class="page-title">
+      {% if variety %}
+      <h1><span>{{ product.name }} - {{ variety.name }}</span></h1>
+      {% else %}
+      <h1><span>{{ product.name }}</span></h1>
+      {% endif %}
+    </div>
+
+    <div class="product-container">
+      <!-- قسم المنتج الرئيسي -->
+      <div class="product-row {% if product.product_type == 'general' %}product-row-general{% elif product.product_type == 'fresh' %}product-row-fresh{% endif %}">
+        {% if product.product_type == 'general' %}
+        <!-- قسم المنتج العام -->
+        <div class="product-col">
+          {% if variety %}
+          <h2 class="product-type-title">{{ product.name }} - {{ variety.name }}</h2>
+          {% else %}
+          <h2 class="product-type-title">{{ product.name }}</h2>
+          {% endif %}
+          
+          <div class="product-image-container">
+            {% if variety and variety.image %}
+            <img
+              src="{{ variety.image.url }}"
+              alt="{{ variety.name }}"
+              class="product-image"
+            />
+            {% elif product.fresh_image %}
+            <img
+              src="{{ product.fresh_image.url }}"
+              alt="{{ product.name }}"
+              class="product-image"
+            />
+            {% else %}
+            <img
+              src="{% static 'img/products/default-product.png' %}"
+              alt="{{ product.name }}"
+              class="product-image"
+            />
+            {% endif %}
+          </div>
+
+          <!-- وصف المنتج والأنواع -->
+          <div class="product-description">
+            {% if variety %}
+            {{ variety.description|default:product.description|safe }}
+            {% else %}
+            {{ product.description|safe }}
+            {% endif %}
+          </div>
+          <a href="#" class="inquiry-button general-inquiry-button" data-product-id="{{ product.id }}">More inquiries</a>
+        </div>
+        {% elif product.product_type == 'fresh' %}
+        <!-- قسم منتج طازج فقط - منفصل عن المنتجات العامة -->
+        <div class="product-col product-col-fresh">
+          <!-- عرض صورة الليست للموبايل فقط -->
+          {% if variety and variety.image %}
+          <img
+            src="{{ variety.image.url }}"
+            alt="{{ variety.name }} Fresh"
+            class="fresh-product-mobile-image"
+          />
+          {% elif product.list_image %}
+          <img
+            src="{{ product.list_image.url }}"
+            alt="{{ product.name }} Fresh"
+            class="fresh-product-mobile-image"
+          />
+          {% elif product.fresh_image %}
+          <img
+            src="{{ product.fresh_image.url }}"
+            alt="{{ product.name }} Fresh"
+            class="fresh-product-mobile-image"
+          />
+          {% endif %}
+          
+          {% if variety %}
+          <h2 class="product-type-title">{{ product.name }} - {{ variety.name }}</h2>
+          {% else %}
+          <h2 class="product-type-title">{{ product.name }}</h2>
+          {% endif %}
+          
+          <!-- هنا نحذف كونتينر الصورة للمنتجات الطازجة لأننا أضفناها في الأعلى -->
+          <p class="product-description">
+            {% if variety and variety.description %}
+              {{ variety.description|safe }}
+            {% elif product.fresh_description %}
+              {{ product.fresh_description|safe }}
+            {% else %}
+              {{ product.description|safe }}
+            {% endif %}
+          </p>
+          <a href="#" class="inquiry-button fresh-inquiry-button" data-product-id="{{ product.id }}">More inquiries</a>
+        </div>
+        {% elif product.product_type == 'both' %}
+        <!-- قسم المنتج الطازج لنوع المنتج both -->
+        <div class="product-col">
+          <div class="product-image-container">
+            {% if variety and variety.image %}
+            <img
+              src="{{ variety.image.url }}"
+              alt="{{ variety.name }} Fresh"
+              class="product-image"
+            />
+            {% elif product.fresh_image %}
+            <img
+              src="{{ product.fresh_image.url }}"
+              alt="{{ product.name }} Fresh"
+              class="product-image"
+            />
+            {% else %}
+            <img
+              src="{% static 'img/products/Strawberry/Fresh Strawberry.png' %}"
+              alt="{{ product.name }} Fresh"
+              class="product-image"
+            />
+            {% endif %}
+          </div>
+
+          {% if variety %}
+          <h2 class="product-type-title">Fresh {{ product.name }} - {{ variety.name }}</h2>
+          {% else %}
+          <h2 class="product-type-title">Fresh {{ product.name }}</h2>
+          {% endif %}
+
+          <p class="product-description">
+            {% if variety and variety.description %}
+              {{ variety.description|safe }}
+            {% elif product.fresh_description %}
+              {{ product.fresh_description|safe }}
+            {% else %}
+              {{ product.description|safe }}
+            {% endif %}
+          </p>
+          <a href="#" class="inquiry-button fresh-inquiry-button" data-product-id="{{ product.id }}">More inquiries</a>
+        </div>
+        {% endif %}
+        {% if product.product_type == 'iqf' or product.product_type == 'both' %}
+        <!-- قسم المنتج المجمد -->
+        <div class="product-col">
+          <div class="product-image-container">
+            {% if variety and variety.image %}
+            <img
+              src="{{ variety.image.url }}"
+              alt="{{ variety.name }} IQF"
+              class="product-image"
+            />
+            {% elif product.iqf_image %}
+            <img
+              src="{{ product.iqf_image.url }}"
+              alt="{{ product.name }} IQF"
+              class="product-image"
+            />
+            {% else %}
+            <img
+              src="{% static 'img/products/Strawberry/IQF Strawberry.png' %}"
+              alt="{{ product.name }} IQF"
+              class="product-image"
+            />
+            {% endif %}
+          </div>
+          {% if variety %}
+          <h2 class="product-type-title">IQF {{ product.name }} - {{ variety.name }}</h2>
+          {% else %}
+          <h2 class="product-type-title">IQF {{ product.name }}</h2>
+          {% endif %}
+          <p class="product-description">
+            {% if variety and variety.description %}
+              {{ variety.description|safe }}
+            {% elif product.iqf_description %}
+              {{ product.iqf_description|safe }}
+            {% else %}
+              {% if product.product_type != 'both' %}
+                {{ product.description|safe }}
+              {% else %}
+                <!-- Show a placeholder message if no iqf description for 'both' type -->
+                <em>No IQF product description available.</em>
+              {% endif %}
+            {% endif %}
+          </p>
+          <a href="#" class="inquiry-button" data-product-id="{{ product.id }}">More inquiries</a>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- قسم الموسمية للمنتجات الطازجة -->
+      <!-- DEBUG -->
+      <div style="background-color: #f8f9fa; border: 1px solid #ddd; padding: 10px; margin-bottom: 20px; display: none;">
+        <h4>Debug Info</h4>
+        <p>Fresh Seasonality Array Length: {{ fresh_seasonality|length }}</p>
+        <p>Fresh Seasonality: {% for s in fresh_seasonality %}{{ s }}{% endfor %}</p>
+        <p>IQF Seasonality Array Length: {{ iqf_seasonality|length }}</p>
+        <p>IQF Seasonality: {% for s in iqf_seasonality %}{{ s }}{% endfor %}</p>
+      </div>
+
+      {% if fresh_seasonality or product.has_varieties %}
+      <div class="seasonality-section">
+        <h2 class="section-title">Seasonality</h2>
+        
+        <!-- عرض الموسمية للموبايل -->
+        <div class="mobile-seasonality-section">
+          <!-- منتج طازج بدون فرايتي أو وضع عرض الفرايتي -->
+          {% if variety or not product.has_varieties %}
+            <!-- عرض موسمية المنتج / الفرايتي المحدد -->
+            {% if fresh_seasonality %}
+              <div class="mobile-seasonality-wrapper">
+                <h3 class="mobile-variety-name">
+                  {% if variety %}
+                  Fresh {{ product.name }} - {{ variety.name }}
+                  {% else %}
+                  Fresh {{ product.name }}
+                  {% endif %}
+                </h3>
+                <div class="mobile-months-container">
+                  {% for season in fresh_seasonality %}
+                    <div class="mobile-month-item {% if season.jan %}month-active{% endif %}">1</div>
+                    <div class="mobile-month-item {% if season.feb %}month-active{% endif %}">2</div>
+                    <div class="mobile-month-item {% if season.mar %}month-active{% endif %}">3</div>
+                    <div class="mobile-month-item {% if season.apr %}month-active{% endif %}">4</div>
+                    <div class="mobile-month-item {% if season.may %}month-active{% endif %}">5</div>
+                    <div class="mobile-month-item {% if season.jun %}month-active{% endif %}">6</div>
+                    <div class="mobile-month-item {% if season.jul %}month-active{% endif %}">7</div>
+                    <div class="mobile-month-item {% if season.aug %}month-active{% endif %}">8</div>
+                    <div class="mobile-month-item {% if season.sep %}month-active{% endif %}">9</div>
+                    <div class="mobile-month-item {% if season.oct %}month-active{% endif %}">10</div>
+                    <div class="mobile-month-item {% if season.nov %}month-active{% endif %}">11</div>
+                    <div class="mobile-month-item {% if season.dec %}month-active{% endif %}">12</div>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+          {% else %}
+            <!-- عرض موسمية الفرايتي للمنتج الأصلي -->
+            <h3 class="sub-section-title mobile-sub-title">Fresh {{ product.name }} Varieties</h3>
+            <div class="mobile-varieties-seasonality">
+              {% for v in product.varieties.all %}
+                <div class="mobile-seasonality-wrapper">
+                  <h3 class="mobile-variety-name">{{ v.name }}</h3>
+                  <div class="mobile-months-container">
+                    <div class="mobile-month-item {% if v.is_available_jan_fresh %}month-active{% endif %}">1</div>
+                    <div class="mobile-month-item {% if v.is_available_feb_fresh %}month-active{% endif %}">2</div>
+                    <div class="mobile-month-item {% if v.is_available_mar_fresh %}month-active{% endif %}">3</div>
+                    <div class="mobile-month-item {% if v.is_available_apr_fresh %}month-active{% endif %}">4</div>
+                    <div class="mobile-month-item {% if v.is_available_may_fresh %}month-active{% endif %}">5</div>
+                    <div class="mobile-month-item {% if v.is_available_jun_fresh %}month-active{% endif %}">6</div>
+                    <div class="mobile-month-item {% if v.is_available_jul_fresh %}month-active{% endif %}">7</div>
+                    <div class="mobile-month-item {% if v.is_available_aug_fresh %}month-active{% endif %}">8</div>
+                    <div class="mobile-month-item {% if v.is_available_sep_fresh %}month-active{% endif %}">9</div>
+                    <div class="mobile-month-item {% if v.is_available_oct_fresh %}month-active{% endif %}">10</div>
+                    <div class="mobile-month-item {% if v.is_available_nov_fresh %}month-active{% endif %}">11</div>
+                    <div class="mobile-month-item {% if v.is_available_dec_fresh %}month-active{% endif %}">12</div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+        
+        <!-- منتج طازج بدون فرايتي أو وضع عرض الفرايتي - للديسكتوب -->
+        <div class="desktop-seasonality-section">
+          {% if variety or not product.has_varieties %}
+            <!-- عرض موسمية المنتج / الفرايتي المحدد -->
+            {% if fresh_seasonality %}
+            <table class="seasonality-table">
+              <thead>
+                <tr>
+                  <th>Variety</th>
+                  <th>JAN</th>
+                  <th>FEB</th>
+                  <th>MAR</th>
+                  <th>APR</th>
+                  <th>MAY</th>
+                  <th>JUNE</th>
+                  <th>JULY</th>
+                  <th>AUG</th>
+                  <th>SEPT</th>
+                  <th>OCT</th>
+                  <th>NOV</th>
+                  <th>DEC</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for season in fresh_seasonality %}
+                <tr class="seasonality-row">
+                  <td>
+                    {% if variety %}
+                    Fresh {{ product.name }} - {{ variety.name }}
+                    {% else %}
+                    Fresh {{ product.name }}
+                    {% endif %}
+                  </td>
+                  <td class="{% if season.jan %}month-available{% endif %}">
+                    {% if season.jan %}
+                    {% if fresh_icon %}
+                    <img src="{{ fresh_icon.url }}" alt="Available" class="month-icon" />
+                    {% else %}
+                    <div class="month-active-fresh"></div>
+                    {% endif %}
+                    {% endif %}
+                  </td>
+                  <td class="{% if season.feb %}month-available{% endif %}">
+                    {% if season.feb %}
+                    {% if fresh_icon %}
+                    <img src="{{ fresh_icon.url }}" alt="Available" class="month-icon" />
+                    {% else %}
+                    <div class="month-active-fresh"></div>
+                    {% endif %}
+                    {% endif %}
+                  </td>
+                  <td class="{% if season.mar %}month-available{% endif %}">
+                    {% if season.mar %}
+                    {% if fresh_icon %}
+                    <img src="{{ fresh_icon.url }}" alt="Available" class="month-icon" />
+                    {% else %}
+                    <div class="month-active-fresh"></div>
+                    {% endif %}
+                    {% endif %}
+                  </td>
+                  <td class="{% if season.apr %}month-available{% endif %}">
+                    {% if season.apr %}
+                    {% if fresh_icon %}
+                    <img src="{{ fresh_icon.url }}" alt="Available" class="month-icon" />
+                    {% else %}
+                    <div class="month-active-fresh"></div>
+                    {% endif %}
+                    {% endif %}
+                  </td>
+                  <td class="{% if season.may %}month-available{% endif %}">
+                    {% if season.may %}
+                    {% if fresh_icon %}
+                    <img src="{{ fresh_icon.url }}" alt="Available" class="month-icon" />
+                    {% else %}
+                    <div class="month-active-fresh"></div>
+                    {% endif %}
+                    {% endif %}
+                  </td>
+                  <td class="{% if season.jun %}month-available{% endif %}">
+                    {% if season.jun %}
+                    {% if fresh_icon %}
+                    <img src="{{ fresh_icon.url }}" alt="Available" class="month-icon" />
+                    {% else %}
+                    <div class="month-active-fresh"></div>
+                    {% endif %}
+                    {% endif %}
+                  </td>
+                  <td class="{% if season.jul %}month-available{% endif %}">
+                    {% if season.jul %}
+                    {% if fresh_icon %}
+                    <img src="{{ fresh_icon.url }}" alt="Available" class="month-icon" />
+                    {% else %}
+                    <div class="month-active-fresh"></div>
+                    {% endif %}
+                    {% endif %}
+                  </td>
+                  <td class="{% if season.aug %}month-available{% endif %}">
+                    {% if season.aug %}
+                    {% if fresh_icon %}
+                    <img src="{{ fresh_icon.url }}" alt="Available" class="month-icon" />
+                    {% else %}
+                    <div class="month-active-fresh"></div>
+                    {% endif %}
+                    {% endif %}
+                  </td>
+                  <td class="{% if season.sep %}month-available{% endif %}">
+                    {% if season.sep %}
+                    {% if fresh_icon %}
+                    <img src="{{ fresh_icon.url }}" alt="Available" class="month-icon" />
+                    {% else %}
+                    <div class="month-active-fresh"></div>
+                    {% endif %}
+                    {% endif %}
+                  </td>
+                  <td class="{% if season.oct %}month-available{% endif %}">
+                    {% if season.oct %}
+                    {% if fresh_icon %}
+                    <img src="{{ fresh_icon.url }}" alt="Available" class="month-icon" />
+                    {% else %}
+                    <div class="month-active-fresh"></div>
+                    {% endif %}
+                    {% endif %}
+                  </td>
+                  <td class="{% if season.nov %}month-available{% endif %}">
+                    {% if season.nov %}
+                    {% if fresh_icon %}
+                    <img src="{{ fresh_icon.url }}" alt="Available" class="month-icon" />
+                    {% else %}
+                    <div class="month-active-fresh"></div>
+                    {% endif %}
+                    {% endif %}
+                  </td>
+                  <td class="{% if season.dec %}month-available{% endif %}">
+                    {% if season.dec %}
+                    {% if fresh_icon %}
+                    <img src="{{ fresh_icon.url }}" alt="Available" class="month-icon" />
+                    {% else %}
+                    <div class="month-active-fresh"></div>
+                    {% endif %}
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% endif %}
+          {% else %}
+            <!-- عرض موسمية الفرايتي للمنتج الأصلي -->
+            <h3 class="sub-section-title">Fresh {{ product.name }} Varieties</h3>
+            <!-- جدول الموسمية للفريش -->
+            <div class="table-responsive">
+              <table class="seasonality-table">
+                  <thead>
+                      <tr>
+                          <th>Variety</th>
+                          <th>JAN</th>
+                          <th>FEB</th>
+                          <th>MAR</th>
+                          <th>APR</th>
+                          <th>MAY</th>
+                          <th>JUNE</th>
+                          <th>JULY</th>
+                          <th>AUG</th>
+                          <th>SEPT</th>
+                          <th>OCT</th>
+                          <th>NOV</th>
+                          <th>DEC</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {% for v in product.varieties.all %}
+                      <tr class="seasonality-row">
+                          <td>{{ v.name }}</td>
+                          <!-- شهر يناير -->
+                          <td class="{% if v.is_available_jan_fresh %}month-available{% endif %}">
+                              {% if v.is_available_jan_fresh %}
+                                  <img src="{{ v.get_display_icon.url }}" alt="Available" class="month-icon" />
+                              {% endif %}
+                          </td>
+                          <!-- شهر فبراير -->
+                          <td class="{% if v.is_available_feb_fresh %}month-available{% endif %}">
+                              {% if v.is_available_feb_fresh %}
+                                  <img src="{{ v.get_display_icon.url }}" alt="Available" class="month-icon" />
+                              {% endif %}
+                          </td>
+                          <!-- شهر مارس -->
+                          <td class="{% if v.is_available_mar_fresh %}month-available{% endif %}">
+                              {% if v.is_available_mar_fresh %}
+                                  <img src="{{ v.get_display_icon.url }}" alt="Available" class="month-icon" />
+                              {% endif %}
+                          </td>
+                          <!-- شهر أبريل -->
+                          <td class="{% if v.is_available_apr_fresh %}month-available{% endif %}">
+                              {% if v.is_available_apr_fresh %}
+                                  <img src="{{ v.get_display_icon.url }}" alt="Available" class="month-icon" />
+                              {% endif %}
+                          </td>
+                          <!-- شهر مايو -->
+                          <td class="{% if v.is_available_may_fresh %}month-available{% endif %}">
+                              {% if v.is_available_may_fresh %}
+                                  <img src="{{ v.get_display_icon.url }}" alt="Available" class="month-icon" />
+                              {% endif %}
+                          </td>
+                          <!-- شهر يونيو -->
+                          <td class="{% if v.is_available_jun_fresh %}month-available{% endif %}">
+                              {% if v.is_available_jun_fresh %}
+                                  <img src="{{ v.get_display_icon.url }}" alt="Available" class="month-icon" />
+                              {% endif %}
+                          </td>
+                          <!-- شهر يوليو -->
+                          <td class="{% if v.is_available_jul_fresh %}month-available{% endif %}">
+                              {% if v.is_available_jul_fresh %}
+                                  <img src="{{ v.get_display_icon.url }}" alt="Available" class="month-icon" />
+                              {% endif %}
+                          </td>
+                          <!-- شهر أغسطس -->
+                          <td class="{% if v.is_available_aug_fresh %}month-available{% endif %}">
+                              {% if v.is_available_aug_fresh %}
+                                  <img src="{{ v.get_display_icon.url }}" alt="Available" class="month-icon" />
+                              {% endif %}
+                          </td>
+                          <!-- شهر سبتمبر -->
+                          <td class="{% if v.is_available_sep_fresh %}month-available{% endif %}">
+                              {% if v.is_available_sep_fresh %}
+                                  <img src="{{ v.get_display_icon.url }}" alt="Available" class="month-icon" />
+                              {% endif %}
+                          </td>
+                          <!-- شهر أكتوبر -->
+                          <td class="{% if v.is_available_oct_fresh %}month-available{% endif %}">
+                              {% if v.is_available_oct_fresh %}
+                                  <img src="{{ v.get_display_icon.url }}" alt="Available" class="month-icon" />
+                              {% endif %}
+                          </td>
+                          <!-- شهر نوفمبر -->
+                          <td class="{% if v.is_available_nov_fresh %}month-available{% endif %}">
+                              {% if v.is_available_nov_fresh %}
+                                  <img src="{{ v.get_display_icon.url }}" alt="Available" class="month-icon" />
+                              {% endif %}
+                          </td>
+                          <!-- شهر ديسمبر -->
+                          <td class="{% if v.is_available_dec_fresh %}month-available{% endif %}">
+                              {% if v.is_available_dec_fresh %}
+                                  <img src="{{ v.get_display_icon.url }}" alt="Available" class="month-icon" />
+                              {% endif %}
+                          </td>
+                      </tr>
+                      {% endfor %}
+                  </tbody>
+              </table>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- قسم الموسمية للمنتجات المجمدة -->
+      {% if iqf_seasonality %}
+      <div class="seasonality-section">
+        <h2 class="section-title">Seasonality</h2>
+        
+        <!-- عرض الموسمية للموبايل -->
+        <div class="mobile-seasonality-section">
+          <!-- عرض موسمية المنتج المجمد فقط - بدون عرض فرايتي بناءًا على طلب العميل -->
+          {% if iqf_seasonality %}
+            <div class="mobile-seasonality-wrapper">
+              <h3 class="mobile-variety-name">
+                {% if variety %}
+                IQF {{ product.name }} - {{ variety.name }}
+                {% else %}
+                IQF {{ product.name }}
+                {% endif %}
+              </h3>
+              <div class="mobile-months-container">
+                {% for season in iqf_seasonality %}
+                  <div class="mobile-month-item {% if season.jan %}month-active{% endif %}">1</div>
+                  <div class="mobile-month-item {% if season.feb %}month-active{% endif %}">2</div>
+                  <div class="mobile-month-item {% if season.mar %}month-active{% endif %}">3</div>
+                  <div class="mobile-month-item {% if season.apr %}month-active{% endif %}">4</div>
+                  <div class="mobile-month-item {% if season.may %}month-active{% endif %}">5</div>
+                  <div class="mobile-month-item {% if season.jun %}month-active{% endif %}">6</div>
+                  <div class="mobile-month-item {% if season.jul %}month-active{% endif %}">7</div>
+                  <div class="mobile-month-item {% if season.aug %}month-active{% endif %}">8</div>
+                  <div class="mobile-month-item {% if season.sep %}month-active{% endif %}">9</div>
+                  <div class="mobile-month-item {% if season.oct %}month-active{% endif %}">10</div>
+                  <div class="mobile-month-item {% if season.nov %}month-active{% endif %}">11</div>
+                  <div class="mobile-month-item {% if season.dec %}month-active{% endif %}">12</div>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+        </div>
+        
+        <!-- عرض الموسمية للديسكتوب -->
+        <div class="desktop-seasonality-section">
+          <table class="seasonality-table">
+            <thead>
+              <tr>
+                <th>Variety</th>
+                <th>JAN</th>
+                <th>FEB</th>
+                <th>MAR</th>
+                <th>APR</th>
+                <th>MAY</th>
+                <th>JUNE</th>
+                <th>JULY</th>
+                <th>AUG</th>
+                <th>SEPT</th>
+                <th>OCT</th>
+                <th>NOV</th>
+                <th>DEC</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for season in iqf_seasonality %}
+              <tr class="seasonality-row">
+                <td>
+                  {% if variety %}
+                  IQF {{ product.name }} - {{ variety.name }}
+                  {% else %}
+                  IQF {{ product.name }}
+                  {% endif %}
+                </td>
+                <td class="{% if season.jan %}month-available{% endif %}">
+                  {% if season.jan %}
+                  {% if iqf_icon %}
+                  <img src="{{ iqf_icon.url }}" alt="Available" class="month-icon" />
+                  {% else %}
+                  <div class="month-active-iqf"></div>
+                  {% endif %}
+                  {% endif %}
+                </td>
+                <td class="{% if season.feb %}month-available{% endif %}">
+                  {% if season.feb %}
+                  {% if iqf_icon %}
+                  <img src="{{ iqf_icon.url }}" alt="Available" class="month-icon" />
+                  {% else %}
+                  <div class="month-active-iqf"></div>
+                  {% endif %}
+                  {% endif %}
+                </td>
+                <td class="{% if season.mar %}month-available{% endif %}">
+                  {% if season.mar %}
+                  {% if iqf_icon %}
+                  <img src="{{ iqf_icon.url }}" alt="Available" class="month-icon" />
+                  {% else %}
+                  <div class="month-active-iqf"></div>
+                  {% endif %}
+                  {% endif %}
+                </td>
+                <td class="{% if season.apr %}month-available{% endif %}">
+                  {% if season.apr %}
+                  {% if iqf_icon %}
+                  <img src="{{ iqf_icon.url }}" alt="Available" class="month-icon" />
+                  {% else %}
+                  <div class="month-active-iqf"></div>
+                  {% endif %}
+                  {% endif %}
+                </td>
+                <td class="{% if season.may %}month-available{% endif %}">
+                  {% if season.may %}
+                  {% if iqf_icon %}
+                  <img src="{{ iqf_icon.url }}" alt="Available" class="month-icon" />
+                  {% else %}
+                  <div class="month-active-iqf"></div>
+                  {% endif %}
+                  {% endif %}
+                </td>
+                <td class="{% if season.jun %}month-available{% endif %}">
+                  {% if season.jun %}
+                  {% if iqf_icon %}
+                  <img src="{{ iqf_icon.url }}" alt="Available" class="month-icon" />
+                  {% else %}
+                  <div class="month-active-iqf"></div>
+                  {% endif %}
+                  {% endif %}
+                </td>
+                <td class="{% if season.jul %}month-available{% endif %}">
+                  {% if season.jul %}
+                  {% if iqf_icon %}
+                  <img src="{{ iqf_icon.url }}" alt="Available" class="month-icon" />
+                  {% else %}
+                  <div class="month-active-iqf"></div>
+                  {% endif %}
+                  {% endif %}
+                </td>
+                <td class="{% if season.aug %}month-available{% endif %}">
+                  {% if season.aug %}
+                  {% if iqf_icon %}
+                  <img src="{{ iqf_icon.url }}" alt="Available" class="month-icon" />
+                  {% else %}
+                  <div class="month-active-iqf"></div>
+                  {% endif %}
+                  {% endif %}
+                </td>
+                <td class="{% if season.sep %}month-available{% endif %}">
+                  {% if season.sep %}
+                  {% if iqf_icon %}
+                  <img src="{{ iqf_icon.url }}" alt="Available" class="month-icon" />
+                  {% else %}
+                  <div class="month-active-iqf"></div>
+                  {% endif %}
+                  {% endif %}
+                </td>
+                <td class="{% if season.oct %}month-available{% endif %}">
+                  {% if season.oct %}
+                  {% if iqf_icon %}
+                  <img src="{{ iqf_icon.url }}" alt="Available" class="month-icon" />
+                  {% else %}
+                  <div class="month-active-iqf"></div>
+                  {% endif %}
+                  {% endif %}
+                </td>
+                <td class="{% if season.nov %}month-available{% endif %}">
+                  {% if season.nov %}
+                  {% if iqf_icon %}
+                  <img src="{{ iqf_icon.url }}" alt="Available" class="month-icon" />
+                  {% else %}
+                  <div class="month-active-iqf"></div>
+                  {% endif %}
+                  {% endif %}
+                </td>
+                <td class="{% if season.dec %}month-available{% endif %}">
+                  {% if season.dec %}
+                  {% if iqf_icon %}
+                  <img src="{{ iqf_icon.url }}" alt="Available" class="month-icon" />
+                  {% else %}
+                  <div class="month-active-iqf"></div>
+                  {% endif %}
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- قسم خيارات العد -->
+      {% if product.has_counts %}
+      <div class="counts-section">
+        <h2 class="section-title">Counts</h2>
+
+        {% if count_options %}
+        <div class="counts-container">
+          {% for count in count_options|dictsort:"value" %}
+          <div class="count-item">
+            <span class="count-value">{{ count.display_value }}</span>
+            <span class="count-check">✓</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p>No count options available.</p>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <!-- قسم الأحجام -->
+      {% if product.has_size %}
+      <div class="counts-section">
+        <h2 class="section-title">Sizes</h2>
+
+        {% if size_options %}
+        <div class="counts-container">
+          {% for size in size_options|dictsort:"value" %}
+          <div class="count-item">
+            <span class="count-value">{{ size.value }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p>No size options available.</p>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <!-- قسم التعبئة والتغليف -->
+      {% if fresh_packaging_types or iqf_packaging_types and product.product_type == 'iqf' or iqf_packaging_types and product.product_type == 'both' or fresh_packaging_options or iqf_packaging_options and product.product_type == 'iqf' or iqf_packaging_options and product.product_type == 'both' or fresh_packaging or iqf_packaging and product.product_type == 'iqf' or iqf_packaging and product.product_type == 'both' %}
+      <div class="packaging-section">
+        <h2 class="section-title">Packaging</h2>
+        <div class="product-row">
+          <!-- ============ قسم تعبئة المنتجات الطازجة ============ -->
+          {% if fresh_packaging_types %}
+          {% for fresh_package in fresh_packaging_types|dictsort:"order" %}
+          <div class="product-col">
+            {% if fresh_package.show_fresh_label %}
+            <h3 class="packaging-type">Fresh</h3>
+            {% endif %}
+            <div class="packaging-box fresh-packaging-box">
+              <!-- صورة العبوة / الكرتونة المفتوحة من أعلى -->
+              <div class="open-box-container" style="text-align: center;">
+                <div style="display: inline-block; text-align: center;">
+                  {% if fresh_package.packaging_type.image %}
+                  <img src="{{ fresh_package.packaging_type.image.url }}" alt="{{ fresh_package.packaging_type.name }}" class="open-box-image" style="margin: 0 auto; display: block; max-height: 150px; width: auto;">
+                  {% elif product.fresh_packaging_image %}
+                  <img src="{{ product.fresh_packaging_image.url }}" alt="Fresh Packaging" class="open-box-image" style="margin: 0 auto; display: block; max-height: 150px; width: auto;">
+                  {% else %}
+                  <!-- تم حذف SVG لعدم عرض أي شيء في حالة عدم وجود صورة -->
+                  {% endif %}
+                </div>
+              </div>
+              
+              <!-- عنوان الكرتونة -->
+              <div class="packaging-title-container">
+                <p class="packaging-title">{{ fresh_package.packaging_type.description }}</p>
+              </div>
+              
+              <!-- تفاصيل العدد في عناصر متوازية مع الارقام في نفس المكان -->
+              <div class="packaging-metrics">
+                <div class="packaging-metric">
+                  <div class="metric-label">No. of Pallets / Container</div>
+                  <div class="metric-value">{{ fresh_package.pallets_per_container }}</div>
+                </div>
+                
+                <div class="packaging-metric">
+                  <div class="metric-label">No. of {{ fresh_package.packaging_type.key_word|default:"Cartons" }} / Pallet</div>
+                  <div class="metric-value">{{ fresh_package.items_per_pallet }}</div>
+                </div>
+              </div>
+              
+              <!-- ملاحظة التخصيص -->
+              <p class="packaging-customize">* We can customize your packaging</p>
+            </div>
+          </div>
+          {% endfor %}
+          {% endif %}
+          
+          <!-- ============ قسم تعبئة المنتجات المجمدة ============ -->
+          {% if iqf_packaging_types %}
+          {% for iqf_package in iqf_packaging_types|dictsort:"order" %}
+          <div class="product-col">
+            {% if iqf_package.show_fresh_label %}
+            <h3 class="packaging-type">IQF</h3>
+            {% endif %}
+            <div class="packaging-box fresh-packaging-box iqf-packaging-box">
+              <!-- صورة العبوة / الكرتونة المفتوحة من أعلى -->
+              <div class="open-box-container" style="text-align: center;">
+                <div style="display: inline-block; text-align: center;">
+                  {% if iqf_package.packaging_type.image %}
+                  <img src="{{ iqf_package.packaging_type.image.url }}" alt="{{ iqf_package.packaging_type.name }}" class="open-box-image" style="margin: 0 auto; display: block; max-height: 150px; width: auto;">
+                  {% elif product.iqf_packaging_image %}
+                  <img src="{{ product.iqf_packaging_image.url }}" alt="IQF Packaging" class="open-box-image" style="margin: 0 auto; display: block; max-height: 150px; width: auto;">
+                  {% else %}
+                  <!-- تم حذف SVG لعدم عرض أي شيء في حالة عدم وجود صورة -->
+                  {% endif %}
+                </div>
+              </div>
+              
+              <!-- عنوان الكرتونة - ثابت دائما Plastic Bag -->
+              <div class="packaging-title-container">
+                <p class="packaging-title">Plastic Bag</p>
+              </div>
+              
+              <!-- تفاصيل مأخوذة من وصف المستخدم -->
+              {% if iqf_package.packaging_type.description %}
+              <div class="packaging-description">
+                {{ iqf_package.packaging_type.description|linebreaks }}
+              </div>
+              {% endif %}
+              
+              <!-- ملاحظة التخصيص -->
+              <p class="packaging-customize">* We can customize your packaging</p>
+            </div>
+          </div>
+          {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+{% endif %}
+
+{% include 'components/inquiry_modal.html' %}
+{% endblock %}
+
+<style>
+    .product-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .inquiry-button {
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.375rem;
+      font-weight: 500;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+    }
+    
+    .inquiry-button {
+      background-color: {{ product.button_color|default:'#39AE68' }};
+      color: white;
+    }
+    
+    .inquiry-button:hover {
+      filter: brightness(90%);
+    }
+    
+    .inquiry-button i {
+      margin-right: 0.5rem;
+    }
+</style>

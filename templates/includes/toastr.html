@@ -1,0 +1,102 @@
+{% load static %}
+<!-- Toastr CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<style>
+    /* تخصيص ستايل للتوستر */
+    .toast-success {
+        background-color: #10b981;
+    }
+    .toast-info {
+        background-color: #3b82f6;
+    }
+    .toast-warning {
+        background-color: #f59e0b;
+    }
+    .toast-error {
+        background-color: #ef4444;
+    }
+    
+    /* تخصيص إضافي للتوستر لعرض النص كاملاً */
+    .full-width-toast {
+        max-width: 600px !important;
+        width: auto !important;
+        white-space: nowrap !important;
+    }
+    
+    #toast-container {
+        width: auto !important;
+        max-width: 100% !important;
+    }
+    
+    #toast-container > div {
+        width: auto !important;
+        max-width: 600px !important;
+        padding: 15px 15px 15px 50px !important;
+    }
+    
+    .toast-message {
+        white-space: nowrap !important;
+        overflow: visible !important;
+        text-overflow: unset !important;
+        width: 100% !important;
+        padding-right: 30px !important;
+    }
+    
+    /* تنسيق زر الإغلاق */
+    .toast-close-button {
+        position: absolute !important;
+        right: 10px !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+    }
+</style>
+
+<!-- jQuery (مطلوب للتوستر) - يعتمد على وجود jQuery في الصفحة -->
+{% if not has_jquery %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+{% endif %}
+
+<!-- Toastr JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script>
+    // إعدادات التوستر
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": true,
+        "progressBar": true,
+        "positionClass": "toast-top-right",
+        "preventDuplicates": false,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "7000",
+        "extendedTimeOut": "3000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut",
+        "toastClass": "toast full-width-toast",
+        "maxOpened": 5,
+        "escapeHtml": false,
+        "tapToDismiss": true,
+        "closeOnHover": false
+    };
+</script>
+
+{% if messages %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+                toastr.success('{{ message }}');
+            {% elif message.tags == 'error' %}
+                toastr.error('{{ message }}');
+            {% elif message.tags == 'warning' %}
+                toastr.warning('{{ message }}');
+            {% else %}
+                toastr.info('{{ message }}');
+            {% endif %}
+        {% endfor %}
+    });
+</script>
+{% endif %} 

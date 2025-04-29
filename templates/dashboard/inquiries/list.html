@@ -1,0 +1,430 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}
+    Inquiries - Egyland Dashboard
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
+<style>
+    .badge {
+        @apply px-3 py-1.5 rounded-md text-xs font-semibold shadow-sm inline-flex items-center gap-1 transition-all duration-200;
+    }
+    
+    .badge:hover {
+        @apply shadow transform scale-105;
+    }
+    
+    .badge-contact {
+        @apply bg-gradient-to-r from-blue-600 to-blue-500 text-white border border-blue-600;
+    }
+    
+    .badge-contact:hover {
+        @apply bg-gradient-to-r from-blue-500 to-blue-600;
+    }
+    
+    .badge-product_inquiry {
+        @apply bg-gradient-to-r from-emerald-600 to-emerald-500 text-white border border-emerald-600;
+    }
+    
+    .badge-product_inquiry:hover {
+        @apply bg-gradient-to-r from-emerald-500 to-emerald-600;
+    }
+    
+    .badge-product_request {
+        @apply bg-gradient-to-r from-purple-600 to-purple-500 text-white border border-purple-600;
+    }
+    
+    .badge-product_request:hover {
+        @apply bg-gradient-to-r from-purple-500 to-purple-600;
+    }
+    
+    .badge-new {
+        @apply bg-gradient-to-r from-amber-500 to-yellow-400 text-white border border-amber-500;
+    }
+    
+    .badge-new:hover {
+        @apply bg-gradient-to-r from-yellow-400 to-amber-500;
+    }
+    
+    .badge-in_progress {
+        @apply bg-gradient-to-r from-blue-600 to-blue-500 text-white border border-blue-600;
+    }
+    
+    .badge-in_progress:hover {
+        @apply bg-gradient-to-r from-blue-500 to-blue-600;
+    }
+    
+    .badge-completed {
+        @apply bg-gradient-to-r from-emerald-600 to-teal-500 text-white border border-emerald-600;
+    }
+    
+    .badge-completed:hover {
+        @apply bg-gradient-to-r from-teal-500 to-emerald-600;
+    }
+    
+    .badge-cancelled {
+        @apply bg-gradient-to-r from-red-600 to-red-500 text-white border border-red-600;
+    }
+    
+    .badge-cancelled:hover {
+        @apply bg-gradient-to-r from-red-500 to-red-600;
+    }
+    
+    .status-indicator {
+        width: 10px;
+        height: 10px;
+        @apply rounded-full inline-block mr-2 border border-white shadow-sm;
+    }
+    
+    .status-new {
+        @apply bg-amber-500;
+    }
+    
+    .status-in_progress {
+        @apply bg-blue-600;
+    }
+    
+    .status-completed {
+        @apply bg-emerald-600;
+    }
+    
+    .status-cancelled {
+        @apply bg-red-600;
+    }
+    
+    .responded-yes {
+        @apply text-emerald-600 text-base;
+    }
+    
+    .responded-no {
+        @apply text-red-600 text-base;
+    }
+    
+    /* Table Styles */
+    .table-auto tr:hover {
+        @apply bg-gray-50;
+    }
+    
+    .dashboard-card {
+        @apply bg-white shadow rounded-lg;
+    }
+    
+    /* Added small background tint to force browser refresh */
+    .table-auto thead tr {
+        background-color: rgba(243, 244, 246, 0.9);
+    }
+    
+    /* Buttons */
+    .btn {
+        @apply px-4 py-2 font-medium text-sm rounded-md transition-colors;
+    }
+    
+    .btn-sm {
+        @apply px-3 py-1 text-xs;
+    }
+    
+    .btn-primary {
+        @apply bg-blue-600 text-white hover:bg-blue-700;
+    }
+    
+    .btn-secondary {
+        @apply bg-emerald-600 text-white hover:bg-emerald-700;
+    }
+    
+    .btn-outline {
+        @apply border border-gray-300 text-gray-700 bg-white hover:bg-gray-50;
+    }
+    
+    /* Fix for @apply in template */
+    .text-primary {
+        color: rgb(37, 99, 235);
+    }
+    
+    .bg-primary {
+        background-color: rgb(16, 185, 129);
+    }
+    
+    .hover\:text-primary:hover {
+        color: rgb(37, 99, 235);
+    }
+
+    /* Custom select2 styles to match packaging_types */
+    .select2-container--default .select2-selection--single {
+        height: 38px !important;
+        border: 1px solid #d1d5db !important;
+        border-radius: 0.375rem !important; 
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 38px !important;
+        padding-left: 12px !important;
+        color: #4b5563 !important;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 36px !important;
+    }
+
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+        background-color: #10b981 !important;
+    }
+</style>
+{% endblock %}
+
+{% block header_title %}
+    <!-- Header title removed -->
+{% endblock %}
+
+{% block breadcrumbs %}
+    <!-- Breadcrumbs moved to content -->
+{% endblock %}
+
+{% block header_actions %}
+    <!-- Header actions moved to content -->
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- New improved header and breadcrumbs design -->
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">
+                    Inquiries
+                </h1>
+                <nav class="flex flex-wrap items-center text-sm text-gray-600">
+                    <a href="{% url 'dashboard:home' %}" class="hover:text-primary transition">
+                        <i class="fas fa-home"></i>
+                        <span class="hidden sm:inline">Dashboard</span>
+                    </a>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <span class="text-primary font-medium">Inquiries</span>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- End of improved header and breadcrumbs -->
+
+    <!-- Filters -->
+    <div class="dashboard-card mb-6">
+        <div class="p-6 border-b border-gray-200">
+            <form method="get" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search Inquiries</label>
+                        <input type="text" id="search" name="search" value="{{ request.GET.search|default:'' }}" 
+                            class="form-input w-full px-3 py-2" placeholder="Name, Company...">
+                    </div>
+                    
+                    <div>
+                        <label for="type" class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                        <select class="form-input" id="type" name="type">
+                            <option value="">All Types</option>
+                            {% for type_value, type_name in type_choices.items %}
+                                <option value="{{ type_value }}" {% if request.GET.type == type_value %}selected{% endif %}>
+                                    {{ type_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                        <select class="form-input" id="status" name="status">
+                            <option value="">All Statuses</option>
+                            {% for status_value, status_name in status_choices.items %}
+                                <option value="{{ status_value }}" {% if request.GET.status == status_value %}selected{% endif %}>
+                                    {{ status_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="is_responded" class="block text-sm font-medium text-gray-700 mb-1">Responded</label>
+                        <select class="form-input" id="is_responded" name="is_responded">
+                            <option value="">All</option>
+                            <option value="true" {% if request.GET.is_responded == 'true' %}selected{% endif %}>Yes</option>
+                            <option value="false" {% if request.GET.is_responded == 'false' %}selected{% endif %}>No</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Hidden sort input to always sort by newest -->
+                    <input type="hidden" name="sort" value="-created_at">
+                </div>
+                
+                <div class="flex justify-end space-x-2">
+                    <a href="{% url 'dashboard:inquiries' %}" class="btn btn-outline">
+                        <i class="fas fa-redo mr-1"></i> Reset
+                    </a>
+                    <button type="submit" style="display: inline-flex; align-items: center; justify-content: center; background-color: #34A853; color: white; padding: 0.5rem 1rem; border-radius: 4px; font-weight: 500; font-size: 0.875rem; transition: background-color 0.2s;" 
+                            onmouseover="this.style.backgroundColor='#2E8B57';" 
+                            onmouseout="this.style.backgroundColor='#34A853';">
+                        <i class="fas fa-search mr-1"></i> Search
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Inquiries Table -->
+    <div class="dashboard-card">
+        <div class="overflow-x-auto">
+            <table class="table-auto w-full">
+                <thead>
+                    <tr class="text-left bg-gray-50">
+                        <th class="p-3 font-medium">ID</th>
+                        <th class="p-3 font-medium">Name</th>
+                        <th class="p-3 font-medium">Company</th>
+                        <th class="p-3 font-medium">Type</th>
+                        <th class="p-3 font-medium">Status</th>
+                        <th class="p-3 font-medium">Responded</th>
+                        <th class="p-3 font-medium">Date</th>
+                        <th class="p-3 text-center font-medium">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for inquiry in inquiries %}
+                    <tr class="border-b border-gray-200">
+                        <td class="p-3">{{ inquiry.id }}</td>
+                        <td class="p-3">
+                            <a href="{% url 'dashboard:inquiry_detail' inquiry.id %}" class="hover:text-blue-600 transition-colors">
+                                <div class="font-medium hover:text-blue-600">{{ inquiry.name }}</div>
+                            </a>
+                        </td>
+                        <td class="p-3">{{ inquiry.company }}</td>
+                        <td class="p-3">
+                            {% if inquiry.type == 'contact' %}
+                            <span style="display: inline-flex; align-items: center; gap: 4px; background-color: #4285F4; color: white; font-weight: 500; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem;">
+                                <i class="fas fa-headset"></i>
+                                {{ inquiry.get_type_display }}
+                            </span>
+                            {% elif inquiry.type == 'product_inquiry' %}
+                            <span style="display: inline-flex; align-items: center; gap: 4px; background-color: #34A853; color: white; font-weight: 500; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem;">
+                                <i class="fas fa-question-circle"></i>
+                                {{ inquiry.get_type_display }}
+                            </span>
+                            {% else %}
+                            <span style="display: inline-flex; align-items: center; gap: 4px; background-color: #673AB7; color: white; font-weight: 500; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem;">
+                                <i class="fas fa-shopping-cart"></i>
+                                {{ inquiry.get_type_display }}
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td class="p-3">
+                            <div class="flex items-center">
+                                {% if inquiry.status == 'new' %}
+                                <span style="width: 8px; height: 8px; border-radius: 50%; background-color: #f8b400; display: inline-block; margin-right: 6px;"></span>
+                                <span class="text-gray-700">{{ inquiry.get_status_display }}</span>
+                                {% elif inquiry.status == 'in_progress' %}
+                                <span style="width: 8px; height: 8px; border-radius: 50%; background-color: #4285F4; display: inline-block; margin-right: 6px;"></span>
+                                <span class="text-gray-700">{{ inquiry.get_status_display }}</span>
+                                {% elif inquiry.status == 'completed' %}
+                                <span style="width: 8px; height: 8px; border-radius: 50%; background-color: #34A853; display: inline-block; margin-right: 6px;"></span>
+                                <span class="text-gray-700">{{ inquiry.get_status_display }}</span>
+                                {% else %}
+                                <span style="width: 8px; height: 8px; border-radius: 50%; background-color: #EA4335; display: inline-block; margin-right: 6px;"></span>
+                                <span class="text-gray-700">{{ inquiry.get_status_display }}</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="p-3 text-center">
+                            {% if inquiry.is_responded %}
+                                <i class="fas fa-check-circle" style="color: #34A853; font-size: 1rem;"></i>
+                            {% else %}
+                                <i class="fas fa-times-circle" style="color: #EA4335; font-size: 1rem;"></i>
+                            {% endif %}
+                        </td>
+                        <td class="p-3 whitespace-nowrap">{{ inquiry.created_at|date:"M d, Y H:i" }}</td>
+                        <td class="p-3 text-center whitespace-nowrap">
+                            <div class="inline-flex items-center space-x-3">
+                                <a href="{% url 'dashboard:inquiry_detail' inquiry.id %}" 
+                                   style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background-color: #f5f5f5; color: #555555; border-radius: 4px; transition: all 0.2s;"
+                                   onmouseover="this.style.backgroundColor='#e0e0e0'; this.style.color='#333333';"
+                                   onmouseout="this.style.backgroundColor='#f5f5f5'; this.style.color='#555555';"
+                                   title="View Details">
+                                    <i class="fas fa-eye" style="font-size: 0.75rem;"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr class="border-b border-gray-200">
+                        <td colspan="8" class="p-3 text-center text-gray-500">
+                            <div class="flex flex-col items-center justify-center py-6">
+                                <i class="fas fa-envelope text-3xl mb-2 text-blue-500"></i>
+                                <p>No inquiries found.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        {% if is_paginated %}
+        <div class="p-6 border-t border-gray-200">
+            <div class="pagination flex justify-between items-center">
+                <div>
+                    <span class="text-sm text-gray-600">Showing page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1{% if get_params %}&{{ get_params }}{% endif %}" class="btn btn-outline btn-sm">
+                            <i class="fas fa-angle-double-left"></i>
+                        </a>
+                        <a href="?page={{ page_obj.previous_page_number }}{% if get_params %}&{{ get_params }}{% endif %}" class="btn btn-outline btn-sm">
+                            <i class="fas fa-chevron-left mr-1"></i> Previous
+                        </a>
+                    {% else %}
+                        <button class="btn btn-outline btn-sm opacity-50" disabled>
+                            <i class="fas fa-chevron-left mr-1"></i> Previous
+                        </button>
+                    {% endif %}
+                    
+                    <span style="display: inline-block; padding: 0.25rem 0.75rem; border-radius: 4px; margin: 0 0.25rem; background-color: #34A853; color: white; font-weight: 500; font-size: 0.75rem;">
+                        {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
+                    
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}{% if get_params %}&{{ get_params }}{% endif %}" class="btn btn-outline btn-sm">
+                            Next <i class="fas fa-chevron-right ml-1"></i>
+                        </a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}{% if get_params %}&{{ get_params }}{% endif %}" class="btn btn-outline btn-sm">
+                            <i class="fas fa-angle-double-right"></i>
+                        </a>
+                    {% else %}
+                        <button class="btn btn-outline btn-sm opacity-50" disabled>
+                            Next <i class="fas fa-chevron-right ml-1"></i>
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Enhance select inputs with Select2 (without search)
+        $('#type, #status, #is_responded').select2({
+            width: '100%',
+            placeholder: 'Select...',
+            allowClear: true,
+            minimumResultsForSearch: Infinity // This disables the search
+        });
+        
+        // Auto-submit the form when filters change
+        $('#type, #status, #is_responded').on('change', function() {
+            $(this).closest('form').submit();
+        });
+    });
+</script>
+{% endblock %} 

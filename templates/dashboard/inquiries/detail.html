@@ -1,0 +1,950 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}Inquiry Details - Egyland Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .badge {
+        @apply px-2 py-1 text-xs font-medium rounded-full;
+    }
+    
+    .badge-contact {
+        @apply bg-blue-500 text-white;
+    }
+    
+    .badge-product_inquiry {
+        @apply bg-gradient-to-r from-green-500 to-teal-400 text-white font-semibold shadow-sm border border-teal-500 px-3 py-1.5 transition-all duration-300;
+        animation: badgePulse 2s infinite, glowEffect 3s infinite;
+    }
+    
+    .badge-product_inquiry:hover {
+        @apply bg-gradient-to-r from-teal-500 to-green-400 transform scale-110 shadow-md;
+    }
+    
+    .badge-product_request {
+        @apply bg-purple-500 text-white;
+    }
+    
+    .badge-new {
+        @apply bg-yellow-500 text-white;
+    }
+    
+    .badge-in_progress {
+        @apply bg-blue-500 text-white;
+    }
+    
+    .badge-completed {
+        @apply bg-green-500 text-white;
+    }
+    
+    .badge-cancelled {
+        @apply bg-red-500 text-white;
+    }
+    
+    .status-indicator {
+        width: 8px;
+        height: 8px;
+        @apply rounded-full inline-block mr-1;
+    }
+    
+    .status-new {
+        @apply bg-yellow-500;
+    }
+    
+    .status-in_progress {
+        @apply bg-blue-500;
+    }
+    
+    .status-completed {
+        @apply bg-green-500;
+    }
+    
+    .status-cancelled {
+        @apply bg-red-500;
+    }
+    
+    .responded-yes {
+        @apply text-green-500;
+    }
+    
+    .responded-no {
+        @apply text-red-500;
+    }
+    
+    /* Form styles */
+    .form-control {
+        @apply w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm transition duration-150 ease-in-out;
+        @apply focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400;
+    }
+    
+    /* Custom checkbox */
+    .custom-control-input {
+        @apply sr-only;
+    }
+    
+    .custom-control-label {
+        @apply relative pl-7 cursor-pointer flex items-center text-gray-700 select-none;
+    }
+    
+    .custom-control-label::before {
+        content: "";
+        @apply absolute left-0 w-5 h-5 border border-gray-300 rounded bg-white transition duration-150;
+    }
+    
+    .custom-control-input:checked ~ .custom-control-label::before {
+        @apply bg-blue-600 border-blue-600;
+    }
+    
+    .custom-control-input:checked ~ .custom-control-label::after {
+        content: "";
+        position: absolute;
+        width: 5px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+        @apply left-[0.4rem] top-[0.25rem];
+    }
+    
+    .custom-control-input:focus ~ .custom-control-label::before {
+        @apply ring-2 ring-offset-2 ring-blue-400;
+    }
+    
+    .btn {
+        @apply inline-flex items-center justify-center px-4 py-2 font-medium text-sm rounded-md transition-all duration-150;
+    }
+    
+    .btn-sm {
+        @apply px-3 py-1 text-xs;
+    }
+    
+    .btn-outline {
+        @apply border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 shadow-sm;
+    }
+    
+    .btn-primary {
+        @apply bg-blue-600 text-white hover:bg-blue-700 shadow-sm;
+    }
+    
+    .btn-secondary {
+        @apply bg-blue-500 text-white hover:bg-blue-600 shadow-sm;
+    }
+    
+    .btn-warning {
+        @apply bg-yellow-500 text-white hover:bg-yellow-600 shadow-sm;
+    }
+    
+    .btn-info {
+        @apply bg-cyan-500 text-white hover:bg-cyan-600 shadow-sm;
+    }
+    
+    .btn-success {
+        @apply bg-green-500 text-white hover:bg-green-600 shadow-sm;
+    }
+    
+    .btn-block {
+        @apply w-full flex justify-center items-center;
+    }
+    
+    .card {
+        @apply bg-white shadow rounded-lg overflow-hidden border border-gray-100 transition duration-300;
+    }
+    
+    .card-header {
+        @apply px-5 py-4 bg-gray-50 border-b border-gray-200;
+    }
+    
+    .card-body {
+        @apply p-5;
+    }
+    
+    .font-weight-bold {
+        @apply font-semibold;
+    }
+    
+    .text-primary {
+        @apply text-blue-600;
+    }
+    
+    .text-warning {
+        @apply text-yellow-500;
+    }
+    
+    .inquiry-info-item {
+        @apply flex items-center text-sm mt-2 text-gray-600;
+    }
+    
+    .inquiry-icon {
+        @apply text-gray-400 w-5 flex-shrink-0;
+    }
+    
+    .inquiry-content-box {
+        @apply bg-gray-50 p-5 rounded-md border border-gray-100;
+    }
+    
+    .animate-fade {
+        animation: fadeIn 0.3s ease-in-out;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .hover-card {
+        @apply hover:shadow-md hover:border-gray-200 transition-all duration-200;
+    }
+    
+    /* Badge animations */
+    @keyframes badgePulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+        }
+        70% {
+            box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+        }
+    }
+    
+    @keyframes glowEffect {
+        0%, 100% {
+            filter: drop-shadow(0 0 3px rgba(5, 150, 105, 0.5));
+        }
+        50% {
+            filter: drop-shadow(0 0 5px rgba(5, 150, 105, 0.9));
+        }
+    }
+</style>
+{% endblock %}
+
+{% block header_title %}{% endblock %}
+{% block breadcrumbs %}{% endblock %}
+{% block header_actions %}{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Keep header section as requested -->
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">
+                    Inquiry #{{ inquiry.id }} Details
+                </h1>
+                <nav class="flex flex-wrap items-center text-sm text-gray-600">
+                    <a href="{% url 'dashboard:home' %}" class="hover:text-primary transition">
+                        <i class="fas fa-home"></i>
+                        <span class="hidden sm:inline">Dashboard</span>
+                    </a>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <a href="{% url 'dashboard:inquiries' %}" class="hover:text-primary transition">Inquiries</a>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <span class="text-primary font-medium">Inquiry Details</span>
+                </nav>
+            </div>
+            <div class="mt-4 md:mt-0">
+                <a href="{% url 'dashboard:inquiries' %}" class="btn btn-outline">
+                    <i class="fas fa-arrow-left mr-1"></i> Back to Inquiries
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Inquiry Summary Card - Improved & Modern Design -->
+    <div class="bg-gray-50 shadow rounded-lg mb-6 overflow-hidden border border-gray-100 animate-fade">
+        <div class="p-6 bg-green-50">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-3">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-4 flex-shrink-0">
+                            <i class="fas fa-user text-blue-500 text-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-gray-800">{{ inquiry.name }}</h4>
+                            {% if inquiry.company %}
+                            <p class="text-sm text-gray-500">{{ inquiry.company }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    {% if inquiry.email %}
+                    <div class="inquiry-info-item">
+                        <i class="fas fa-envelope inquiry-icon"></i>
+                        <a href="mailto:{{ inquiry.email }}" class="text-blue-600 hover:text-blue-800 ml-2">{{ inquiry.email }}</a>
+                    </div>
+                    {% endif %}
+                    
+                    {% if inquiry.phone %}
+                    <div class="inquiry-info-item">
+                        <i class="fas fa-phone inquiry-icon"></i>
+                        <span class="ml-2">{{ inquiry.phone }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if inquiry.country %}
+                    <div class="inquiry-info-item">
+                        <i class="fas fa-globe inquiry-icon"></i>
+                        <span class="ml-2">{{ inquiry.country }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="md:text-right space-y-3 flex flex-col items-start md:items-end">
+                    <div class="flex flex-wrap gap-2 mb-2">
+                        {% if inquiry.type == 'product_inquiry' %}
+                        <span class="badge badge-product_inquiry flex items-center">
+                            <i class="fas fa-question-circle mr-1"></i>
+                            <span class="uppercase">{{ inquiry.get_type_display }}</span>
+                            <span class="ml-1 text-yellow-100">★</span>
+                        </span>
+                        {% else %}
+                        <span class="badge badge-{{ inquiry.type }} flex items-center">
+                            <i class="fas {% if inquiry.type == 'contact' %}fa-headset{% else %}fa-shopping-cart{% endif %} mr-1"></i>
+                                {{ inquiry.get_type_display }}
+                            </span>
+                        {% endif %}
+                        
+                        <span id="status-badge" class="badge badge-{{ inquiry.status }} flex items-center">
+                            <i class="fas {% if inquiry.status == 'new' %}fa-star{% elif inquiry.status == 'in_progress' %}fa-sync{% elif inquiry.status == 'completed' %}fa-check-circle{% else %}fa-times-circle{% endif %} mr-1"></i>
+                                {{ inquiry.get_status_display }}
+                            </span>
+                        </div>
+                    
+                    <div class="inquiry-info-item justify-end">
+                        <i class="far fa-calendar-alt inquiry-icon"></i>
+                        <span class="ml-2">{{ inquiry.created_at|date:"F d, Y H:i" }}</span>
+                        </div>
+                    
+                    <div id="responded-status" class="inquiry-info-item justify-end">
+                        <i class="far fa-comment-dots inquiry-icon"></i>
+                            {% if inquiry.is_responded %}
+                            <span class="text-green-500 ml-2 font-medium">Responded</span>
+                            {% else %}
+                            <span class="text-red-500 ml-2 font-medium">Not Responded</span>
+                            {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content Area - Balanced Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left Column - Inquiry Message & Products -->
+        <div class="lg:col-span-8 order-1 lg:order-1 space-y-6">
+            <!-- Message -->
+            <div class="card hover-card bg-white overflow-hidden border-0 shadow-lg rounded-xl">
+                <div class="p-5 bg-gray-700 text-white">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-lg bg-white bg-opacity-20 mr-4 flex items-center justify-center">
+                            <i class="far fa-comment-alt text-white text-lg"></i>
+                        </div>
+                        <h5 class="text-white font-semibold text-xl">Inquiry Message</h5>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 whitespace-pre-line">
+                        {{ inquiry.message }}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Products (if any) -->
+            {% if inquiry.is_product_related and inquiry.products.exists %}
+            <div class="card hover-card bg-white overflow-hidden border-0 shadow-lg rounded-xl">
+                <div class="p-5 bg-gray-700 text-white">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-lg bg-white bg-opacity-20 mr-4 flex items-center justify-center">
+                            <i class="fas fa-boxes text-white text-lg"></i>
+                        </div>
+                        <h5 class="text-white font-semibold text-xl">Products of Interest</h5>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {% for product in inquiry.products.all %}
+                        <div class="flex items-center p-4 rounded-xl bg-gray-50 border border-gray-200">
+                            <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center flex-shrink0 mr-4">
+                                <i class="fas fa-box text-green-600 text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-green-700">{{ product.name }}</h4>
+                                <p class="text-xs text-green-600">Product ID: {{ product.id }}</p>
+                            </div>
+                        </div>
+                            {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Product Request Details (if applicable) -->
+            {% if inquiry.type == 'product_request' %}
+            <div class="card hover-card bg-white overflow-hidden border-0 shadow-lg rounded-xl">
+                <div class="p-5 bg-gray-700 text-white">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-lg bg-white bg-opacity-20 mr-4 flex items-center justify-center">
+                            <i class="fas fa-clipboard-list text-white text-lg"></i>
+                        </div>
+                        <h5 class="text-white font-semibold text-xl">Request Details</h5>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            {% if inquiry.product_quantity %}
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                            <span class="text-green-600 font-medium block mb-1">
+                                <i class="fas fa-cubes mr-2"></i>Requested Quantity
+                            </span>
+                            <p class="text-gray-700">{{ inquiry.product_quantity }}</p>
+                        </div>
+                            {% endif %}
+                            
+                            {% if inquiry.target_price_range %}
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                            <span class="text-green-600 font-medium block mb-1">
+                                <i class="fas fa-tag mr-2"></i>Target Price Range
+                            </span>
+                            <p class="text-gray-700">{{ inquiry.target_price_range }}</p>
+                        </div>
+                            {% endif %}
+                            
+                            {% if inquiry.preferred_delivery_date %}
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                            <span class="text-green-600 font-medium block mb-1">
+                                <i class="fas fa-calendar mr-2"></i>Preferred Delivery Date
+                            </span>
+                            <p class="text-gray-700">{{ inquiry.preferred_delivery_date }}</p>
+                        </div>
+                            {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Tracking Information - Timeline -->
+            <div class="card hover-card bg-white overflow-hidden border-0 shadow-lg rounded-xl">
+                <div class="p-5 bg-green-600 text-white">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-lg bg-white bg-opacity-20 mr-4 flex items-center justify-center">
+                            <i class="fas fa-history text-white text-lg"></i>
+                        </div>
+                        <h5 class="text-white font-semibold text-xl">Activity Timeline</h5>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="relative border-l-2 border-green-300 pl-8 ml-3 pb-1">
+                        <div class="absolute w-8 h-8 bg-green-600 rounded-full -left-4 flex items-center justify-center">
+                            <i class="fas fa-plus text-white text-xs"></i>
+                        </div>
+                        <div class="mb-6">
+                            <h4 class="text-sm font-semibold text-gray-800">Inquiry Created</h4>
+                            <p class="text-xs text-gray-600">{{ inquiry.created_at|date:"F j, Y - h:i a" }}</p>
+                            <p class="text-sm mt-2 text-gray-700">Inquiry was submitted by {{ inquiry.name }}</p>
+                        </div>
+                        
+                        {% if inquiry.updated_at and inquiry.updated_at != inquiry.created_at %}
+                        <div class="absolute w-8 h-8 bg-green-600 rounded-full -left-4 flex items-center justify-center">
+                            <i class="fas fa-sync text-white text-xs"></i>
+                        </div>
+                        <div class="mb-6">
+                            <h4 class="text-sm font-semibold text-gray-800">Status Updated</h4>
+                            <p class="text-xs text-gray-600">{{ inquiry.updated_at|date:"F j, Y - h:i a" }}</p>
+                            <p class="text-sm mt-2 text-gray-700">Status changed to <span class="font-medium">{{ inquiry.get_status_display }}</span></p>
+                        </div>
+                        {% endif %}
+                        
+                        {% if inquiry.is_responded %}
+                        <div class="absolute w-8 h-8 bg-green-600 rounded-full -left-4 flex items-center justify-center">
+                            <i class="fas fa-reply text-white text-xs"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-semibold text-gray-800">Response Sent</h4>
+                            <p class="text-xs text-gray-600">{{ inquiry.responded_at|date:"F j, Y - h:i a"|default:"Date not recorded" }}</p>
+                            <p class="text-sm mt-2 text-gray-700">Customer has been contacted</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Column - Inquiry Management -->
+        <div class="lg:col-span-4 order-2 lg:order-2 space-y-6">
+            <!-- Management Card -->
+            <div class="card hover-card bg-white overflow-hidden border-0 shadow-lg rounded-xl">
+                <div class="p-5 bg-green-600 text-white">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-lg bg-white bg-opacity-20 mr-4 flex items-center justify-center">
+                            <i class="fas fa-cog text-white text-lg"></i>
+                        </div>
+                        <h5 class="text-white font-semibold text-xl">Inquiry Management</h5>
+                    </div>
+                </div>
+                
+                <div class="p-0 divide-y divide-gray-100">
+                    <!-- Status Update -->
+                    <div class="p-5">
+                        <form id="status-form" class="space-y-4">
+                            <div class="mb-5">
+                                <label class="flex items-center justify-between text-sm font-medium text-gray-700 mb-2">
+                                    <span>Inquiry Status</span>
+                                    <span id="current-status" class="badge badge-{{ inquiry.status }} flex items-center">
+                                        <i class="fas {% if inquiry.status == 'new' %}fa-star{% elif inquiry.status == 'in_progress' %}fa-sync{% elif inquiry.status == 'completed' %}fa-check-circle{% else %}fa-times-circle{% endif %} mr-1"></i>
+                                        {{ inquiry.get_status_display }}
+                                    </span>
+                                </label>
+                                
+                                <div class="relative rounded-md shadow-sm">
+                                    <select class="form-input w-full pr-10 appearance-none bg-white focus:ring-2 focus:ring-primary focus:border-primary" id="status" name="status">
+                                {% for status_value, status_name in status_choices.items %}
+                                    <option value="{{ status_value }}" {% if inquiry.status == status_value %}selected{% endif %}>
+                                        {{ status_name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                        <i class="fas fa-chevron-down text-gray-400"></i>
+                                    </div>
+                                </div>
+                        </div>
+                        
+                            <div class="flex items-center justify-between px-1">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="is_responded" name="is_responded" {% if inquiry.is_responded %}checked{% endif %}>
+                                <label class="custom-control-label" for="is_responded">Mark as Responded</label>
+                                </div>
+                                
+                                <button type="submit" class="btn bg-green-600 hover:bg-green-700 text-white rounded-lg transform transition hover:scale-105">
+                                    <i class="fas fa-save mr-1"></i> Update
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="card hover-card bg-white overflow-hidden border-0 shadow-lg rounded-xl">
+                <div class="p-5 bg-gray-700 text-white">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-lg bg-white bg-opacity-20 mr-4 flex items-center justify-center">
+                            <i class="fas fa-bolt text-white text-lg"></i>
+                        </div>
+                        <h5 class="text-white font-semibold text-xl">Quick Actions</h5>
+                    </div>
+                </div>
+                
+                <div class="p-5 grid grid-cols-1 gap-4">
+                    {% if inquiry.email %}
+                    <div class="action-container">
+                        <a href="#" 
+                            data-action="email"
+                            data-target="{{ inquiry.email }}"
+                            data-subject="Re: {{ inquiry.get_type_display }}"
+                            class="action-btn flex items-center p-4 rounded-xl bg-gray-50 border border-gray-200 transition transform hover:scale-105 hover:shadow-md">
+                            <div class="w-12 h-12 rounded-full bg-green-600 text-white flex items-center justify-center mr-4">
+                                <i class="fas fa-envelope text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-green-800">Send Email</h4>
+                                <p class="text-sm text-green-600">{{ inquiry.email }}</p>
+                            </div>
+                        </a>
+                    </div>
+                    {% endif %}
+                    
+                    {% if inquiry.phone %}
+                    <div class="action-container">
+                        <a href="#" 
+                            data-action="phone"
+                            data-target="{{ inquiry.phone }}"
+                            class="action-btn flex items-center p-4 rounded-xl bg-gray-50 border border-gray-200 transition transform hover:scale-105 hover:shadow-md">
+                            <div class="w-12 h-12 rounded-full bg-green-600 text-white flex items-center justify-center mr-4">
+                                <i class="fas fa-phone text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-green-800">Call Customer</h4>
+                                <p class="text-sm text-green-600">{{ inquiry.phone }}</p>
+                            </div>
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Admin Notes - Separated as its own card -->
+            <div class="card hover-card bg-white overflow-hidden border-0 shadow-lg rounded-xl">
+                <div class="p-5 bg-gray-700 text-white">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-lg bg-white bg-opacity-20 mr-4 flex items-center justify-center">
+                            <i class="fas fa-sticky-note text-white text-lg"></i>
+                        </div>
+                        <h5 class="text-white font-semibold text-xl">Admin Notes</h5>
+                    </div>
+                </div>
+                
+                <div class="p-5 space-y-4">
+                    <!-- Notes List Container -->
+                    <div id="notes-container" class="space-y-3">
+                        {% if notes %}
+                            {% for note in notes %}
+                            <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                                <div class="flex justify-between items-start mb-2">
+                                    <span class="font-medium text-green-700">{{ note.created_by.get_full_name|default:note.created_by.username }}</span>
+                                    <span class="text-xs text-gray-500">{{ note.created_at|date:"j F Y - h:i a" }}</span>
+                                </div>
+                                <p class="text-gray-700">{{ note.content }}</p>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center text-gray-500 py-4">
+                                <i class="fas fa-sticky-note text-2xl mb-2"></i>
+                                <p>No notes added yet</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Add New Note Form -->
+                    <form id="notes-form" class="space-y-3 mt-4">
+                        <div class="relative">
+                            <textarea class="form-input w-full bg-gray-50 border-gray-200 focus:bg-white focus:ring-2 focus:ring-primary focus:border-primary" 
+                                id="admin_notes" name="admin_notes" rows="2" 
+                                placeholder="Add internal notes about this inquiry..."></textarea>
+                        </div>
+                        <div class="flex justify-end">
+                            <button type="submit" class="btn bg-green-600 hover:bg-green-700 text-white rounded-lg transform transition hover:scale-105">
+                                <i class="fas fa-plus mr-1"></i> Add Note
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Tracking Information - Visible only on smaller screens -->
+            <div class="card hover-card bg-white overflow-hidden border-0 shadow-lg rounded-xl lg:hidden">
+                <div class="p-5 bg-gray-700 text-white">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-lg bg-white bg-opacity-20 mr-4 flex items-center justify-center">
+                            <i class="fas fa-chart-line text-white text-lg"></i>
+                        </div>
+                        <h5 class="text-white font-semibold text-xl">Inquiry Tracking</h5>
+                    </div>
+                </div>
+                <div class="p-5 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-600">Created Date</span>
+                        <span class="font-medium text-gray-800">{{ inquiry.created_at|date:"j F Y - h:i a" }}</span>
+                    </div>
+                    
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-600">Last Updated</span>
+                        <span class="font-medium text-gray-800">{{ inquiry.updated_at|date:"j F Y - h:i a"|default:"Not updated yet" }}</span>
+                    </div>
+                    
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-600">Inquiry Source</span>
+                        <span class="font-medium text-gray-800">{{ inquiry.source|default:"Website" }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Update Status Form Submission
+        $('#status-form').submit(function(e) {
+            e.preventDefault();
+            
+            const status = $('#status').val();
+            const isResponded = $('#is_responded').is(':checked');
+            
+            // Show loading state
+            const submitBtn = $(this).find('button[type="submit"]');
+            const originalBtnText = submitBtn.html();
+            submitBtn.html('<i class="fas fa-spinner fa-spin mr-1"></i> Updating...');
+            submitBtn.attr('disabled', true);
+            
+            $.ajax({
+                url: '{% url "dashboard:update_inquiry_status" inquiry.id %}',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    status: status,
+                    is_responded: isResponded
+                }),
+                success: function(response) {
+                    // Update the status badge with the new icon
+                    let statusIcon = 'fa-star';
+                    if (status === 'in_progress') statusIcon = 'fa-sync';
+                    else if (status === 'completed') statusIcon = 'fa-check-circle';
+                    else if (status === 'cancelled') statusIcon = 'fa-times-circle';
+                    
+                    $('#status-badge').html(`
+                        <span class="badge badge-${status} flex items-center">
+                            <i class="fas ${statusIcon} mr-1"></i>
+                            ${response.inquiry_status}
+                        </span>
+                    `);
+                    
+                    // Update responded status
+                    if (response.is_responded) {
+                        $('#responded-status').html('<i class="far fa-comment-dots inquiry-icon"></i> <span class="text-green-500 ml-2 font-medium">Responded</span>');
+                    } else {
+                        $('#responded-status').html('<i class="far fa-comment-dots inquiry-icon"></i> <span class="text-red-500 ml-2 font-medium">Not Responded</span>');
+                    }
+                    
+                    // Show success message
+                    toastr.success('Inquiry status updated successfully');
+                    
+                    // Reset button
+                    submitBtn.html(originalBtnText);
+                    submitBtn.attr('disabled', false);
+                },
+                error: function(xhr) {
+                    const response = xhr.responseJSON || { message: 'An error occurred' };
+                    toastr.error(response.message);
+                    
+                    // Reset button
+                    submitBtn.html(originalBtnText);
+                    submitBtn.attr('disabled', false);
+                }
+            });
+        });
+        
+        // إضافة مستمعات الأحداث لأزرار الإيميل والاتصال - الأسلوب الجديد
+        $('.action-btn').on('click', function(e) {
+            e.preventDefault(); // منع السلوك الافتراضي
+            
+            console.log('Action button clicked:', $(this).data());
+            
+            // استخراج معلومات من سمات البيانات
+            const actionType = $(this).data('action');
+            const target = $(this).data('target');
+            const subject = $(this).data('subject') || '';
+            
+            // استدعاء وظيفة تحديث حالة الاستفسار
+            updateInquiryAfterAction(true);
+            
+            // عرض رسالة للمستخدم
+            toastr.success(`Starting ${actionType}. Status updated automatically.`);
+            
+            // تأخير قليل ثم فتح الإجراء المناسب
+            setTimeout(() => {
+                console.log('Executing action:', actionType, target);
+                
+                if (actionType === 'email') {
+                    window.location.href = `mailto:${target}?subject=${subject}`;
+                } else if (actionType === 'phone') {
+                    window.location.href = `tel:${target}`;
+                }
+            }, 800); // تأخير لإتاحة الوقت لتحديث الحالة أولاً
+        });
+        
+        // وظيفة تحديث حالة الاستفسار إلى "in_progress"
+        function updateStatusToInProgress() {
+            const currentStatus = $('#status').val();
+            
+            // نتحقق من أن الحالة الحالية ليست "مكتملة" أو "ملغاة"
+            if (currentStatus === 'new') {
+                // عرض مؤشر تحميل صغير
+                $('#status-badge').addClass('opacity-50');
+                
+                $.ajax({
+                    url: '{% url "dashboard:update_inquiry_status" inquiry.id %}',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        status: 'in_progress',
+                        is_responded: $('#is_responded').is(':checked')
+                    }),
+                    success: function(response) {
+                        // تحديث الواجهة
+                        $('#status').val('in_progress');
+                        
+                        // تحديث شارة الحالة
+                        $('#status-badge').removeClass('opacity-50').html(`
+                            <span class="badge badge-in_progress flex items-center">
+                                <i class="fas fa-sync mr-1"></i>
+                                ${response.inquiry_status}
+                            </span>
+                        `);
+                        
+                        // تحديث نص إعادة التوجيه
+                        $('#status-badge').closest('.card').addClass('border-blue-200');
+                        setTimeout(() => {
+                            $('#status-badge').closest('.card').removeClass('border-blue-200');
+                        }, 2000);
+                        
+                        // إظهار رسالة نجاح
+                        toastr.info('Status automatically changed to In Progress');
+                    },
+                    error: function(xhr) {
+                        $('#status-badge').removeClass('opacity-50');
+                        console.error('Failed to update inquiry status:', xhr.responseText);
+                    }
+                });
+            }
+        }
+        
+        // وظيفة تحديث الاستفسار بعد إجراء (إيميل أو اتصال)
+        function updateInquiryAfterAction(markAsResponded = false) {
+            const currentStatus = $('#status').val();
+            console.log('Updating inquiry status from:', currentStatus);
+            
+            // لا تحاول تحديث الحالة إذا كانت مكتملة أو ملغاة
+            if (currentStatus === 'completed' || currentStatus === 'cancelled') {
+                console.log('Not updating status because it is already completed or cancelled');
+                toastr.warning('Status was not changed because it is already ' + 
+                    (currentStatus === 'completed' ? 'completed' : 'cancelled'));
+                return;
+            }
+            
+            // عرض مؤشر تحميل
+            $('#status-badge').addClass('opacity-50');
+            if (markAsResponded) {
+                $('#responded-status').addClass('opacity-50');
+            }
+            
+            // بيانات التحديث
+            const updateData = {
+                status: 'in_progress',
+                is_responded: markAsResponded ? true : $('#is_responded').is(':checked')
+            };
+            
+            console.log('Sending update with data:', updateData);
+            
+            // إرسال طلب التحديث
+            $.ajax({
+                url: '{% url "dashboard:update_inquiry_status" inquiry.id %}',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(updateData),
+                success: function(response) {
+                    console.log('Status update successful:', response);
+                    
+                    // تحديث واجهة المستخدم
+                    $('#status').val('in_progress');
+                    
+                    // تحديث شارة الحالة
+                    $('#status-badge').removeClass('opacity-50').html(`
+                        <span class="badge badge-in_progress flex items-center">
+                            <i class="fas fa-sync mr-1"></i>
+                            ${response.inquiry_status}
+                        </span>
+                    `);
+                    
+                    // تحديث حالة الرد إذا لزم الأمر
+                    if (markAsResponded) {
+                        $('#is_responded').prop('checked', true);
+                        $('#responded-status').removeClass('opacity-50').html('<i class="far fa-comment-dots inquiry-icon"></i> <span class="text-green-500 ml-2 font-medium">Responded</span>');
+                    }
+                    
+                    // تأثير بصري للتأكيد
+                    $('#status-badge').closest('.card').addClass('border-blue-200');
+                    setTimeout(() => {
+                        $('#status-badge').closest('.card').removeClass('border-blue-200');
+                    }, 2000);
+                    
+                    // إظهار رسالة نجاح
+                    if (currentStatus !== 'in_progress') {
+                        let message = 'Status changed to In Progress';
+                        if (markAsResponded) {
+                            message += ' and marked as responded';
+                        }
+                        toastr.info(message);
+                    } else if (markAsResponded && !$('#is_responded').is(':checked')) {
+                        toastr.info('Inquiry marked as responded');
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Failed to update inquiry status:', xhr.responseText);
+                    $('#status-badge').removeClass('opacity-50');
+                    if (markAsResponded) {
+                        $('#responded-status').removeClass('opacity-50');
+                    }
+                    toastr.error('Failed to update inquiry status');
+                }
+            });
+        }
+        
+        // تحديث نموذج الملاحظات لاستخدام الوظيفة الجديدة
+        $('#notes-form').submit(function(e) {
+            e.preventDefault();
+            
+            const noteContent = $('#admin_notes').val();
+            
+            if (!noteContent.trim()) {
+                toastr.warning('Please add a note before submitting');
+                return;
+            }
+            
+            // Show loading state
+            const submitBtn = $(this).find('button[type="submit"]');
+            const originalBtnText = submitBtn.html();
+            submitBtn.html('<i class="fas fa-spinner fa-spin mr-1"></i> Adding...');
+            submitBtn.attr('disabled', true);
+            
+            // إضافة الملاحظة
+            $.ajax({
+                url: '{% url "dashboard:add_inquiry_note" inquiry.id %}',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    content: noteContent
+                }),
+                success: function(response) {
+                    console.log('Note added successfully:', response);
+                    
+                    // Clear the textarea
+                    $('#admin_notes').val('');
+                    
+                    // Add the new note to the notes container
+                    const newNote = `
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 animate-fade">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="font-medium text-green-700">${response.username}</span>
+                                <span class="text-xs text-gray-500">${response.created_at}</span>
+                            </div>
+                            <p class="text-gray-700">${response.content}</p>
+                        </div>
+                    `;
+                    
+                    if ($('#notes-container .text-center.text-gray-500').length) {
+                        // إذا لم تكن هناك ملاحظات سابقة، فنزيل العنصر الذي يعرض "لا توجد ملاحظات"
+                        $('#notes-container').empty();
+                    }
+                    
+                    $('#notes-container').prepend(newNote);
+                    
+                    // Show success message
+                    toastr.success('Note added successfully');
+                    
+                    // Reset button
+                    submitBtn.html(originalBtnText);
+                    submitBtn.attr('disabled', false);
+                    
+                    // تحديث حالة الاستفسار
+                    updateInquiryAfterAction(false);
+                },
+                error: function(xhr) {
+                    const response = xhr.responseJSON || { message: 'An error occurred' };
+                    toastr.error(response.message);
+                    
+                    // Reset button
+                    submitBtn.html(originalBtnText);
+                    submitBtn.attr('disabled', false);
+                    
+                    console.error('Failed to add note:', xhr.responseText);
+                }
+            });
+        });
+    });
+</script>
+{% endblock %} 

@@ -1,0 +1,118 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}
+    Delete Product Packaging Type - Egyland Dashboard
+{% endblock %}
+
+{% block header_title %}
+    <!-- Header title removed -->
+{% endblock %}
+
+{% block breadcrumbs %}
+    <!-- Breadcrumbs moved to content -->
+{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <!-- New improved header and breadcrumbs design -->
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">
+                    Delete Product Packaging Type
+                </h1>
+                <nav class="flex flex-wrap items-center text-sm text-gray-600">
+                    <a href="{% url 'dashboard:home' %}" class="hover:text-primary transition">
+                        <i class="fas fa-home"></i>
+                        <span class="hidden sm:inline">Dashboard</span>
+                    </a>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <span class="text-gray-600">Products</span>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <a href="{% url 'dashboard:product_packaging_types' %}" class="hover:text-primary transition">Product Packaging Types</a>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <span class="text-primary font-medium">Delete</span>
+                </nav>
+            </div>
+            <div class="mt-4 md:mt-0">
+                <a href="{% url 'dashboard:product_packaging_types' %}" class="btn btn-outline">
+                    <i class="fas fa-arrow-left mr-1.5"></i> 
+                    Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- End of improved header and breadcrumbs -->
+
+    <div class="dashboard-card bg-white shadow rounded-lg">
+        <div class="p-6">
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold text-gray-800">
+                    Confirm Deletion
+                </h2>
+                <p class="text-gray-600 mt-1">
+                    Are you sure you want to delete the following product packaging type association?
+                </p>
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <div class="text-sm text-gray-500 mb-1">Product</div>
+                        <div class="font-medium">{{ object.product.name }}</div>
+                    </div>
+                    <div>
+                        <div class="text-sm text-gray-500 mb-1">Packaging Type</div>
+                        <div class="font-medium">{{ object.packaging_type.name }}</div>
+                    </div>
+                </div>
+
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <div class="text-sm text-gray-500 mb-1">Type</div>
+                        <div>{{ object.get_type_display }}</div>
+                    </div>
+                    <div>
+                        <div class="text-sm text-gray-500 mb-1">Items per Pallet</div>
+                        <div>{{ object.items_per_pallet }} {{ object.packaging_type.key_word }}</div>
+                    </div>
+                    <div>
+                        <div class="text-sm text-gray-500 mb-1">Pallets per Container</div>
+                        <div>{{ object.pallets_per_container }}</div>
+                    </div>
+                </div>
+
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <div class="text-sm text-gray-500 mb-1">Net Weight</div>
+                        <div>{{ object.net_weight }} {{ object.weight_unit }}</div>
+                    </div>
+                    <div>
+                        <div class="text-sm text-gray-500 mb-1">Show Fresh Label</div>
+                        <div>{% if object.show_fresh_label %}Yes{% else %}No{% endif %}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-warning mb-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                <span>This action cannot be undone. Deleting this association will remove it from the product detail page.</span>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="p-6 bg-gray-50 rounded-lg border-t border-gray-200 flex justify-between items-center">
+                    <a href="{% url 'dashboard:product_packaging_types' %}" class="text-gray-600 hover:text-gray-900 transition">
+                        <i class="fas fa-times mr-1"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-danger px-6 py-2.5">
+                        <i class="fas fa-trash-alt mr-1"></i> Delete Product Packaging Type
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

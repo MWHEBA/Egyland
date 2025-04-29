@@ -1,0 +1,292 @@
+{% extends "base/home_base.html" %}
+{% load static %}
+
+{% block title %}Egyland - Agricultural Export Company{% endblock %}
+
+{% block content %}
+<!-- Full Screen Hero Slider Section -->
+<section class="h-screen w-full overflow-hidden">
+    <div id="hero-slider" class="h-full w-full">
+        <!-- Slide 1 (كان Slide 2 سابقا) -->
+        <div class="slide h-full w-full bg-cover bg-center absolute inset-0" 
+             style="background-image: url('{% static 'img/slider/slide2.jpg' %}');"
+             data-mobile-bg="{% static 'img/slider/Slider2-mobile.jpg' %}">
+            <div class="absolute inset-0 bg-black bg-opacity-5"></div>
+            <div class="max-w-[1300px] mx-auto px-4 relative z-10 h-full flex items-center">
+                <div class="max-w-2xl">
+                    <h1 class="text-shadow-lg">
+                        <span class="block text-white slide-title">Crafting</span>
+                        <br>
+                        <span class="inline-block primary-bg px-8 py-4 text-white slide-title">Joyful Moments</span>
+                        <br>
+                        <span class="block text-white slide-title mt-4">with Great Food</span>
+                    </h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2 (كان Slide 1 سابقا) -->
+        <div class="slide h-full w-full bg-cover bg-center absolute inset-0" 
+             style="background-image: url('{% static 'img/slider/slide1.jpg' %}');"
+             data-mobile-bg="{% static 'img/slider/Slider1-mobile.jpg' %}">
+            <div class="absolute inset-0 bg-black bg-opacity-5"></div>
+            <div class="max-w-[1300px] mx-auto px-4 relative z-10 h-full flex items-center">
+                <div class="max-w-2xl">
+                    <h1 class="text-shadow-lg">
+                        <span class="inline-block primary-bg px-8 py-4 text-white slide-title">Global Sourcing,</span>
+                        <br>
+                        <span class="block text-white slide-title mt-4">World - Class</span>
+                        <br>
+                        <span class="block text-white slide-title">Service</span>
+                    </h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="slide h-full w-full bg-cover bg-center absolute inset-0" 
+             style="background-image: url('{% static 'img/slider/slide3.jpg' %}');"
+             data-mobile-bg="{% static 'img/slider/Slider3-mobile.jpg' %}">
+            <div class="absolute inset-0 bg-black bg-opacity-5"></div>
+            <div class="max-w-[1300px] mx-auto px-4 relative z-10 h-full flex items-center">
+                <div class="max-w-2xl">
+                    <h1 class="text-shadow-lg">
+                        <span class="inline-block primary-bg px-8 py-4 text-white slide-title nowrap-text">Cultivated with Care</span>
+                        <br>
+                        <span class="block text-white slide-title mt-4">Harvested with</span>
+                        <br>
+                        <span class="inline-block primary-bg px-8 py-4 text-white love-text">love</span>
+                    </h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4 -->
+        <div class="slide h-full w-full bg-cover bg-center absolute inset-0" 
+             style="background-image: url('{% static 'img/slider/slide4.jpg' %}');"
+             data-mobile-bg="{% static 'img/slider/Slider4-mobile.jpg' %}">
+            <div class="absolute inset-0 bg-black bg-opacity-5"></div>
+            <div class="max-w-[1300px] mx-auto px-4 relative z-10 h-full flex items-center">
+                <div class="max-w-2xl">
+                    <h1 class="text-shadow-lg">
+                        <span class="block text-white slide-title">Every Ingredient</span>
+                        <br>
+                        <span class="block text-white slide-title">Every Process</span>
+                        <br>
+                        <span class="inline-block primary-bg px-8 py-4 text-white slide-title nowrap-text">Quality First</span>
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Slider Navigation -->
+    <div class="absolute bottom-10 left-0 right-0 flex justify-center space-x-6 z-20">
+        <button class="slider-nav-dot w-4 h-4 rounded-full bg-white transition-opacity" data-slide="0"></button>
+        <button class="slider-nav-dot w-4 h-4 rounded-full bg-white transition-opacity" data-slide="1"></button>
+        <button class="slider-nav-dot w-4 h-4 rounded-full bg-white transition-opacity" data-slide="2"></button>
+        <button class="slider-nav-dot w-4 h-4 rounded-full bg-white transition-opacity" data-slide="3"></button>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+    }
+    
+    html, body {
+        height: 100%;
+        overflow: hidden;
+    }
+    
+    .text-shadow {
+        text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    }
+    
+    .text-shadow-sm {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    
+    .text-shadow-lg {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    
+    .slide-title {
+        font-family: 'Raleway', sans-serif;
+        font-weight: 800;
+        font-size: 64px;
+        line-height: 1.1;
+        letter-spacing: -0.01em;
+    }
+    
+    .primary-bg {
+        background-color: #27ae60;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .love-text {
+        font-style: italic;
+        font-weight: 800;
+        font-family: 'Raleway', sans-serif;
+        font-size: 64px;
+        line-height: 1.1;
+    }
+    
+    .nowrap-text {
+        white-space: nowrap;
+    }
+    
+    /* السلايدر الرئيسي */
+    #hero-slider .slide {
+        opacity: 0;
+        visibility: hidden;
+        z-index: 0;
+        transition: opacity 1s ease, visibility 1s ease;
+    }
+    
+    #hero-slider .slide.active {
+        opacity: 1;
+        visibility: visible;
+        z-index: 1;
+    }
+    
+    /* أزرار التنقل */
+    .slider-nav-dot {
+        opacity: 0.6;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid rgba(255, 255, 255, 0.8);
+        background-color: transparent;
+    }
+    
+    .slider-nav-dot.active {
+        opacity: 1;
+        background-color: #27ae60;
+        border-color: #27ae60;
+        transform: scale(1.2);
+    }
+    
+    /* تصميم الاستجابة للموبايل */
+    @media (max-width: 768px) {
+        /* تطبيق خلفيات الموبايل على الشاشات الصغيرة */
+        #hero-slider .slide {
+            background-size: cover;
+            background-position: center;
+        }
+    }
+</style>
+<!-- إضافة CSS المُحسن للموبايل -->
+<link rel="stylesheet" href="{% static 'css/mobile_home.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // تعريف المتغيرات
+        const slides = document.querySelectorAll('#hero-slider .slide');
+        const dots = document.querySelectorAll('.slider-nav-dot');
+        let currentSlide = 0;
+        let slideInterval;
+        let isTransitioning = false;
+        
+        // تبديل صور الخلفية بناءً على حجم الشاشة
+        function switchBackgroundImages() {
+            const isMobile = window.innerWidth <= 768;
+            
+            slides.forEach(slide => {
+                const desktopBg = slide.style.backgroundImage;
+                const mobileBg = slide.getAttribute('data-mobile-bg');
+                
+                if (isMobile && mobileBg) {
+                    slide.style.backgroundImage = `url('${mobileBg}')`;
+                } else if (!isMobile && desktopBg) {
+                    // استعادة الصورة الأصلية إذا تم تغيير حجم النافذة
+                    const originalBg = slide.getAttribute('data-original-bg');
+                    if (originalBg) {
+                        slide.style.backgroundImage = originalBg;
+                    }
+                }
+            });
+        }
+        
+        // حفظ الصور الأصلية
+        slides.forEach(slide => {
+            slide.setAttribute('data-original-bg', slide.style.backgroundImage);
+        });
+        
+        // التنفيذ الأولي والاستماع لتغييرات الحجم
+        switchBackgroundImages();
+        window.addEventListener('resize', switchBackgroundImages);
+        
+        // دالة لتنشيط سلايد محدد
+        function activateSlide(index) {
+            // منع التداخل أثناء التحول
+            if (isTransitioning) return;
+            isTransitioning = true;
+            
+            // إلغاء تنشيط السلايد الحالي
+            slides[currentSlide].classList.remove('active');
+            dots[currentSlide].classList.remove('active');
+            
+            // تعيين السلايد الجديد
+            currentSlide = index;
+            
+            // التأكد من صحة الرقم
+            if (currentSlide >= slides.length) {
+                currentSlide = 0;
+            } else if (currentSlide < 0) {
+                currentSlide = slides.length - 1;
+            }
+            
+            // تنشيط السلايد الجديد والنقطة المقابلة
+            slides[currentSlide].classList.add('active');
+            dots[currentSlide].classList.add('active');
+            
+            // السماح بالتحول التالي بعد اكتمال الحالي
+            setTimeout(() => {
+                isTransitioning = false;
+            }, 1100); // أطول قليلا من مدة التحول
+        }
+        
+        // تنشيط السلايد الأول
+        slides[0].classList.add('active');
+        dots[0].classList.add('active');
+        
+        // إضافة مستمعي الأحداث للنقاط
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                // إيقاف التلقائي
+                clearInterval(slideInterval);
+                
+                // الانتقال للسلايد المحدد
+                activateSlide(index);
+                
+                // إعادة تشغيل التلقائي
+                startAutoSlide();
+            });
+        });
+        
+        // بدء العرض التلقائي
+        function startAutoSlide() {
+            slideInterval = setInterval(() => {
+                activateSlide((currentSlide + 1) % slides.length);
+            }, 8000);
+        }
+        
+        // بدء العرض التلقائي عند تحميل الصفحة
+        startAutoSlide();
+        
+        // تنشيط رابط الصفحة الرئيسية في القائمة
+        const homeLink = document.querySelector('a[href="{% url "core:home" %}"]');
+        if (homeLink) {
+            homeLink.classList.add('text-primary');
+        }
+    });
+</script>
+<!-- إضافة JavaScript المُحسن للموبايل -->
+<script src="{% static 'js/mobile_home.js' %}"></script>
+{% endblock %} 
