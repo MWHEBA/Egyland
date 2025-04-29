@@ -200,31 +200,31 @@ To avoid issues with Google Fonts and improve loading performance, the project n
 
 All templates have been updated to use these local font definitions.
 
-## تحسينات الموبايل
+## Mobile Enhancements
 
-تم إضافة تحسينات للصفحة الرئيسية على الأجهزة المحمولة. لاستخدام هذه التحسينات:
+Mobile enhancements have been added to the homepage. To use these enhancements:
 
-1. قم بتثبيت Sass إذا لم يكن موجودًا بالفعل:
+1. Install Sass if it's not already installed:
    ```
    npm install -g sass
    ```
 
-2. قم بتشغيل أمر التطوير الذي يراقب كلاً من ملفات Tailwind CSS و SCSS:
+2. Run the development command that watches both Tailwind CSS and SCSS files:
    ```
    npm run dev
    ```
 
-3. أو يمكنك تجميع ملفات SCSS فقط:
+3. Or you can compile only the SCSS files:
    ```
    npm run build:scss
    ```
 
-تشمل التحسينات الرئيسية للموبايل:
-- تحسين العناوين والنصوص لتكون أكثر قابلية للقراءة على الشاشات الصغيرة
-- دعم السحب لتغيير الشرائح في العرض الرئيسي
-- إصلاح مشكلة ارتفاع الشاشة الكاملة (100vh) في متصفحات الموبايل
-- تحسين تفاعل القائمة المتنقلة للموبايل
-- تأثيرات انتقالية محسّنة 
+The main mobile enhancements include:
+- Improved headings and text for better readability on small screens
+- Swipe support for changing slides in the main carousel
+- Fix for full-height (100vh) issues in mobile browsers
+- Improved mobile menu interaction
+- Enhanced transition effects
 
 ## Production Setup with MySQL
 
