@@ -1,0 +1,110 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}Delete User: {{ user_profile.username }}{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/plugins/datatables.min.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">
+                    Delete User: {{ user_profile.username }}
+                </h1>
+                <nav class="flex flex-wrap items-center text-sm text-gray-600">
+                    <a href="{% url 'dashboard:home' %}" class="hover:text-primary transition">
+                        <i class="fas fa-home"></i>
+                        <span class="hidden sm:inline">Dashboard</span>
+                    </a>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <a href="{% url 'dashboard_user_management:user_list' %}" class="hover:text-primary transition">
+                        <span>User Management</span>
+                    </a>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <a href="{% url 'dashboard_user_management:user_detail' user_id=user_profile.id %}" class="hover:text-primary transition">
+                        <span>{{ user_profile.username }}</span>
+                    </a>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <span class="text-primary font-medium">Delete</span>
+                </nav>
+            </div>
+            <div class="mt-4 md:mt-0">
+                <a href="{% url 'dashboard_user_management:user_detail' user_id=user_profile.id %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left mr-2"></i> Back to User
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-lg">
+        <div class="flex items-center">
+            <div class="flex-shrink-0 text-red-500">
+                <i class="fas fa-exclamation-triangle text-xl"></i>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-lg font-medium text-red-800">Warning: This action cannot be undone</h3>
+                <div class="mt-2 text-red-700">
+                    <p>You are about to permanently delete the user <strong>{{ user_profile.username }}</strong>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-xl font-semibold mb-4">User Information</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div>
+                <p class="text-gray-600">Username:</p>
+                <p class="font-medium">{{ user_profile.username }}</p>
+            </div>
+            <div>
+                <p class="text-gray-600">Email:</p>
+                <p class="font-medium">{{ user_profile.email }}</p>
+            </div>
+            <div>
+                <p class="text-gray-600">Full Name:</p>
+                <p class="font-medium">{{ user_profile.get_full_name }}</p>
+            </div>
+            <div>
+                <p class="text-gray-600">Date Joined:</p>
+                <p class="font-medium">{{ user_profile.date_joined|date:"M d, Y" }}</p>
+            </div>
+        </div>
+        
+        <form method="post" class="mt-8">
+            {% csrf_token %}
+            <div class="flex items-center mb-4">
+                <input type="checkbox" id="confirm" class="mr-2" required>
+                <label for="confirm" class="text-red-600">
+                    I understand that this action will permanently delete this user and all associated data.
+                </label>
+            </div>
+            
+            <div class="flex justify-end space-x-3">
+                <a href="{% url 'dashboard_user_management:user_detail' user_id=user_profile.id %}" class="btn btn-secondary">
+                    Cancel
+                </a>
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash mr-2"></i> Delete User
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/plugins/datatables.min.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+            // Any initialization can go here if needed
+        });
+    </script>
+{% endblock %} 

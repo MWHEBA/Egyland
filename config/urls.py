@@ -28,6 +28,7 @@ urlpatterns = [
     path('dashboard/', include('apps.dashboard.urls')),
     path('accounts/', include('apps.accounts.urls')),
     path('inquiries/', include('apps.inquiries.urls')),
+    path('dashboard/user-management/', include('apps.user_management.urls')),
     
     # إضافة مسار لخدمة ملفات الوسائط في بيئة الإنتاج
     # ملاحظة: هذه ليست الطريقة المثالية وغير موصى بها للإنتاج

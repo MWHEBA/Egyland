@@ -88,6 +88,7 @@ INSTALLED_APPS = [
     'apps.dashboard.apps.DashboardConfig',
     'apps.branches.apps.BranchesConfig',
     'apps.inquiries.apps.InquiriesConfig',
+    'apps.user_management.apps.UserManagementConfig',
 ]
 
 MIDDLEWARE = [
@@ -296,6 +297,11 @@ LOGGING = {
             'propagate': True,
         },
         'apps': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'user_management': {
             'handlers': ['console', 'file'],
             'level': 'INFO',
             'propagate': True,

@@ -1,0 +1,101 @@
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/plugins/datatables.min.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">
+                    {{ title }}
+                </h1>
+                <nav class="flex flex-wrap items-center text-sm text-gray-600">
+                    <a href="{% url 'dashboard:home' %}" class="hover:text-primary transition">
+                        <i class="fas fa-home"></i>
+                        <span class="hidden sm:inline">Dashboard</span>
+                    </a>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <a href="{% url 'dashboard_user_management:user_list' %}" class="hover:text-primary transition">
+                        <span>User Management</span>
+                    </a>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <a href="{% url 'dashboard_user_management:role_list' %}" class="hover:text-primary transition">
+                        <span>Roles</span>
+                    </a>
+                    {% if role %}
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <a href="{% url 'dashboard_user_management:role_detail' role_id=role.id %}" class="hover:text-primary transition">
+                        <span>{{ role }}</span>
+                    </a>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <span class="text-primary font-medium">Edit</span>
+                    {% else %}
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <span class="text-primary font-medium">Create</span>
+                    {% endif %}
+                </nav>
+            </div>
+            <div class="mt-4 md:mt-0">
+                {% if role %}
+                <a href="{% url 'dashboard_user_management:role_detail' role_id=role.id %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left mr-2"></i> {% trans "Back to Role" %}
+                </a>
+                {% else %}
+                <a href="{% url 'dashboard_user_management:role_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left mr-2"></i> {% trans "Back to Roles" %}
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white shadow rounded-lg p-6">
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    {{ form.name|crispy }}
+                </div>
+            </div>
+            
+            <div>
+                {{ form.description|crispy }}
+            </div>
+            
+            <div class="flex justify-end space-x-3">
+                {% if role %}
+                <a href="{% url 'dashboard_user_management:role_detail' role_id=role.id %}" class="btn btn-secondary">
+                    {% trans "Cancel" %}
+                </a>
+                {% else %}
+                <a href="{% url 'dashboard_user_management:role_list' %}" class="btn btn-secondary">
+                    {% trans "Cancel" %}
+                </a>
+                {% endif %}
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save mr-2"></i> {% trans "Save" %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/plugins/datatables.min.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+            // Any initialization can go here if needed
+        });
+    </script>
+{% endblock %} 

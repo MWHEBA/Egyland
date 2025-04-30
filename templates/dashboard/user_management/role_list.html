@@ -1,0 +1,158 @@
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% trans "Roles" %} - Egyland Dashboard{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/plugins/datatables.min.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">
+                    {% trans "Roles Management" %}
+                </h1>
+                <nav class="flex flex-wrap items-center text-sm text-gray-600">
+                    <a href="{% url 'dashboard:home' %}" class="hover:text-primary transition">
+                        <i class="fas fa-home"></i>
+                        <span class="hidden sm:inline">Dashboard</span>
+                    </a>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <span class="font-medium">User Management</span>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <span class="text-primary font-medium">{% trans "Roles" %}</span>
+                </nav>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Roles List -->
+    {% if roles %}
+        <div class="bg-white shadow rounded-lg">
+            <div class="overflow-x-auto">
+                <table class="table-auto w-full" id="rolesTable">
+                    <thead>
+                        <tr class="text-left bg-gray-50">
+                            <th class="p-3">{% trans "Role Name" %}</th>
+                            <th class="p-3">{% trans "Description" %}</th>
+                            <th class="p-3">{% trans "Users Count" %}</th>
+                            <th class="p-3 text-center">{% trans "Actions" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for role in roles %}
+                        <tr class="border-b border-gray-200 hover:bg-gray-50">
+                            <td class="p-3">
+                                <a href="{% url 'dashboard_user_management:role_detail' role_id=role.id %}" class="hover:text-blue-600 transition-colors">
+                                    <div class="font-medium hover:text-blue-600">{{ role }}</div>
+                                </a>
+                            </td>
+                            <td class="p-3">
+                                {% if role.description %}
+                                    {{ role.description|truncatechars:80 }}
+                                {% else %}
+                                    <span class="text-gray-500">{% trans "No description" %}</span>
+                                {% endif %}
+                            </td>
+                            <td class="p-3">
+                                <span class="badge badge-primary">{{ role.user_count }} {% trans "users" %}</span>
+                            </td>
+                            <td class="p-3 text-center whitespace-nowrap">
+                                <div class="inline-flex items-center space-x-3">
+                                    <a href="{% url 'dashboard_user_management:role_detail' role_id=role.id %}" 
+                                       class="w-7 h-7 rounded-full bg-gray-100 text-gray-600 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center transition-colors"
+                                       title="{% trans 'View' %}">
+                                        <i class="fas fa-eye text-xs"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            {% if roles.has_other_pages %}
+            <div class="p-4 border-t border-gray-200">
+                <div class="flex justify-between items-center">
+                    <div class="text-sm text-gray-600">
+                        {% trans "Showing" %} {{ roles.start_index }} {% trans "to" %} {{ roles.end_index }} {% trans "of" %} {{ roles.paginator.count }} {% trans "roles" %}
+                    </div>
+                    <div class="flex space-x-1">
+                        {% if roles.has_previous %}
+                            <a href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline btn-sm">
+                                <i class="fas fa-angle-double-left"></i>
+                            </a>
+                            <a href="?page={{ roles.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline btn-sm">
+                                <i class="fas fa-chevron-left mr-1"></i> {% trans "Previous" %}
+                            </a>
+                        {% else %}
+                            <button class="btn btn-outline btn-sm opacity-50" disabled>
+                                <i class="fas fa-angle-double-left"></i>
+                            </button>
+                            <button class="btn btn-outline btn-sm opacity-50" disabled>
+                                <i class="fas fa-chevron-left mr-1"></i> {% trans "Previous" %}
+                            </button>
+                        {% endif %}
+                        
+                        <!-- Current Page Number/Total -->
+                        <span class="px-3 py-1 text-sm text-gray-700 bg-gray-100 rounded">
+                            {{ roles.number }} / {{ roles.paginator.num_pages }}
+                        </span>
+                        
+                        {% if roles.has_next %}
+                            <a href="?page={{ roles.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline btn-sm">
+                                {% trans "Next" %} <i class="fas fa-chevron-right ml-1"></i>
+                            </a>
+                            <a href="?page={{ roles.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline btn-sm">
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                        {% else %}
+                            <button class="btn btn-outline btn-sm opacity-50" disabled>
+                                {% trans "Next" %} <i class="fas fa-chevron-right ml-1"></i>
+                            </button>
+                            <button class="btn btn-outline btn-sm opacity-50" disabled>
+                                <i class="fas fa-angle-double-right"></i>
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="bg-white shadow rounded-lg p-6 text-center">
+            <div class="py-6">
+                <div class="flex flex-col items-center justify-center text-gray-500">
+                    <i class="fas fa-user-tag text-3xl mb-2"></i>
+                    <p>{% trans "No roles found." %}</p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/plugins/datatables.min.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTable
+            $('#rolesTable').DataTable({
+                paging: false,
+                searching: false,
+                info: false,
+                responsive: true,
+                language: {
+                    url: "{% static 'js/plugins/datatables-en.json' %}"
+                }
+            });
+        });
+    </script>
+{% endblock %} 

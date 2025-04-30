@@ -1,0 +1,118 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+{% block title %}Manage Roles: {{ user_profile.username }}{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/plugins/datatables.min.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">
+                    Manage Roles: {{ user_profile.username }}
+                </h1>
+                <nav class="flex flex-wrap items-center text-sm text-gray-600">
+                    <a href="{% url 'dashboard:home' %}" class="hover:text-primary transition">
+                        <i class="fas fa-home"></i>
+                        <span class="hidden sm:inline">Dashboard</span>
+                    </a>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <a href="{% url 'dashboard_user_management:user_list' %}" class="hover:text-primary transition">
+                        <span>User Management</span>
+                    </a>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <a href="{% url 'dashboard_user_management:user_detail' user_id=user_profile.id %}" class="hover:text-primary transition">
+                        <span>{{ user_profile.username }}</span>
+                    </a>
+                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                    <span class="text-primary font-medium">Manage Roles</span>
+                </nav>
+            </div>
+            <div class="mt-4 md:mt-0">
+                <a href="{% url 'dashboard_user_management:user_detail' user_id=user_profile.id %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left mr-2"></i> Back to User
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white shadow rounded-lg p-6">
+        <!-- User Profile Header -->
+        <div class="flex items-center mb-8">
+            <div class="w-16 h-16 bg-blue-500 text-white rounded-full flex items-center justify-center text-2xl">
+                {{ user_profile.username|first|upper }}
+            </div>
+            <div class="ml-4">
+                <h1 class="text-2xl font-bold">{{ user_profile.get_full_name }}</h1>
+                <p class="text-gray-600">@{{ user_profile.username }}</p>
+            </div>
+        </div>
+        
+        <!-- Role Assignment Form -->
+        <div class="mb-6">
+            <h2 class="text-xl font-semibold mb-6">Assign Roles</h2>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="mb-6">
+                    <p class="text-gray-600 mb-4">Select roles to assign to this user. A user can have multiple roles.</p>
+                    
+                    <div class="space-y-4">
+                        {% for role_field in form.roles %}
+                        <div class="flex items-start">
+                            <div class="flex items-center h-5">
+                                {{ role_field.tag }}
+                            </div>
+                            <div class="ml-3 text-sm">
+                                <label for="{{ role_field.id_for_label }}" class="font-medium text-gray-700">{{ role_field.choice_label }}</label>
+                                <p class="text-gray-500">
+                                    {% if role_field.choice_value == 'developer' %}
+                                    Full access to all system features
+                                    {% elif role_field.choice_value == 'admin' %}
+                                    Administrative access with user management
+                                    {% elif role_field.choice_value == 'editor' %}
+                                    Content management without user administration
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="flex justify-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save mr-2"></i> Save Roles
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="bg-white shadow rounded-lg p-6 mt-6 border-l-4 border-blue-500">
+        <h3 class="font-semibold text-lg mb-2">Role Permissions</h3>
+        <ul class="mt-2 list-disc list-inside space-y-1">
+            <li><strong>Developer:</strong> Full access to all system features including user management</li>
+            <li><strong>Admin:</strong> Administrative access with full user management capabilities</li>
+            <li><strong>Editor:</strong> Can manage content but cannot add or delete users</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/plugins/datatables.min.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+            // Any initialization can go here if needed
+        });
+    </script>
+{% endblock %} 

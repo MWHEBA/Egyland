@@ -359,18 +359,43 @@
                     </li>
                     
                     <li>
+                        <button id="user-management-menu-toggle" class="menu-item flex items-center justify-between w-full p-3 
+                        {% if 'dashboard_user_management' in request.resolver_match.namespace or request.resolver_match.url_name == 'profile' %}active{% endif %}">
+                            <div class="flex items-center">
+                                <i class="fas fa-users w-6 text-center"></i>
+                                <span class="ml-3 menu-text">User Management</span>
+                            </div>
+                            <i class="fas fa-chevron-down text-sm transition-transform menu-text" id="user-management-chevron"></i>
+                        </button>
+                        <ul id="user-management-submenu" class="pl-8 mt-1 {% if 'dashboard_user_management' in request.resolver_match.namespace or request.resolver_match.url_name == 'profile' %}block{% else %}hidden{% endif %}">
+                            <li>
+                                <a href="{% url 'dashboard_user_management:user_list' %}" class="menu-item flex items-center p-2 rounded-md {% if request.resolver_match.url_name == 'user_list' %}text-primary{% endif %}">
+                                    <i class="fas fa-angle-right mr-2 text-xs"></i>
+                                    <span class="menu-text text-sm">Users</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'dashboard_user_management:role_list' %}" class="menu-item flex items-center p-2 rounded-md {% if request.resolver_match.url_name == 'role_list' %}text-primary{% endif %}">
+                                    <i class="fas fa-angle-right mr-2 text-xs"></i>
+                                    <span class="menu-text text-sm">Roles</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'dashboard:profile' %}" class="menu-item flex items-center p-2 rounded-md {% if request.resolver_match.url_name == 'profile' %}text-primary{% endif %}">
+                                    <i class="fas fa-angle-right mr-2 text-xs"></i>
+                                    <span class="menu-text text-sm">My Profile</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <li>
                         <a href="{% url 'core:home' %}" class="menu-item flex items-center p-3" target="_blank">
                             <i class="fas fa-globe w-6 text-center"></i>
                             <span class="ml-3 menu-text">View Website</span>
                         </a>
                     </li>
                     
-                    <li class="mt-5">
-                        <a href="{% url 'dashboard:profile' %}" class="menu-item flex items-center p-3 {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
-                            <i class="fas fa-user-circle text-lg w-8"></i>
-                            <span class="menu-text">Profile</span>
-                        </a>
-                    </li>
                     <li>
                         <a href="{% url 'dashboard:branches' %}" class="menu-item flex items-center p-3 {% if 'branch' in request.resolver_match.url_name %}active{% endif %}">
                             <i class="fas fa-building text-lg w-8"></i>
@@ -414,7 +439,7 @@
                             </button>
                             
                             <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden z-50" id="user-dropdown">
-                                <a href="{% url 'dashboard:profile' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <a href="{% url 'dashboard:profile' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="openUserManagementMenu()">
                                     <i class="fas fa-user mr-2"></i> My Profile
                                 </a>
                                 <a href="{% url 'accounts:logout' %}" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
@@ -537,6 +562,50 @@
                 localStorage.setItem('productsSubmenuOpen', isNowOpen);
             });
         });
+    </script>
+
+    <!-- User Management submenu toggle -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userManagementMenuToggle = document.getElementById('user-management-menu-toggle');
+            const userManagementSubmenu = document.getElementById('user-management-submenu');
+            const userManagementChevron = document.getElementById('user-management-chevron');
+            
+            // Check localStorage for the submenu state
+            const isSubmenuOpen = localStorage.getItem('userManagementSubmenuOpen') === 'true' || 
+                                 {% if 'dashboard_user_management' in request.resolver_match.namespace or request.resolver_match.url_name == 'profile' %}true{% else %}false{% endif %};
+            
+            // Initialize submenu state
+            if (isSubmenuOpen) {
+                userManagementSubmenu.classList.remove('hidden');
+                userManagementSubmenu.classList.add('block');
+                userManagementChevron.classList.add('transform', 'rotate-180');
+                localStorage.setItem('userManagementSubmenuOpen', 'true');
+            } else {
+                userManagementSubmenu.classList.add('hidden');
+                userManagementSubmenu.classList.remove('block');
+                userManagementChevron.classList.remove('transform', 'rotate-180');
+                localStorage.setItem('userManagementSubmenuOpen', 'false');
+            }
+            
+            // Toggle submenu when clicked
+            userManagementMenuToggle.addEventListener('click', function() {
+                userManagementSubmenu.classList.toggle('hidden');
+                userManagementSubmenu.classList.toggle('block');
+                userManagementChevron.classList.toggle('transform');
+                userManagementChevron.classList.toggle('rotate-180');
+                
+                // Save state to localStorage
+                const isNowOpen = userManagementSubmenu.classList.contains('block');
+                localStorage.setItem('userManagementSubmenuOpen', isNowOpen);
+            });
+        });
+        
+        // Function to ensure User Management menu is open when clicking Profile link
+        function openUserManagementMenu() {
+            // Store in localStorage that user management should be open
+            localStorage.setItem('userManagementSubmenuOpen', 'true');
+        }
     </script>
 </body>
 </html> 

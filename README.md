@@ -10,6 +10,7 @@ Professional platform for an Egyptian agricultural export company built with Dja
 - Admin dashboard for full content control
 - Responsive design for all device sizes
 - SEO-optimized
+- Advanced user management system
 
 ## Tech Stack
 
@@ -62,8 +63,11 @@ python manage.py runserver
 - `apps/`: Module applications
   - `core/`: Main site pages and functionality
   - `products/`: Product catalog and detail pages
-  - `admin/`: Custom admin dashboard
-  - `accounts/`: User accounts (future)
+  - `dashboard/`: Custom admin dashboard
+  - `accounts/`: User accounts management
+  - `user_management/`: Advanced user management system
+  - `inquiries/`: Contact and inquiry handling
+  - `branches/`: Company branches
 - `config/`: Project configuration
 - `templates/`: HTML templates
 - `static/`: Static assets (CSS, JS, images)
@@ -120,6 +124,44 @@ The system supports an enhanced packaging management approach:
      - Pallets per container
      - Net weight and units
    - Display options (e.g., show "Fresh" label)
+
+## User Management System
+
+The platform includes a comprehensive user management system that offers:
+
+1. **Role-Based Access Control**
+   - Create custom roles with specific permissions
+   - Assign roles to users
+   - Control access to different parts of the system
+
+2. **User Activity Tracking**
+   - Monitor login/logout events
+   - Track password changes and profile updates
+   - Record all user actions with timestamps and IP addresses
+
+3. **Security Features**
+   - Account status management (active, inactive, suspended, locked)
+   - Login attempt tracking to detect suspicious activity
+   - Security questions for account recovery
+   - Session tracking and management
+
+4. **Administrative Tools**
+   - User statistics and analytics
+   - Comprehensive user reports
+   - Bulk user operations
+   - User verification management
+
+### Using the User Management System
+
+Access the user management dashboard at `/user-management/dashboard/` with admin credentials. From there you can:
+
+1. View user statistics and recent activities
+2. Add, edit, and manage users
+3. Create and assign roles
+4. Generate user activity reports
+5. Manage account statuses
+
+This module integrates with the existing accounts app and enhances it with advanced management capabilities.
 
 ## Development Guidelines
 
