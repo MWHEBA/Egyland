@@ -836,6 +836,14 @@ function initializeModal() {
             // التحقق من صحة النموذج
             let isValid = true;
             
+            // الحصول على زر الإرسال
+            const submitButton = inquiryForm.querySelector('button[type="submit"]');
+            
+            // منع النقر المتكرر عن طريق التحقق من خاصية الزر
+            if (submitButton.disabled) {
+                return; // إذا كان الزر معطلًا بالفعل، توقف عن التنفيذ
+            }
+            
             // التحقق من صحة الإيميل
             const emailInput = document.querySelector('input[name="email"]');
             const emailError = document.getElementById('email-error');
@@ -889,6 +897,12 @@ function initializeModal() {
             
             if (!isValid) return;
             
+            // تعطيل الزر وتغيير النص إلى "Submitting..."
+            submitButton.disabled = true;
+            submitButton.classList.add('submitting');
+            const originalText = submitButton.innerHTML;
+            submitButton.innerHTML = 'Submitting...';
+            
             // إرسال النموذج باستخدام Fetch API
             fetch(inquiryForm.action, {
                 method: 'POST',
@@ -899,6 +913,11 @@ function initializeModal() {
             })
             .then(response => response.json())
             .then(data => {
+                // إعادة تفعيل الزر وإرجاع النص الأصلي له
+                submitButton.disabled = false;
+                submitButton.classList.remove('submitting');
+                submitButton.innerHTML = originalText;
+                
                 if (data.success) {
                     // عرض رسالة النجاح وإغلاق المودال باستخدام SweetAlert
                     const successMessage = 'Thank you for your inquiry. We will get back to you soon.';
@@ -949,6 +968,11 @@ function initializeModal() {
             })
             .catch(error => {
                 console.error('Error:', error);
+                
+                // إعادة تفعيل الزر وإرجاع النص الأصلي له
+                submitButton.disabled = false;
+                submitButton.classList.remove('submitting');
+                submitButton.innerHTML = originalText;
                 
                 // عرض رسالة الخطأ باستخدام SweetAlert
                 const errorMessage = 'An error occurred while sending your inquiry. Please try again.';

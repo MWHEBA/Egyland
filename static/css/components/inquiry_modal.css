@@ -119,11 +119,42 @@
   border-radius: 0.375rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, opacity 0.3s;
 }
 
 #inquiryForm .submit-btn:hover {
   background-color: var(--primary-hover);
+}
+
+#inquiryForm .submit-btn.submitting {
+  opacity: 0.7;
+  cursor: not-allowed;
+  position: relative;
+}
+
+#inquiryForm .submit-btn.submitting::after {
+  content: '';
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  border-top-color: white;
+  margin-left: 0.5rem;
+  display: inline-block;
+  animation: spinner 0.8s linear infinite;
+}
+
+#inquiryForm .submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* إضافة انيميشن للسبينر */
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* تصميم محسن لقائمة المنتجات */
