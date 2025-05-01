@@ -575,10 +575,19 @@
                     
                     <!-- للتشخيص: طباعة حالة إمكانية الحذف -->
                     <div class="bg-gray-100 p-4 rounded-lg text-sm text-gray-700">
-                        <p>حالة صلاحية الحذف: {% if can_delete_inquiry %}مفعلة{% else %}غير مفعلة{% endif %}</p>
-                        <p>هل المستخدم سوبر يوزر: {% if request.user.is_superuser %}نعم{% else %}لا{% endif %}</p>
-                        <p>هل المستخدم ستاف: {% if request.user.is_staff %}نعم{% else %}لا{% endif %}</p>
-                        <p>أدوار المستخدم: {% for role in request.user.user_roles.all %}{{ role.role.name }} {% endfor %}</p>
+                        <p>حالة صلاحية الحذف: {% if can_delete_inquiry %}<span class="text-green-600 font-bold">مفعلة</span>{% else %}<span class="text-red-600 font-bold">غير مفعلة</span>{% endif %}</p>
+                        <p>هل المستخدم سوبر يوزر: {% if request.user.is_superuser %}<span class="text-green-600 font-bold">نعم</span>{% else %}<span class="text-red-600 font-bold">لا</span>{% endif %}</p>
+                        <p>هل المستخدم ستاف: {% if request.user.is_staff %}<span class="text-green-600 font-bold">نعم</span>{% else %}<span class="text-red-600 font-bold">لا</span>{% endif %}</p>
+                        <p>أدوار المستخدم: 
+                            {% if request.user.user_roles.all %}
+                                {% for role in request.user.user_roles.all %}
+                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full">{{ role.role.name }}</span>
+                                {% endfor %}
+                            {% else %}
+                                <span class="text-red-600">لا توجد أدوار مخصصة</span>
+                            {% endif %}
+                        </p>
+                        <p class="mt-2">قيم الثوابت: Role.DEVELOPER = "{{ role_developer_constant }}"</p>
                     </div>
                     
                     <!-- زر حذف الاستفسار - للمستخدمين ذوي دور Developer فقط -->

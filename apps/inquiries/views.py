@@ -23,12 +23,36 @@ def is_developer(user):
     """
     التحقق مما إذا كان المستخدم يمتلك صلاحية Developer
     """
+    # طباعة لمساعدتنا في تشخيص المشكلة
+    print(f"DEBUG: Checking if user {user.username} is developer")
+    print(f"DEBUG: is_superuser = {user.is_superuser}")
+    
+    # إذا كان المستخدم سوبر يوزر
     if user.is_superuser:
+        print("DEBUG: User is superuser, returning True")
         return True
     
+    # محاولة التحقق من الأدوار
     try:
-        return user.user_roles.filter(role__name=Role.DEVELOPER).exists()
-    except:
+        # فحص جميع الأدوار بشكل مباشر
+        user_roles = user.user_roles.all()
+        print(f"DEBUG: User roles: {[ur.role.name for ur in user_roles]}")
+        
+        # فحص إذا كان لديه دور developer بأي طريقة
+        has_developer = user.user_roles.filter(role__name=Role.DEVELOPER).exists()
+        print(f"DEBUG: has_developer role = {has_developer}")
+        
+        # البحث يدوياً عن دور developer
+        for user_role in user_roles:
+            if user_role.role.name == Role.DEVELOPER:
+                print(f"DEBUG: Found developer role, returning True")
+                return True
+                
+        # إذا وصلنا إلى هنا، فلا يوجد دور developer
+        print(f"DEBUG: Developer role not found, returning {has_developer}")
+        return has_developer
+    except Exception as e:
+        print(f"DEBUG: Exception occurred: {str(e)}")
         return False
 
 
@@ -377,8 +401,18 @@ class InquiryDetailView(LoginRequiredMixin, StaffRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         context['status_choices'] = dict(Inquiry.INQUIRY_STATUS_CHOICES)
         
-        # إضافة معلومة عن صلاحية المستخدم لحذف الاستفسارات
-        context['can_delete_inquiry'] = is_developer(self.request.user)
+        # تصحيح التحقق من صلاحية المستخدم لحذف الاستفسارات
+        is_developer_result = is_developer(self.request.user)
+        print(f"DEBUG: is_developer result = {is_developer_result}")
+        
+        # التأكد من صلاحية الحذف - إذا كان سوبر يوزر أو لديه دور Developer
+        can_delete = is_developer_result or self.request.user.is_superuser
+        print(f"DEBUG: can_delete final result = {can_delete}")
+        
+        context['can_delete_inquiry'] = can_delete
+        
+        # إضافة قيمة الثابت Role.DEVELOPER للقالب للتصحيح
+        context['role_developer_constant'] = Role.DEVELOPER
         
         return context
 
