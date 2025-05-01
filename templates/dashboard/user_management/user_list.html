@@ -38,8 +38,8 @@
                 </nav>
             </div>
             <div class="mt-4 md:mt-0">
-                <a href="{% url 'dashboard_user_management:create_user' %}" class="btn btn-primary">
-                    <i class="fas fa-plus mr-1"></i> Add User
+                <a href="{% url 'user_management:create_user' %}" class="btn btn-primary">
+                    <i class="fas fa-plus mr-1"></i> {{ _('Add User') }}
                 </a>
             </div>
         </div>
@@ -65,7 +65,7 @@
                         {% for user in users %}
                         <tr class="border-b border-gray-200 hover:bg-gray-50">
                             <td class="p-3">
-                                <a href="{% url 'dashboard_user_management:user_detail' user_id=user.id %}" class="hover:text-blue-600 transition-colors">
+                                <a href="{% url 'user_management:user_detail' user_id=user.id %}" class="hover:text-blue-600 transition-colors">
                                     <div class="font-medium hover:text-blue-600">{{ user.username }}</div>
                                 </a>
                             </td>
@@ -86,22 +86,22 @@
                             <td class="p-3">{{ user.date_joined|date:"M d, Y" }}</td>
                             <td class="p-3 text-center whitespace-nowrap">
                                 <div class="inline-flex items-center space-x-3">
-                                    <a href="{% url 'dashboard_user_management:user_detail' user_id=user.id %}" 
+                                    <a href="{% url 'user_management:user_detail' user_id=user.id %}" 
                                       class="w-7 h-7 rounded-full bg-gray-100 text-gray-600 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center transition-colors"
                                       title="View">
                                         <i class="fas fa-eye text-xs"></i>
                                     </a>
-                                    <a href="{% url 'dashboard_user_management:edit_user' user_id=user.id %}" 
+                                    <a href="{% url 'user_management:edit_user' user_id=user.id %}" 
                                       class="w-7 h-7 rounded-full bg-gray-100 text-gray-600 hover:bg-yellow-50 hover:text-yellow-600 flex items-center justify-center transition-colors"
                                       title="Edit">
                                         <i class="fas fa-edit text-xs"></i>
                                     </a>
-                                    <a href="{% url 'dashboard_user_management:assign_role' user_id=user.id %}" 
+                                    <a href="{% url 'user_management:assign_role' user_id=user.id %}" 
                                       class="w-7 h-7 rounded-full bg-gray-100 text-gray-600 hover:bg-green-50 hover:text-green-600 flex items-center justify-center transition-colors"
                                       title="Manage Roles">
                                         <i class="fas fa-user-tag text-xs"></i>
                                     </a>
-                                    <a href="{% url 'dashboard_user_management:delete_user' user_id=user.id %}" 
+                                    <a href="{% url 'user_management:delete_user' user_id=user.id %}" 
                                       class="w-7 h-7 rounded-full bg-gray-100 text-gray-600 hover:bg-red-50 hover:text-red-600 flex items-center justify-center transition-colors"
                                       title="Delete">
                                         <i class="fas fa-trash text-xs"></i>
@@ -169,7 +169,7 @@
                 <div class="flex flex-col items-center justify-center text-gray-500">
                     <i class="fas fa-users text-3xl mb-2"></i>
                     <p>No users found.</p>
-                    <a href="{% url 'dashboard_user_management:create_user' %}" class="text-primary hover:underline mt-1">Add your first user</a>
+                    <a href="{% url 'user_management:create_user' %}" class="text-primary hover:underline mt-1">Add your first user</a>
                 </div>
             </div>
         </div>

@@ -358,32 +358,32 @@
                         </a>
                     </li>
                     
-                    <li>
-                        <button id="user-management-menu-toggle" class="menu-item flex items-center justify-between w-full p-3 
-                        {% if 'dashboard_user_management' in request.resolver_match.namespace or request.resolver_match.url_name == 'profile' %}active{% endif %}">
-                            <div class="flex items-center">
-                                <i class="fas fa-users w-6 text-center"></i>
-                                <span class="ml-3 menu-text">User Management</span>
-                            </div>
-                            <i class="fas fa-chevron-down text-sm transition-transform menu-text" id="user-management-chevron"></i>
+                    <li class="mb-1">
+                        <button type="button" class="w-full flex items-center justify-between text-left p-2 rounded-md hover:bg-primary-50 
+                        {% if 'user_management' in request.resolver_match.namespace or request.resolver_match.url_name == 'profile' %}active{% endif %}">
+                            <span class="flex items-center">
+                                <i class="fas fa-users-cog mr-3 text-gray-500"></i>
+                                <span>{{ _('User Management') }}</span>
+                            </span>
+                            <i class="fas fa-chevron-down text-sm"></i>
                         </button>
-                        <ul id="user-management-submenu" class="pl-8 mt-1 {% if 'dashboard_user_management' in request.resolver_match.namespace or request.resolver_match.url_name == 'profile' %}block{% else %}hidden{% endif %}">
+                        <ul id="user-management-submenu" class="pl-8 mt-1 {% if 'user_management' in request.resolver_match.namespace or request.resolver_match.url_name == 'profile' %}block{% else %}hidden{% endif %}">
                             <li>
-                                <a href="{% url 'dashboard_user_management:user_list' %}" class="menu-item flex items-center p-2 rounded-md {% if request.resolver_match.url_name == 'user_list' %}text-primary{% endif %}">
-                                    <i class="fas fa-angle-right mr-2 text-xs"></i>
-                                    <span class="menu-text text-sm">Users</span>
+                                <a href="{% url 'user_management:user_list' %}" class="menu-item flex items-center p-2 rounded-md {% if request.resolver_match.url_name == 'user_list' %}text-primary{% endif %}">
+                                    <i class="fas fa-user-friends mr-2"></i>
+                                    <span>{{ _('Users') }}</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="{% url 'dashboard_user_management:role_list' %}" class="menu-item flex items-center p-2 rounded-md {% if request.resolver_match.url_name == 'role_list' %}text-primary{% endif %}">
-                                    <i class="fas fa-angle-right mr-2 text-xs"></i>
-                                    <span class="menu-text text-sm">Roles</span>
+                                <a href="{% url 'user_management:role_list' %}" class="menu-item flex items-center p-2 rounded-md {% if request.resolver_match.url_name == 'role_list' %}text-primary{% endif %}">
+                                    <i class="fas fa-user-tag mr-2"></i>
+                                    <span>{{ _('Roles') }}</span>
                                 </a>
                             </li>
                             <li>
                                 <a href="{% url 'dashboard:profile' %}" class="menu-item flex items-center p-2 rounded-md {% if request.resolver_match.url_name == 'profile' %}text-primary{% endif %}">
-                                    <i class="fas fa-angle-right mr-2 text-xs"></i>
-                                    <span class="menu-text text-sm">My Profile</span>
+                                    <i class="fas fa-user-circle mr-2"></i>
+                                    <span>{{ _('My Profile') }}</span>
                                 </a>
                             </li>
                         </ul>
@@ -573,7 +573,7 @@
             
             // Check localStorage for the submenu state
             const isSubmenuOpen = localStorage.getItem('userManagementSubmenuOpen') === 'true' || 
-                                 {% if 'dashboard_user_management' in request.resolver_match.namespace or request.resolver_match.url_name == 'profile' %}true{% else %}false{% endif %};
+                                 {% if 'user_management' in request.resolver_match.namespace or request.resolver_match.url_name == 'profile' %}true{% else %}false{% endif %};
             
             // Initialize submenu state
             if (isSubmenuOpen) {
@@ -606,6 +606,56 @@
             // Store in localStorage that user management should be open
             localStorage.setItem('userManagementSubmenuOpen', 'true');
         }
+    </script>
+
+    <!-- إضافة سكربت لتوسيع/طي القوائم الفرعية -->
+    <script>
+        // التحقق من حالة القوائم المحفوظة
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuButtons = document.querySelectorAll('button.w-full');
+            
+            // تطبيق حالة القوائم المحفوظة
+            menuButtons.forEach(button => {
+                const submenuId = button.nextElementSibling.id;
+                const isExpanded = localStorage.getItem(submenuId) === 'true';
+                
+                // القائمة مفتوحة حالياً بسبب الصفحة النشطة
+                const isCurrentlyOpen = button.nextElementSibling.classList.contains('block');
+                
+                if (isExpanded && !isCurrentlyOpen) {
+                    button.nextElementSibling.classList.remove('hidden');
+                    button.nextElementSibling.classList.add('block');
+                    button.querySelector('.fa-chevron-down').classList.add('transform', 'rotate-180');
+                }
+            });
+            
+            // إضافة المستمعين للأحداث
+            menuButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const submenu = this.nextElementSibling;
+                    const icon = this.querySelector('.fa-chevron-down');
+                    
+                    submenu.classList.toggle('hidden');
+                    submenu.classList.toggle('block');
+                    icon.classList.toggle('transform');
+                    icon.classList.toggle('rotate-180');
+                    
+                    // حفظ الحالة
+                    localStorage.setItem(submenu.id, submenu.classList.contains('block'));
+                });
+            });
+            
+            // ضبط حالة القائمة الفرعية لإدارة المستخدمين
+            const userManagementExpanded = 
+            {% if 'user_management' in request.resolver_match.namespace or request.resolver_match.url_name == 'profile' %}true{% else %}false{% endif %};
+            
+            if (userManagementExpanded) {
+                document.getElementById('user-management-submenu').classList.remove('hidden');
+                document.getElementById('user-management-submenu').classList.add('block');
+                const button = document.getElementById('user-management-submenu').previousElementSibling;
+                button.querySelector('.fa-chevron-down').classList.add('transform', 'rotate-180');
+            }
+        });
     </script>
 </body>
 </html> 

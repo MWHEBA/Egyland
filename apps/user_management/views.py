@@ -81,7 +81,7 @@ def create_user(request):
             
             logger.info(f"User {user.username} created by {request.user.username}")
             messages.success(request, _('User created successfully!'))
-            return redirect('dashboard_user_management:user_detail', user_id=user.id)
+            return redirect('user_management:user_detail', user_id=user.id)
     else:
         form = AdminUserCreationForm()
     
@@ -134,14 +134,14 @@ def edit_user(request, user_id):
             user_form.save()
             
             messages.success(request, _('User information updated successfully!'))
-            return redirect('dashboard_user_management:user_detail', user_id=user.id)
+            return redirect('user_management:user_detail', user_id=user.id)
             
         elif 'change_password' in request.POST and password_form.is_valid():
             user.password = make_password(password_form.cleaned_data['password1'])
             user.save()
             
             messages.success(request, _('Password changed successfully!'))
-            return redirect('dashboard_user_management:user_detail', user_id=user.id)
+            return redirect('user_management:user_detail', user_id=user.id)
     else:
         user_form = AdminUserEditForm(instance=user)
         password_form = AdminPasswordChangeForm()
@@ -167,7 +167,7 @@ def delete_user(request, user_id):
         
         logger.info(f"User {username} deleted by {request.user.username}")
         messages.success(request, _('User deleted successfully!'))
-        return redirect('dashboard_user_management:user_list')
+        return redirect('user_management:user_list')
     
     return render(request, 'dashboard/user_management/user_confirm_delete.html', {
         'user_profile': user,
@@ -204,7 +204,7 @@ def assign_role(request, user_id):
                 )
             
             messages.success(request, _('User roles updated successfully!'))
-            return redirect('dashboard_user_management:user_detail', user_id=user.id)
+            return redirect('user_management:user_detail', user_id=user.id)
     else:
         form = UserRoleForm(initial={'roles': current_roles})
     

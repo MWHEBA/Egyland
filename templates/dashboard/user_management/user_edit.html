@@ -18,30 +18,35 @@
                 <h1 class="text-2xl font-bold text-gray-800 mb-2">
                     Edit User: {{ user_profile.username }}
                 </h1>
-                <nav class="flex flex-wrap items-center text-sm text-gray-600">
-                    <a href="{% url 'dashboard:home' %}" class="hover:text-primary transition">
-                        <i class="fas fa-home"></i>
-                        <span class="hidden sm:inline">Dashboard</span>
-                    </a>
-                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
-                    <a href="{% url 'dashboard_user_management:user_list' %}" class="hover:text-primary transition">
-                        <span>User Management</span>
-                    </a>
-                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
-                    <a href="{% url 'dashboard_user_management:user_detail' user_id=user_profile.id %}" class="hover:text-primary transition">
-                        <span>{{ user_profile.username }}</span>
-                    </a>
-                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
-                    <span class="text-primary font-medium">Edit</span>
+                <nav class="text-sm breadcrumbs mb-4">
+                    <ul>
+                        <li>
+                            <a href="{% url 'dashboard:home' %}">
+                                <i class="fas fa-home"></i>
+                                <span class="ml-1">{{ _('Dashboard') }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'user_management:user_list' %}" class="hover:text-primary transition">
+                                {{ _('Users') }}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'user_management:user_detail' user_id=user_profile.id %}" class="hover:text-primary transition">
+                                {{ user_profile.username }}
+                            </a>
+                        </li>
+                        <li class="font-medium">{{ _('Edit') }}</li>
+                    </ul>
                 </nav>
             </div>
             <div class="mt-4 md:mt-0">
                 <div class="flex space-x-2">
-                    <a href="{% url 'dashboard_user_management:user_detail' user_id=user_profile.id %}" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left mr-2"></i> Back to User
+                    <a href="{% url 'user_management:user_detail' user_id=user_profile.id %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left mr-2"></i> {{ _('Back to Profile') }}
                     </a>
-                    <a href="{% url 'dashboard_user_management:assign_role' user_id=user_profile.id %}" class="btn btn-primary">
-                        <i class="fas fa-user-tag mr-2"></i> Manage Roles
+                    <a href="{% url 'user_management:assign_role' user_id=user_profile.id %}" class="btn btn-primary">
+                        <i class="fas fa-user-tag mr-2"></i> {{ _('Manage Roles') }}
                     </a>
                 </div>
             </div>
@@ -91,9 +96,12 @@
                 <h4 class="font-semibold">Delete this user</h4>
                 <p class="text-gray-600">Once deleted, this action cannot be undone.</p>
             </div>
-            <a href="{% url 'dashboard_user_management:delete_user' user_id=user_profile.id %}" class="btn btn-danger">
-                <i class="fas fa-trash mr-2"></i> Delete User
-            </a>
+            <div class="mt-6 text-center md:text-right">
+                <hr class="mb-6">
+                <a href="{% url 'user_management:delete_user' user_id=user_profile.id %}" class="btn btn-danger">
+                    <i class="fas fa-trash-alt mr-1"></i> {{ _('Delete User') }}
+                </a>
+            </div>
         </div>
     </div>
 </div>

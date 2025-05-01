@@ -31,24 +31,26 @@
                 <h1 class="text-2xl font-bold text-gray-800 mb-2">
                     {% trans "Role Details" %}: {{ role }}
                 </h1>
-                <nav class="flex flex-wrap items-center text-sm text-gray-600">
-                    <a href="{% url 'dashboard:home' %}" class="hover:text-primary transition">
-                        <i class="fas fa-home"></i>
-                        <span class="hidden sm:inline">Dashboard</span>
-                    </a>
-                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
-                    <span class="font-medium">User Management</span>
-                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
-                    <a href="{% url 'dashboard_user_management:role_list' %}" class="hover:text-primary transition">
-                        {% trans "Roles" %}
-                    </a>
-                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
-                    <span class="text-primary font-medium">{{ role }}</span>
+                <nav class="text-sm breadcrumbs mb-4">
+                    <ul>
+                        <li>
+                            <a href="{% url 'dashboard:home' %}">
+                                <i class="fas fa-home"></i>
+                                <span class="ml-1">{{ _('Dashboard') }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'user_management:role_list' %}" class="hover:text-primary transition">
+                                {{ _('Roles') }}
+                            </a>
+                        </li>
+                        <li class="font-medium">{{ role.name }}</li>
+                    </ul>
                 </nav>
             </div>
             <div class="mt-4 md:mt-0">
-                <a href="{% url 'dashboard_user_management:role_list' %}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left mr-1"></i> {% trans "Back to Roles" %}
+                <a href="{% url 'user_management:role_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left mr-1"></i> {{ _('Back to Roles') }}
                 </a>
             </div>
         </div>
@@ -132,7 +134,7 @@
                     {% for user in users %}
                     <tr class="border-b border-gray-200 hover:bg-gray-50">
                         <td class="p-3">
-                            <a href="{% url 'dashboard_user_management:user_detail' user_id=user.id %}" class="hover:text-blue-600 transition-colors">
+                            <a href="{% url 'user_management:user_detail' user_id=user.id %}" class="hover:text-blue-600 transition-colors">
                                 <div class="font-medium hover:text-blue-600">{{ user.username }}</div>
                             </a>
                         </td>
@@ -140,10 +142,10 @@
                         <td class="p-3">{{ user.email }}</td>
                         <td class="p-3 text-center">
                             <div class="flex justify-center space-x-2">
-                                <a href="{% url 'dashboard_user_management:user_detail' user_id=user.id %}" class="btn btn-sm btn-icon btn-primary">
+                                <a href="{% url 'user_management:user_detail' user_id=user.id %}" class="btn btn-sm btn-icon btn-primary">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="{% url 'dashboard_user_management:edit_user' user_id=user.id %}" class="btn btn-sm btn-icon btn-secondary">
+                                <a href="{% url 'user_management:edit_user' user_id=user.id %}" class="btn btn-sm btn-icon btn-secondary">
                                     <i class="fas fa-edit"></i>
                                 </a>
                             </div>

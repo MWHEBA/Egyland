@@ -17,25 +17,30 @@
                 <h1 class="text-2xl font-bold text-gray-800 mb-2">
                     Delete User: {{ user_profile.username }}
                 </h1>
-                <nav class="flex flex-wrap items-center text-sm text-gray-600">
-                    <a href="{% url 'dashboard:home' %}" class="hover:text-primary transition">
-                        <i class="fas fa-home"></i>
-                        <span class="hidden sm:inline">Dashboard</span>
-                    </a>
-                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
-                    <a href="{% url 'dashboard_user_management:user_list' %}" class="hover:text-primary transition">
-                        <span>User Management</span>
-                    </a>
-                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
-                    <a href="{% url 'dashboard_user_management:user_detail' user_id=user_profile.id %}" class="hover:text-primary transition">
-                        <span>{{ user_profile.username }}</span>
-                    </a>
-                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
-                    <span class="text-primary font-medium">Delete</span>
+                <nav class="text-sm breadcrumbs mb-4">
+                    <ul>
+                        <li>
+                            <a href="{% url 'dashboard:home' %}">
+                                <i class="fas fa-home"></i>
+                                <span class="ml-1">{{ _('Dashboard') }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'user_management:user_list' %}" class="hover:text-primary transition">
+                                {{ _('Users') }}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'user_management:user_detail' user_id=user_profile.id %}" class="hover:text-primary transition">
+                                {{ user_profile.username }}
+                            </a>
+                        </li>
+                        <li class="font-medium">{{ _('Delete') }}</li>
+                    </ul>
                 </nav>
             </div>
             <div class="mt-4 md:mt-0">
-                <a href="{% url 'dashboard_user_management:user_detail' user_id=user_profile.id %}" class="btn btn-secondary">
+                <a href="{% url 'user_management:user_detail' user_id=user_profile.id %}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left mr-2"></i> Back to User
                 </a>
             </div>
@@ -78,24 +83,21 @@
             </div>
         </div>
         
-        <form method="post" class="mt-8">
-            {% csrf_token %}
-            <div class="flex items-center mb-4">
-                <input type="checkbox" id="confirm" class="mr-2" required>
-                <label for="confirm" class="text-red-600">
-                    I understand that this action will permanently delete this user and all associated data.
-                </label>
-            </div>
-            
-            <div class="flex justify-end space-x-3">
-                <a href="{% url 'dashboard_user_management:user_detail' user_id=user_profile.id %}" class="btn btn-secondary">
-                    Cancel
-                </a>
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold">{{ _('Are you sure you want to delete this user?') }}</h1>
+        </div>
+        
+        <div class="flex flex-wrap justify-center gap-4">
+            <a href="{% url 'user_management:user_detail' user_id=user_profile.id %}" class="btn btn-secondary">
+                <i class="fas fa-times mr-2"></i> {{ _('Cancel') }}
+            </a>
+            <form method="post">
+                {% csrf_token %}
                 <button type="submit" class="btn btn-danger">
-                    <i class="fas fa-trash mr-2"></i> Delete User
+                    <i class="fas fa-trash-alt mr-2"></i> {{ _('Delete User') }}
                 </button>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}

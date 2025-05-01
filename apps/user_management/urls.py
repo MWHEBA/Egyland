@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 
-app_name = 'dashboard_user_management'
+app_name = 'user_management'
 
 urlpatterns = [
     # User management

@@ -16,6 +16,25 @@
 <div class="dashboard-card p-6">
     <h2 class="text-xl font-semibold mb-6">{{ title }}</h2>
     
+    {% if 'create' in request.path %}
+    <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+        <div class="bg-white rounded-lg shadow-md p-6">
+            {% include 'dashboard/partials/form_errors.html' %}
+            
+            {{ form|crispy }}
+            
+            <div class="flex flex-wrap gap-2 mt-6">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save mr-1"></i> {{ _('Create User') }}
+                </button>
+                <a href="{% url 'user_management:user_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-times mr-1"></i> {{ _('Cancel') }}
+                </a>
+            </div>
+        </div>
+    </form>
+    {% else %}
     <form method="post" class="space-y-6">
         {% csrf_token %}
         
@@ -65,5 +84,6 @@
             </button>
         </div>
     </form>
+    {% endif %}
 </div>
 {% endblock %} 

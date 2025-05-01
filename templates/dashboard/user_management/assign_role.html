@@ -18,26 +18,31 @@
                 <h1 class="text-2xl font-bold text-gray-800 mb-2">
                     Manage Roles: {{ user_profile.username }}
                 </h1>
-                <nav class="flex flex-wrap items-center text-sm text-gray-600">
-                    <a href="{% url 'dashboard:home' %}" class="hover:text-primary transition">
-                        <i class="fas fa-home"></i>
-                        <span class="hidden sm:inline">Dashboard</span>
-                    </a>
-                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
-                    <a href="{% url 'dashboard_user_management:user_list' %}" class="hover:text-primary transition">
-                        <span>User Management</span>
-                    </a>
-                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
-                    <a href="{% url 'dashboard_user_management:user_detail' user_id=user_profile.id %}" class="hover:text-primary transition">
-                        <span>{{ user_profile.username }}</span>
-                    </a>
-                    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
-                    <span class="text-primary font-medium">Manage Roles</span>
+                <nav class="text-sm breadcrumbs mb-4">
+                    <ul>
+                        <li>
+                            <a href="{% url 'dashboard:home' %}">
+                                <i class="fas fa-home"></i>
+                                <span class="ml-1">{{ _('Dashboard') }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'user_management:user_list' %}" class="hover:text-primary transition">
+                                {{ _('Users') }}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'user_management:user_detail' user_id=user_profile.id %}" class="hover:text-primary transition">
+                                {{ user_profile.username }}
+                            </a>
+                        </li>
+                        <li class="font-medium">{{ _('Assign Roles') }}</li>
+                    </ul>
                 </nav>
             </div>
             <div class="mt-4 md:mt-0">
-                <a href="{% url 'dashboard_user_management:user_detail' user_id=user_profile.id %}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left mr-2"></i> Back to User
+                <a href="{% url 'user_management:user_detail' user_id=user_profile.id %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left mr-1"></i> {{ _('Back to User') }}
                 </a>
             </div>
         </div>
