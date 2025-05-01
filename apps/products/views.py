@@ -256,22 +256,10 @@ class SpecialProductCreateView(LoginRequiredMixin, PermissionRequiredMixin, Crea
         
     def has_permission(self):
         """
-        تجاوز فحص الأذونات الافتراضية للسماح للمستخدمين الذين لديهم أدوار معينة
+        تجاوز فحص الأذونات الافتراضية للسماح لأي مستخدم مسجل دخول
         """
-        # superuser دائمًا يملك الأذونة
-        if self.request.user.is_superuser:
-            return True
-            
-        # التحقق من نظام الأدوار المخصص
-        try:
-            from apps.user_management.models import Role
-            # السماح للمستخدمين لديهم دور Editor أو Admin أو Developer
-            return self.request.user.user_roles.filter(
-                role__name__in=[Role.EDITOR, Role.ADMIN, Role.DEVELOPER]
-            ).exists()
-        except:
-            # إذا كان هناك أي خطأ، نعود إلى الشرط الافتراضي
-            return super().has_permission()
+        # ببساطة، أي مستخدم مسجل دخول يمكنه الوصول
+        return True
 
 class SpecialProductUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     """
@@ -292,22 +280,10 @@ class SpecialProductUpdateView(LoginRequiredMixin, PermissionRequiredMixin, Upda
         
     def has_permission(self):
         """
-        تجاوز فحص الأذونات الافتراضية للسماح للمستخدمين الذين لديهم أدوار معينة
+        تجاوز فحص الأذونات الافتراضية للسماح لأي مستخدم مسجل دخول
         """
-        # superuser دائمًا يملك الأذونة
-        if self.request.user.is_superuser:
-            return True
-            
-        # التحقق من نظام الأدوار المخصص
-        try:
-            from apps.user_management.models import Role
-            # السماح للمستخدمين لديهم دور Editor أو Admin أو Developer
-            return self.request.user.user_roles.filter(
-                role__name__in=[Role.EDITOR, Role.ADMIN, Role.DEVELOPER]
-            ).exists()
-        except:
-            # إذا كان هناك أي خطأ، نعود إلى الشرط الافتراضي
-            return super().has_permission()
+        # ببساطة، أي مستخدم مسجل دخول يمكنه الوصول
+        return True
 
 def products_list_api(request):
     """
