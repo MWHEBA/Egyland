@@ -573,10 +573,18 @@
                     </div>
                     {% endif %}
                     
+                    <!-- للتشخيص: طباعة حالة إمكانية الحذف -->
+                    <div class="bg-gray-100 p-4 rounded-lg text-sm text-gray-700">
+                        <p>حالة صلاحية الحذف: {% if can_delete_inquiry %}مفعلة{% else %}غير مفعلة{% endif %}</p>
+                        <p>هل المستخدم سوبر يوزر: {% if request.user.is_superuser %}نعم{% else %}لا{% endif %}</p>
+                        <p>هل المستخدم ستاف: {% if request.user.is_staff %}نعم{% else %}لا{% endif %}</p>
+                        <p>أدوار المستخدم: {% for role in request.user.user_roles.all %}{{ role.role.name }} {% endfor %}</p>
+                    </div>
+                    
                     <!-- زر حذف الاستفسار - للمستخدمين ذوي دور Developer فقط -->
                     {% if can_delete_inquiry %}
                     <div class="action-container">
-                        <a href="{% url 'inquiries:delete' inquiry.id %}" 
+                        <a href="{% url 'dashboard:delete_inquiry' inquiry.id %}" 
                             class="action-btn flex items-center p-4 rounded-xl bg-red-50 border border-red-200 transition transform hover:scale-105 hover:shadow-md">
                             <div class="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center mr-4">
                                 <i class="fas fa-trash-alt text-lg"></i>

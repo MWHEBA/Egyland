@@ -2,6 +2,7 @@ from django.urls import path, reverse_lazy
 from django.contrib.auth import views as auth_views
 from . import views
 from apps.branches.views import BranchListView, BranchCreateView, BranchUpdateView, BranchDeleteView, MainBranchUpdateView, BranchDetailAPIView
+from apps.inquiries.views import delete_inquiry
 
 app_name = 'dashboard'
 
@@ -67,6 +68,7 @@ urlpatterns = [
     path('inquiries/<int:pk>/', views.InquiryDetailView.as_view(), name='inquiry_detail'),
     path('inquiries/<int:pk>/update-status/', views.update_inquiry_status, name='update_inquiry_status'),
     path('inquiries/<int:pk>/add-note/', views.add_inquiry_note, name='add_inquiry_note'),
+    path('inquiries/<int:pk>/delete/', delete_inquiry, name='delete_inquiry'),
     
     # User Profile
     path('profile/', views.UserProfileView.as_view(), name='profile'),
