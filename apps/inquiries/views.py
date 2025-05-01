@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils.decorators import method_decorator
 from django.db.models import Q
 from django.core.mail import send_mail
@@ -16,6 +16,20 @@ from .models import Inquiry
 from .forms import InquiryForm, ProductInquiryForm, ProductRequestForm
 from apps.dashboard.mixins import StaffRequiredMixin
 from apps.branches.models import Branch, MainBranch
+from apps.user_management.models import Role
+
+# فحص ما إذا كان المستخدم لديه دور Developer
+def is_developer(user):
+    """
+    التحقق مما إذا كان المستخدم يمتلك صلاحية Developer
+    """
+    if user.is_superuser:
+        return True
+    
+    try:
+        return user.user_roles.filter(role__name=Role.DEVELOPER).exists()
+    except:
+        return False
 
 
 class ContactFormView(FormView):
@@ -362,6 +376,10 @@ class InquiryDetailView(LoginRequiredMixin, StaffRequiredMixin, DetailView):
         """
         context = super().get_context_data(**kwargs)
         context['status_choices'] = dict(Inquiry.INQUIRY_STATUS_CHOICES)
+        
+        # إضافة معلومة عن صلاحية المستخدم لحذف الاستفسارات
+        context['can_delete_inquiry'] = is_developer(self.request.user)
+        
         return context
 
 
@@ -523,3 +541,21 @@ def products_api(request):
         response["Access-Control-Allow-Headers"] = "Content-Type, X-Requested-With"
         
         return response 
+
+
+@login_required
+@user_passes_test(is_developer)
+def delete_inquiry(request, pk):
+    """
+    حذف الاستفسار - متاح فقط للمستخدمين بصلاحية Developer
+    """
+    inquiry = get_object_or_404(Inquiry, pk=pk)
+    
+    if request.method == 'POST':
+        inquiry.delete()
+        messages.success(request, 'تم حذف الاستفسار بنجاح')
+        return redirect('dashboard:inquiries')
+    
+    return render(request, 'dashboard/inquiries/delete_confirmation.html', {
+        'inquiry': inquiry
+    }) 

@@ -1,0 +1,52 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}
+    حذف الاستفسار - Egyland Dashboard
+{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto my-8">
+    <div class="bg-white shadow-md rounded-lg p-6 border border-red-200">
+        <div class="flex items-center justify-center mb-6">
+            <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+            </div>
+        </div>
+        
+        <h1 class="text-2xl font-bold text-center text-red-600 mb-4">تأكيد حذف الاستفسار</h1>
+        
+        <div class="bg-red-50 p-4 rounded-lg border border-red-200 mb-6">
+            <p class="text-gray-800 mb-2 text-center">
+                هل أنت متأكد من أنك تريد حذف هذا الاستفسار نهائياً؟
+            </p>
+            <p class="text-red-600 text-sm text-center">
+                <strong>تحذير:</strong> لا يمكن التراجع عن هذا الإجراء
+            </p>
+        </div>
+        
+        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-6">
+            <h3 class="font-semibold text-lg mb-2">معلومات الاستفسار:</h3>
+            <ul class="list-inside space-y-1">
+                <li><strong>الاسم:</strong> {{ inquiry.name }}</li>
+                <li><strong>البريد الإلكتروني:</strong> {{ inquiry.email }}</li>
+                <li><strong>الشركة:</strong> {{ inquiry.company }}</li>
+                <li><strong>النوع:</strong> {{ inquiry.get_type_display }}</li>
+                <li><strong>تاريخ الإنشاء:</strong> {{ inquiry.created_at|date:"Y-m-d H:i" }}</li>
+            </ul>
+        </div>
+        
+        <div class="flex justify-center space-x-4 rtl:space-x-reverse">
+            <a href="{% url 'dashboard:inquiry_detail' inquiry.id %}" class="btn btn-outline-gray">
+                <i class="fas fa-times mr-1"></i> إلغاء
+            </a>
+            <form method="post" class="inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash-alt mr-1"></i> تأكيد الحذف
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

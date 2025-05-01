@@ -17,4 +17,5 @@ urlpatterns = [
     path('dashboard/inquiries/', views.InquiryListView.as_view(), name='list'),
     path('dashboard/inquiries/<int:pk>/', views.InquiryDetailView.as_view(), name='detail'),
     path('dashboard/inquiries/<int:pk>/update-status/', views.update_inquiry_status, name='update_status'),
+    path('dashboard/inquiries/<int:pk>/delete/', views.delete_inquiry, name='delete'),  # مسار حذف الاستفسار
 ] 
