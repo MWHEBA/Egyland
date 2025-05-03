@@ -659,13 +659,13 @@ class SeasonalityUpdateView(LoginRequiredMixin, StaffRequiredMixin, UpdateView):
         
         # طباعة بيانات تشخيصية لتتبع المشكلة
         obj = self.get_object()
-        print(f"Current object: Product ID={obj.product.pk}, Variety ID={obj.variety.pk}, Type={obj.type}")
+        print(f"Current object: Product ID={obj.product.pk if obj.product else None}, Variety ID={obj.variety.pk if obj.variety else None}, Type={obj.type}")
         
         # تحديد القيم الأولية بشكل صريح
         if not form.initial:
             form.initial = {
-                'product': obj.product.pk,
-                'variety': obj.variety.pk,
+                'product': obj.product.pk if obj.product else None,
+                'variety': obj.variety.pk if obj.variety else None,
                 'type': obj.type,
                 'season_icon': obj.season_icon,
                 'jan': obj.jan,
@@ -695,8 +695,10 @@ class SeasonalityUpdateView(LoginRequiredMixin, StaffRequiredMixin, UpdateView):
         # Set proper success message
         if form.instance.product:
             messages.success(self.request, f"Seasonality for '{form.instance.product.name}' updated successfully.")
-        else:
+        elif form.instance.variety:
             messages.success(self.request, f"Seasonality for '{form.instance.variety.name}' updated successfully.")
+        else:
+            messages.success(self.request, "Seasonality updated successfully.")
         
         response = super().form_valid(form)
         
@@ -750,8 +752,10 @@ class SeasonalityDeleteView(LoginRequiredMixin, StaffRequiredMixin, DeleteView):
         
         if seasonality.product:
             messages.success(request, f"Seasonality for '{seasonality.product.name}' deleted successfully.")
-        else:
+        elif seasonality.variety:
             messages.success(request, f"Seasonality for '{seasonality.variety.name}' deleted successfully.")
+        else:
+            messages.success(request, "Seasonality deleted successfully.")
         
         response = super().delete(request, *args, **kwargs)
         
