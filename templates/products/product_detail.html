@@ -897,7 +897,12 @@
       {% endif %}
 
       <!-- قسم التعبئة والتغليف -->
-      {% if fresh_packaging_types or iqf_packaging_types and product.product_type == 'iqf' or iqf_packaging_types and product.product_type == 'both' or fresh_packaging_options or iqf_packaging_options and product.product_type == 'iqf' or iqf_packaging_options and product.product_type == 'both' or fresh_packaging or iqf_packaging and product.product_type == 'iqf' or iqf_packaging and product.product_type == 'both' %}
+      {% if fresh_packaging_types or 
+            (iqf_packaging_types and (product.product_type == 'iqf' or product.product_type == 'both')) or 
+            fresh_packaging_options or 
+            (iqf_packaging_options and (product.product_type == 'iqf' or product.product_type == 'both')) or 
+            fresh_packaging or 
+            (iqf_packaging and (product.product_type == 'iqf' or product.product_type == 'both')) %}
       <div class="packaging-section">
         <h2 class="section-title">Packaging</h2>
         <div class="product-row">
@@ -952,7 +957,7 @@
           {% endif %}
           
           <!-- ============ قسم تعبئة المنتجات المجمدة ============ -->
-          {% if iqf_packaging_types %}
+          {% if iqf_packaging_types and (product.product_type == 'iqf' or product.product_type == 'both') %}
           {% for iqf_package in iqf_packaging_types|dictsort:"order" %}
           <div class="product-col">
             {% if iqf_package.show_fresh_label %}

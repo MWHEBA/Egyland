@@ -43,7 +43,7 @@ footer {
 .background-right {
     position: absolute;
     right: 0;
-    bottom: -150%;
+    bottom: -110%;
     max-width: 30%;
     z-index: 0;
     pointer-events: none;
