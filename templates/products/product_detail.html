@@ -1,4 +1,4 @@
-﻿{% extends "base/home_base.html" %}
+{% extends "base/home_base.html" %}
 {% load static %}
 
 {% block title %}
@@ -897,106 +897,294 @@
       {% endif %}
 
       <!-- قسم التعبئة والتغليف -->
-      {% if fresh_packaging_types or 
-            (iqf_packaging_types and (product.product_type == 'iqf' or product.product_type == 'both')) or 
-            fresh_packaging_options or 
-            (iqf_packaging_options and (product.product_type == 'iqf' or product.product_type == 'both')) or 
-            fresh_packaging or 
-            (iqf_packaging and (product.product_type == 'iqf' or product.product_type == 'both')) %}
-      <div class="packaging-section">
-        <h2 class="section-title">Packaging</h2>
-        <div class="product-row">
-          <!-- ============ قسم تعبئة المنتجات الطازجة ============ -->
-          {% if fresh_packaging_types %}
-          {% for fresh_package in fresh_packaging_types|dictsort:"order" %}
-          <div class="product-col">
-            {% if fresh_package.show_fresh_label %}
-            <h3 class="packaging-type">Fresh</h3>
-            {% endif %}
-            <div class="packaging-box fresh-packaging-box">
-              <!-- صورة العبوة / الكرتونة المفتوحة من أعلى -->
-              <div class="open-box-container" style="text-align: center;">
-                <div style="display: inline-block; text-align: center;">
-                  {% if fresh_package.packaging_type.image %}
-                  <img src="{{ fresh_package.packaging_type.image.url }}" alt="{{ fresh_package.packaging_type.name }}" class="open-box-image" style="margin: 0 auto; display: block; max-height: 150px; width: auto;">
-                  {% elif product.fresh_packaging_image %}
-                  <img src="{{ product.fresh_packaging_image.url }}" alt="Fresh Packaging" class="open-box-image" style="margin: 0 auto; display: block; max-height: 150px; width: auto;">
-                  {% else %}
-                  <!-- تم حذف SVG لعدم عرض أي شيء في حالة عدم وجود صورة -->
+      {% if fresh_packaging_types %}
+        <div class="packaging-section">
+          <h2 class="section-title">Packaging</h2>
+          <div class="product-row">
+            <!-- ============ قسم تعبئة المنتجات الطازجة ============ -->
+            {% for fresh_package in fresh_packaging_types|dictsort:"order" %}
+            <div class="product-col">
+              {% if fresh_package.show_fresh_label %}
+              <h3 class="packaging-type">Fresh</h3>
+              {% endif %}
+              <div class="packaging-box fresh-packaging-box">
+                <!-- صورة العبوة / الكرتونة المفتوحة من أعلى -->
+                <div class="open-box-container" style="text-align: center;">
+                  <div style="display: inline-block; text-align: center;">
+                    {% if fresh_package.packaging_type.image %}
+                    <img src="{{ fresh_package.packaging_type.image.url }}" alt="{{ fresh_package.packaging_type.name }}" class="open-box-image" style="margin: 0 auto; display: block; max-height: 150px; width: auto;">
+                    {% elif product.fresh_packaging_image %}
+                    <img src="{{ product.fresh_packaging_image.url }}" alt="Fresh Packaging" class="open-box-image" style="margin: 0 auto; display: block; max-height: 150px; width: auto;">
+                    {% else %}
+                    <!-- تم حذف SVG لعدم عرض أي شيء في حالة عدم وجود صورة -->
+                    {% endif %}
+                  </div>
+                </div>
+                
+                <!-- عنوان الكرتونة -->
+                <div class="packaging-title-container">
+                  <p class="packaging-title">{{ fresh_package.packaging_type.description }}</p>
+                </div>
+                
+                <!-- تفاصيل العدد في عناصر متوازية مع الارقام في نفس المكان -->
+                <div class="packaging-metrics">
+                  {% if fresh_package.pallets_per_container > 0 %}
+                  <div class="packaging-metric">
+                    <div class="metric-label">No. of Pallets / Container</div>
+                    <div class="metric-value">{{ fresh_package.pallets_per_container }}</div>
+                  </div>
+                  {% endif %}
+                  
+                  {% if fresh_package.items_per_pallet > 0 %}
+                  <div class="packaging-metric {% if fresh_package.pallets_per_container <= 0 %}single-metric{% endif %}">
+                    <div class="metric-label">No. of {{ fresh_package.packaging_type.key_word|default:"Cartons" }} / Pallet</div>
+                    <div class="metric-value">{{ fresh_package.items_per_pallet }}</div>
+                  </div>
                   {% endif %}
                 </div>
+                
+                <!-- ملاحظة التخصيص -->
+                <p class="packaging-customize">* We can customize your packaging</p>
               </div>
-              
-              <!-- عنوان الكرتونة -->
-              <div class="packaging-title-container">
-                <p class="packaging-title">{{ fresh_package.packaging_type.description }}</p>
-              </div>
-              
-              <!-- تفاصيل العدد في عناصر متوازية مع الارقام في نفس المكان -->
-              <div class="packaging-metrics">
-                {% if fresh_package.pallets_per_container > 0 %}
-                <div class="packaging-metric">
-                  <div class="metric-label">No. of Pallets / Container</div>
-                  <div class="metric-value">{{ fresh_package.pallets_per_container }}</div>
+            </div>
+            {% endfor %}
+
+            <!-- ============ قسم تعبئة المنتجات المجمدة ============ -->
+            {% if iqf_packaging_types %}
+            {% for iqf_package in iqf_packaging_types|dictsort:"order" %}
+            <div class="product-col">
+              {% if iqf_package.show_fresh_label %}
+              <h3 class="packaging-type">IQF</h3>
+              {% endif %}
+              <div class="packaging-box fresh-packaging-box iqf-packaging-box">
+                <!-- صورة العبوة / الكرتونة المفتوحة من أعلى -->
+                <div class="open-box-container" style="text-align: center;">
+                  <div style="display: inline-block; text-align: center;">
+                    {% if iqf_package.packaging_type.image %}
+                    <img src="{{ iqf_package.packaging_type.image.url }}" alt="{{ iqf_package.packaging_type.name }}" class="open-box-image" style="margin: 0 auto; display: block; max-height: 150px; width: auto;">
+                    {% elif product.iqf_packaging_image %}
+                    <img src="{{ product.iqf_packaging_image.url }}" alt="IQF Packaging" class="open-box-image" style="margin: 0 auto; display: block; max-height: 150px; width: auto;">
+                    {% else %}
+                    <!-- تم حذف SVG لعدم عرض أي شيء في حالة عدم وجود صورة -->
+                    {% endif %}
+                  </div>
+                </div>
+                
+                <!-- عنوان الكرتونة - ثابت دائما Plastic Bag -->
+                <div class="packaging-title-container">
+                  <p class="packaging-title">Plastic Bag</p>
+                </div>
+                
+                <!-- تفاصيل مأخوذة من وصف المستخدم -->
+                {% if iqf_package.packaging_type.description %}
+                <div class="packaging-description">
+                  {{ iqf_package.packaging_type.description|linebreaks }}
                 </div>
                 {% endif %}
                 
-                {% if fresh_package.items_per_pallet > 0 %}
-                <div class="packaging-metric {% if fresh_package.pallets_per_container <= 0 %}single-metric{% endif %}">
-                  <div class="metric-label">No. of {{ fresh_package.packaging_type.key_word|default:"Cartons" }} / Pallet</div>
-                  <div class="metric-value">{{ fresh_package.items_per_pallet }}</div>
+                <!-- ملاحظة التخصيص -->
+                <p class="packaging-customize">* We can customize your packaging</p>
+              </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+      {% elif iqf_packaging_types %}
+        <div class="packaging-section">
+          <h2 class="section-title">Packaging</h2>
+          <div class="product-row">
+            <!-- ============ قسم تعبئة المنتجات المجمدة ============ -->
+            {% for iqf_package in iqf_packaging_types|dictsort:"order" %}
+            <div class="product-col">
+              {% if iqf_package.show_fresh_label %}
+              <h3 class="packaging-type">IQF</h3>
+              {% endif %}
+              <div class="packaging-box fresh-packaging-box iqf-packaging-box">
+                <!-- صورة العبوة / الكرتونة المفتوحة من أعلى -->
+                <div class="open-box-container" style="text-align: center;">
+                  <div style="display: inline-block; text-align: center;">
+                    {% if iqf_package.packaging_type.image %}
+                    <img src="{{ iqf_package.packaging_type.image.url }}" alt="{{ iqf_package.packaging_type.name }}" class="open-box-image" style="margin: 0 auto; display: block; max-height: 150px; width: auto;">
+                    {% elif product.iqf_packaging_image %}
+                    <img src="{{ product.iqf_packaging_image.url }}" alt="IQF Packaging" class="open-box-image" style="margin: 0 auto; display: block; max-height: 150px; width: auto;">
+                    {% else %}
+                    <!-- تم حذف SVG لعدم عرض أي شيء في حالة عدم وجود صورة -->
+                    {% endif %}
+                  </div>
+                </div>
+                
+                <!-- عنوان الكرتونة - ثابت دائما Plastic Bag -->
+                <div class="packaging-title-container">
+                  <p class="packaging-title">Plastic Bag</p>
+                </div>
+                
+                <!-- تفاصيل مأخوذة من وصف المستخدم -->
+                {% if iqf_package.packaging_type.description %}
+                <div class="packaging-description">
+                  {{ iqf_package.packaging_type.description|linebreaks }}
                 </div>
                 {% endif %}
+                
+                <!-- ملاحظة التخصيص -->
+                <p class="packaging-customize">* We can customize your packaging</p>
               </div>
-              
-              <!-- ملاحظة التخصيص -->
-              <p class="packaging-customize">* We can customize your packaging</p>
             </div>
+            {% endfor %}
           </div>
-          {% endfor %}
-          {% endif %}
-          
-          <!-- ============ قسم تعبئة المنتجات المجمدة ============ -->
-          {% if iqf_packaging_types and (product.product_type == 'iqf' or product.product_type == 'both') %}
-          {% for iqf_package in iqf_packaging_types|dictsort:"order" %}
-          <div class="product-col">
-            {% if iqf_package.show_fresh_label %}
-            <h3 class="packaging-type">IQF</h3>
-            {% endif %}
-            <div class="packaging-box fresh-packaging-box iqf-packaging-box">
-              <!-- صورة العبوة / الكرتونة المفتوحة من أعلى -->
-              <div class="open-box-container" style="text-align: center;">
-                <div style="display: inline-block; text-align: center;">
-                  {% if iqf_package.packaging_type.image %}
-                  <img src="{{ iqf_package.packaging_type.image.url }}" alt="{{ iqf_package.packaging_type.name }}" class="open-box-image" style="margin: 0 auto; display: block; max-height: 150px; width: auto;">
-                  {% elif product.iqf_packaging_image %}
-                  <img src="{{ product.iqf_packaging_image.url }}" alt="IQF Packaging" class="open-box-image" style="margin: 0 auto; display: block; max-height: 150px; width: auto;">
-                  {% else %}
-                  <!-- تم حذف SVG لعدم عرض أي شيء في حالة عدم وجود صورة -->
-                  {% endif %}
-                </div>
-              </div>
-              
-              <!-- عنوان الكرتونة - ثابت دائما Plastic Bag -->
-              <div class="packaging-title-container">
-                <p class="packaging-title">Plastic Bag</p>
-              </div>
-              
-              <!-- تفاصيل مأخوذة من وصف المستخدم -->
-              {% if iqf_package.packaging_type.description %}
-              <div class="packaging-description">
-                {{ iqf_package.packaging_type.description|linebreaks }}
-              </div>
-              {% endif %}
-              
-              <!-- ملاحظة التخصيص -->
-              <p class="packaging-customize">* We can customize your packaging</p>
-            </div>
-          </div>
-          {% endfor %}
-          {% endif %}
         </div>
-      </div>
+      {% elif fresh_packaging_options %}
+        <!-- القسم القديم للتوافق مع الإصدارات السابقة - قسم تعبئة المنتجات الطازجة -->
+        <div class="packaging-section">
+          <h2 class="section-title">Packaging</h2>
+          <div class="product-row">
+            {% for fresh_option in fresh_packaging_options %}
+            <div class="product-col">
+              <h3 class="packaging-type">Fresh</h3>
+              <div class="packaging-box fresh-packaging-box">
+                <!-- صورة العبوة / الكرتونة المفتوحة من أعلى -->
+                <div class="open-box-container" style="text-align: center;">
+                  <div style="display: inline-block; text-align: center;">
+                    {% if fresh_option.image %}
+                    <img src="{{ fresh_option.image.url }}" alt="{{ fresh_option.name }}" class="open-box-image" style="margin: 0 auto; display: block; max-height: 150px; width: auto;">
+                    {% elif product.fresh_packaging_image %}
+                    <img src="{{ product.fresh_packaging_image.url }}" alt="Fresh Packaging" class="open-box-image" style="margin: 0 auto; display: block; max-height: 150px; width: auto;">
+                    {% endif %}
+                  </div>
+                </div>
+                
+                <!-- عنوان الكرتونة -->
+                <div class="packaging-title-container">
+                  <p class="packaging-title">{{ fresh_option.name }}</p>
+                </div>
+                
+                <!-- تفاصيل العدد في عناصر متوازية مع الارقام في نفس المكان -->
+                {% if fresh_option.description %}
+                <div class="packaging-description">
+                  {{ fresh_option.description|linebreaks }}
+                </div>
+                {% endif %}
+                
+                <!-- ملاحظة التخصيص -->
+                <p class="packaging-customize">* We can customize your packaging</p>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% elif iqf_packaging_options and product.product_type == 'iqf' or iqf_packaging_options and product.product_type == 'both' %}
+        <!-- القسم القديم للتوافق مع الإصدارات السابقة - قسم تعبئة المنتجات المجمدة -->
+        <div class="packaging-section">
+          <h2 class="section-title">Packaging</h2>
+          <div class="product-row">
+            {% for iqf_option in iqf_packaging_options %}
+            <div class="product-col">
+              <h3 class="packaging-type">IQF</h3>
+              <div class="packaging-box fresh-packaging-box iqf-packaging-box">
+                <!-- صورة العبوة / الكرتونة المفتوحة من أعلى -->
+                <div class="open-box-container" style="text-align: center;">
+                  <div style="display: inline-block; text-align: center;">
+                    {% if iqf_option.image %}
+                    <img src="{{ iqf_option.image.url }}" alt="{{ iqf_option.name }}" class="open-box-image" style="margin: 0 auto; display: block; max-height: 150px; width: auto;">
+                    {% elif product.iqf_packaging_image %}
+                    <img src="{{ product.iqf_packaging_image.url }}" alt="IQF Packaging" class="open-box-image" style="margin: 0 auto; display: block; max-height: 150px; width: auto;">
+                    {% endif %}
+                  </div>
+                </div>
+                
+                <!-- عنوان الكرتونة -->
+                <div class="packaging-title-container">
+                  <p class="packaging-title">{{ iqf_option.name|default:"Plastic Bag" }}</p>
+                </div>
+                
+                <!-- تفاصيل مأخوذة من وصف المستخدم -->
+                {% if iqf_option.description %}
+                <div class="packaging-description">
+                  {{ iqf_option.description|linebreaks }}
+                </div>
+                {% endif %}
+                
+                <!-- ملاحظة التخصيص -->
+                <p class="packaging-customize">* We can customize your packaging</p>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% elif fresh_packaging %}
+        <!-- القسم الأقدم للتوافق مع الإصدارات السابقة - قسم تعبئة المنتجات الطازجة -->
+        <div class="packaging-section">
+          <h2 class="section-title">Packaging</h2>
+          <div class="product-row">
+            <div class="product-col">
+              <h3 class="packaging-type">Fresh</h3>
+              <div class="packaging-box fresh-packaging-box">
+                <!-- صورة العبوة / الكرتونة المفتوحة من أعلى -->
+                <div class="open-box-container" style="text-align: center;">
+                  <div style="display: inline-block; text-align: center;">
+                    {% if fresh_packaging.image %}
+                    <img src="{{ fresh_packaging.image.url }}" alt="Fresh Packaging" class="open-box-image" style="margin: 0 auto; display: block; max-height: 150px; width: auto;">
+                    {% elif product.fresh_packaging_image %}
+                    <img src="{{ product.fresh_packaging_image.url }}" alt="Fresh Packaging" class="open-box-image" style="margin: 0 auto; display: block; max-height: 150px; width: auto;">
+                    {% endif %}
+                  </div>
+                </div>
+                
+                <!-- عنوان الكرتونة -->
+                <div class="packaging-title-container">
+                  <p class="packaging-title">{{ fresh_packaging.description|default:"Fresh Packaging" }}</p>
+                </div>
+                
+                <!-- تفاصيل إضافية من الوصف القديم -->
+                {% if fresh_packaging.details %}
+                <div class="packaging-description">
+                  {{ fresh_packaging.details|linebreaks }}
+                </div>
+                {% endif %}
+                
+                <!-- ملاحظة التخصيص -->
+                <p class="packaging-customize">* We can customize your packaging</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% elif iqf_packaging and product.product_type == 'iqf' or iqf_packaging and product.product_type == 'both' %}
+        <!-- القسم الأقدم للتوافق مع الإصدارات السابقة - قسم تعبئة المنتجات المجمدة -->
+        <div class="packaging-section">
+          <h2 class="section-title">Packaging</h2>
+          <div class="product-row">
+            <div class="product-col">
+              <h3 class="packaging-type">IQF</h3>
+              <div class="packaging-box fresh-packaging-box iqf-packaging-box">
+                <!-- صورة العبوة / الكرتونة المفتوحة من أعلى -->
+                <div class="open-box-container" style="text-align: center;">
+                  <div style="display: inline-block; text-align: center;">
+                    {% if iqf_packaging.image %}
+                    <img src="{{ iqf_packaging.image.url }}" alt="IQF Packaging" class="open-box-image" style="margin: 0 auto; display: block; max-height: 150px; width: auto;">
+                    {% elif product.iqf_packaging_image %}
+                    <img src="{{ product.iqf_packaging_image.url }}" alt="IQF Packaging" class="open-box-image" style="margin: 0 auto; display: block; max-height: 150px; width: auto;">
+                    {% endif %}
+                  </div>
+                </div>
+                
+                <!-- عنوان الكرتونة - ثابت دائما Plastic Bag -->
+                <div class="packaging-title-container">
+                  <p class="packaging-title">Plastic Bag</p>
+                </div>
+                
+                <!-- تفاصيل مأخوذة من وصف المستخدم -->
+                {% if iqf_packaging.description %}
+                <div class="packaging-description">
+                  {{ iqf_packaging.description|linebreaks }}
+                </div>
+                {% endif %}
+                
+                <!-- ملاحظة التخصيص -->
+                <p class="packaging-customize">* We can customize your packaging</p>
+              </div>
+            </div>
+          </div>
+        </div>
       {% endif %}
     </div>
 {% endif %}
