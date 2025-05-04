@@ -929,15 +929,19 @@
               
               <!-- تفاصيل العدد في عناصر متوازية مع الارقام في نفس المكان -->
               <div class="packaging-metrics">
+                {% if fresh_package.pallets_per_container > 0 %}
                 <div class="packaging-metric">
                   <div class="metric-label">No. of Pallets / Container</div>
                   <div class="metric-value">{{ fresh_package.pallets_per_container }}</div>
                 </div>
+                {% endif %}
                 
-                <div class="packaging-metric">
+                {% if fresh_package.items_per_pallet > 0 %}
+                <div class="packaging-metric {% if fresh_package.pallets_per_container <= 0 %}single-metric{% endif %}">
                   <div class="metric-label">No. of {{ fresh_package.packaging_type.key_word|default:"Cartons" }} / Pallet</div>
                   <div class="metric-value">{{ fresh_package.items_per_pallet }}</div>
                 </div>
+                {% endif %}
               </div>
               
               <!-- ملاحظة التخصيص -->

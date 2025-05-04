@@ -171,47 +171,6 @@
                     </tbody>
                 </table>
             </div>
-            
-            {% if product_packaging_types.has_other_pages %}
-            <div class="p-6 border-t border-gray-200">
-                <div class="pagination flex justify-between items-center">
-                    <div>
-                        <span class="text-sm text-gray-600">Showing page {{ product_packaging_types.number }} of {{ product_packaging_types.paginator.num_pages }}</span>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        {% if product_packaging_types.has_previous %}
-                            <a href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline btn-sm">
-                                <i class="fas fa-angle-double-left"></i>
-                            </a>
-                            <a href="?page={{ product_packaging_types.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline btn-sm">
-                                <i class="fas fa-chevron-left mr-1"></i> Previous
-                            </a>
-                        {% else %}
-                            <button class="btn btn-outline btn-sm opacity-50" disabled>
-                                <i class="fas fa-chevron-left mr-1"></i> Previous
-                            </button>
-                        {% endif %}
-                        
-                        <span class="px-3 py-1 rounded-md mx-1 bg-primary text-white">
-                            {{ product_packaging_types.number }} of {{ product_packaging_types.paginator.num_pages }}
-                        </span>
-                        
-                        {% if product_packaging_types.has_next %}
-                            <a href="?page={{ product_packaging_types.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline btn-sm">
-                                Next <i class="fas fa-chevron-right ml-1"></i>
-                            </a>
-                            <a href="?page={{ product_packaging_types.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="btn btn-outline btn-sm">
-                                <i class="fas fa-angle-double-right"></i>
-                            </a>
-                        {% else %}
-                            <button class="btn btn-outline btn-sm opacity-50" disabled>
-                                Next <i class="fas fa-chevron-right ml-1"></i>
-                            </button>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            {% endif %}
         </div>
     {% else %}
         <div class="dashboard-card bg-white shadow rounded-lg p-6 text-center">

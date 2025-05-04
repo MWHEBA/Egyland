@@ -637,6 +637,11 @@ footer {
     width: 48%;
 }
 
+/* نمط للعنصر المفرد عند إخفاء أحد العناصر */
+.packaging-metric.single-metric {
+    width: 100%;
+}
+
 .metric-label {
     font-size: 12px;
     color: #444;

@@ -1234,7 +1234,6 @@ class ProductPackagingTypeListView(LoginRequiredMixin, StaffRequiredMixin, ListV
     model = ProductPackagingType
     template_name = 'dashboard/product/product_packaging_type_list.html'
     context_object_name = 'product_packaging_types'
-    paginate_by = 15
     
     def get_queryset(self):
         queryset = super().get_queryset()
