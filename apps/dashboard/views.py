@@ -37,8 +37,6 @@ class DashboardHomeView(LoginRequiredMixin, StaffRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        # إضافة حالة UNDER_CONSTRUCTION
-        context['under_construction'] = getattr(settings, 'UNDER_CONSTRUCTION', True)
         
         # Key metrics
         context['total_products'] = Product.objects.count()
@@ -1906,62 +1904,3 @@ def season_icon_detail_api(request, pk):
         return JsonResponse(data)
     except SeasonIcon.DoesNotExist:
         return JsonResponse({'error': 'Season icon not found'}, status=404)
-
-@login_required
-def toggle_construction_mode(request):
-    """
-    تبديل حالة وضع البناء (Under Construction Mode)
-    يجب أن يكون المستخدم مسجل ومن فريق الإدارة
-    """
-    if not request.user.is_staff:
-        messages.error(request, "You don't have permission to perform this action.")
-        return redirect('dashboard:home')
-    
-    # قراءة ملف .env الحالي
-    env_file_path = os.path.join(settings.BASE_DIR, 'config', '.env')
-    try:
-        # قراءة الملف كنص
-        if os.path.exists(env_file_path):
-            with open(env_file_path, 'r') as file:
-                env_content = file.read()
-        else:
-            env_content = ""
-        
-        # تحديد حالة UNDER_CONSTRUCTION
-        current_state = getattr(settings, 'UNDER_CONSTRUCTION', True)
-        new_state = not current_state
-        
-        # تحديث البيئة المحيطة أولاً
-        import environ
-        env = environ.Env()
-        env.ENVIRON['UNDER_CONSTRUCTION'] = str(new_state).lower()
-        
-        # تحديث/إضافة المتغير في ملف .env
-        if 'UNDER_CONSTRUCTION=' in env_content:
-            # تحديث القيمة الموجودة
-            updated_content = env_content.replace(
-                f'UNDER_CONSTRUCTION={str(current_state).lower()}',
-                f'UNDER_CONSTRUCTION={str(new_state).lower()}'
-            )
-        else:
-            # إضافة متغير جديد إلى الملف
-            updated_content = env_content + f"\nUNDER_CONSTRUCTION={str(new_state).lower()}"
-        
-        # كتابة المحتوى المحدث
-        with open(env_file_path, 'w') as file:
-            file.write(updated_content)
-        
-        # تحديث الإعداد في الذاكرة للتأثير الفوري
-        setattr(settings, 'UNDER_CONSTRUCTION', new_state)
-        
-        # رسالة نجاح
-        if new_state:
-            messages.success(request, "Construction mode has been activated successfully.")
-        else:
-            messages.success(request, "Construction mode has been deactivated successfully.")
-    
-    except Exception as e:
-        messages.error(request, f"Error changing construction mode: {str(e)}")
-    
-    # العودة إلى الداشبورد
-    return redirect('dashboard:home')

@@ -19,5 +19,4 @@ def company_info(request):
         'company_linkedin': 'https://linkedin.com/company/egyland',
         'company_twitter': 'https://twitter.com/egyland',
         'copyright_year': '2025',
-        'under_construction': getattr(settings, 'UNDER_CONSTRUCTION', True),
     } 

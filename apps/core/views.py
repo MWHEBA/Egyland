@@ -14,20 +14,8 @@ from apps.inquiries.views import ContactFormView
 class HomeView(TemplateView):
     """
     الصفحة الرئيسية للموقع
-    تعرض صفحة under construction للزوار عندما يكون الإعداد UNDER_CONSTRUCTION مفعل
-    أو للزوار غير المسجلين حسب الحالة السابقة
     """
     template_name = 'core/home.html'
-    
-    def get_template_names(self):
-        """
-        تحديد القالب المناسب بناءً على حالة تسجيل دخول المستخدم وإعداد UNDER_CONSTRUCTION
-        """
-        # عرض صفحة البناء فقط إذا كان الإعداد مفعل وليس مستخدم مسجل دخوله
-        under_construction = getattr(settings, 'UNDER_CONSTRUCTION', True)
-        if under_construction and not self.request.user.is_authenticated:
-            return ['core/under_construction.html']
-        return [self.template_name]
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

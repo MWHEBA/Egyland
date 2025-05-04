@@ -29,7 +29,7 @@ env = environ.Env(
     EMAIL_USE_TLS=(bool, False),
     CONTACT_EMAIL=(str, 'info@egyland.com'),
     # إعداد وضع البناء
-    UNDER_CONSTRUCTION=(bool, True),
+    UNDER_CONSTRUCTION=(bool, False),
 )
 
 # نحاول قراءة ملف .env إذا كان موجودًا

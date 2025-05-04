@@ -422,14 +422,6 @@
                     </div>
                     <div class="ml-4">{% block header_actions %}{% endblock %}</div>
                     <div class="flex items-center ml-auto">
-                        <!-- Under Construction Toggle -->
-                        <div class="mr-4 hidden sm:block">
-                            <a href="{% url 'dashboard:toggle_construction' %}" class="flex items-center text-sm font-medium px-3 py-2 rounded-md {% if under_construction %}bg-amber-100 text-amber-800{% else %}bg-green-100 text-green-800{% endif %} hover:bg-opacity-75">
-                                <i class="fas {% if under_construction %}fa-hard-hat{% else %}fa-check-circle{% endif %} mr-2"></i>
-                                <span>{% if under_construction %}Construction Mode{% else %}Site Visible{% endif %}</span>
-                            </a>
-                        </div>
-
                         <!-- User dropdown -->
                         <div class="relative" id="user-menu">
                             <button class="flex items-center focus:outline-none" id="user-menu-button">

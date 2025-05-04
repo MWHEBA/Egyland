@@ -43,25 +43,7 @@
             </div>
         </div>
 
-        <!-- Slide 3 -->
-        <div class="slide h-full w-full bg-cover bg-center absolute inset-0" 
-             style="background-image: url('{% static 'img/slider/slide3.jpg' %}');"
-             data-mobile-bg="{% static 'img/slider/Slider3-mobile.jpg' %}">
-            <div class="absolute inset-0 bg-black bg-opacity-5"></div>
-            <div class="max-w-[1300px] mx-auto px-4 relative z-10 h-full flex items-center">
-                <div class="max-w-2xl">
-                    <h1 class="text-shadow-lg">
-                        <span class="inline-block primary-bg px-8 py-4 text-white slide-title nowrap-text">Cultivated with Care</span>
-                        <br>
-                        <span class="block text-white slide-title mt-4">Harvested with</span>
-                        <br>
-                        <span class="inline-block primary-bg px-8 py-4 text-white love-text">love</span>
-                    </h1>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 4 -->
+        <!-- Slide 3 (تم تبديله مع السلايد 4) -->
         <div class="slide h-full w-full bg-cover bg-center absolute inset-0" 
              style="background-image: url('{% static 'img/slider/slide4.jpg' %}');"
              data-mobile-bg="{% static 'img/slider/Slider4-mobile.jpg' %}">
@@ -74,6 +56,24 @@
                         <span class="block text-white slide-title">Every Process</span>
                         <br>
                         <span class="inline-block primary-bg px-8 py-4 text-white slide-title nowrap-text">Quality First</span>
+                    </h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4 (تم تبديله مع السلايد 3) -->
+        <div class="slide h-full w-full bg-cover bg-center absolute inset-0" 
+             style="background-image: url('{% static 'img/slider/slide3.jpg' %}');"
+             data-mobile-bg="{% static 'img/slider/Slider3-mobile.jpg' %}">
+            <div class="absolute inset-0 bg-black bg-opacity-5"></div>
+            <div class="max-w-[1300px] mx-auto px-4 relative z-10 h-full flex items-center">
+                <div class="max-w-2xl">
+                    <h1 class="text-shadow-lg">
+                        <span class="inline-block primary-bg px-8 py-4 text-white slide-title nowrap-text">Cultivated with Care</span>
+                        <br>
+                        <span class="block text-white slide-title mt-4">Harvested with</span>
+                        <br>
+                        <span class="inline-block primary-bg px-8 py-4 text-white love-text">love</span>
                     </h1>
                 </div>
             </div>
@@ -274,7 +274,7 @@
         function startAutoSlide() {
             slideInterval = setInterval(() => {
                 activateSlide((currentSlide + 1) % slides.length);
-            }, 8000);
+            }, 3000);
         }
         
         // بدء العرض التلقائي عند تحميل الصفحة

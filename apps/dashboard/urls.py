@@ -85,7 +85,4 @@ urlpatterns = [
     path('branches/<int:pk>/delete/', BranchDeleteView.as_view(), name='branch_delete'),
     path('branches/<int:pk>/get-data/', BranchDetailAPIView.as_view(), name='branch_detail_api'),
     path('branches/main/', MainBranchUpdateView.as_view(), name='main_branch'),
-    
-    # تبديل وضع تحت الإنشاء
-    path('toggle-construction/', views.toggle_construction_mode, name='toggle_construction'),
 ]
