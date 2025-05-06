@@ -1,108 +1,53 @@
-# Image Processing Scripts
+# Inquiry Cleanup Script
 
-This directory contains Python scripts for image processing and optimization in the project.
+This directory contains a utility script for cleaning up inquiries and product requests from the database, especially when preparing for production.
 
-## Comprehensive Image Processor (image_processor.py)
+## clean_inquiries.py
 
-This script combines all image processing functions in one place:
+This script is designed to delete all inquiries and product requests from the database. It's useful when transitioning to a production environment to remove test data.
 
-### Features:
-- Image compression while maintaining quality
-- WebP conversion for better performance
-- Original image replacement with WebP (optional)
-- Code references update in HTML/CSS/JS files
-- HTML `<picture>` element support for WebP
-- Cleanup of redundant image files
-
-Usage options:
-- Command-line interface (CLI)
-- Django signals for automatic processing
-- Cron job for scheduled processing
-
-### Basic Usage:
+### Basic Usage
 
 ```bash
-# Complete processing (compression + conversion + code update)
-python scripts/image_processor.py
-
-# Process specific image
-python scripts/image_processor.py --path static/img/example.jpg
-
-# Process specific directory
-python scripts/image_processor.py --path static/img/products/
-
-# Process all images, including previously processed ones
-python scripts/image_processor.py --all
+# Run the script with confirmation prompt
+python scripts/clean_inquiries.py
 ```
 
-### Advanced Options:
+### Advanced Options
 
 ```bash
-# Compress images only without WebP conversion
-python scripts/image_processor.py --only-compress
-
-# Process without WebP conversion
-python scripts/image_processor.py --no-webp
-
-# Replace original images with WebP versions
-python scripts/image_processor.py --replace
-
-# Remove redundant WebP files
-python scripts/image_processor.py --clean
-
-# Update HTML files only for WebP support
-python scripts/image_processor.py --update-html
+# Execute cleaning without confirmation prompt
+python scripts/clean_inquiries.py --force
 ```
 
-### Automation Setup:
+### Running on Windows
 
-```bash
-# Display Django signal code example
-python scripts/image_processor.py --django-signal
+When running the script on Windows, use:
 
-# Display cron job setup example
-python scripts/image_processor.py --cron
+```
+python scripts\clean_inquiries.py
 ```
 
-### Integration with Django:
+On Linux/Mac systems, you can make the file executable:
 
-1. **Using Django signals**:
-   - Use the `--django-signal` parameter to view the code example
-   - Add the code to the models.py file in your image-handling app
+```
+chmod +x scripts/clean_inquiries.py
+./scripts/clean_inquiries.py
+```
 
-   ```python
-   # Add this code to models.py in your image-handling app
-   
-   from django.db.models.signals import post_save
-   from django.dispatch import receiver
-   from .models import YourImageModel  # Replace with your image model
-   from scripts.image_processor import process_single_image
-   
-   @receiver(post_save, sender=YourImageModel)
-   def optimize_uploaded_image(sender, instance, created, **kwargs):
-       """Automatically process images after upload"""
-       if instance.image:  # Replace with your image field
-           image_path = instance.image.path
-           process_single_image(image_path, convert_to_webp=True, keep_original=False)
-   ```
+## Important Notes
 
-2. **As a cron job**:
-   - Use the `--cron` parameter to view the cron job example
-   - Add the job to crontab (Linux) or Task Scheduler (Windows)
+1. **Warning:** The cleaning operation cannot be undone. Consider making a manual database backup before running this script.
 
-## Technical Details
+2. **Use Proper Environment:** Make sure to run this script in the appropriate environment (development, testing, production).
 
-### Compression Settings:
-- **JPEG_QUALITY**: 85 (JPEG image quality)
-- **PNG_COMPRESSION**: 9 (PNG compression level)
-- **WEBP_QUALITY**: 85 (WebP quality)
-- **MAX_SIZE**: 1920 (Maximum image dimension in pixels)
+3. **Log File:** The script creates a log file in the current directory named `clean_inquiries.log` with operation details.
 
-### Requirements:
-- Python 3.6 or newer
-- Pillow library (included in requirements.txt)
+## What Gets Deleted
 
-### Important Notes:
-- The script tracks processed images to avoid redundant processing
-- Creates backups of files before modification
-- When replacing images, maintains original file extensions for code compatibility 
+The script will delete the following data:
+
+1. All inquiry notes from `apps.inquiries.models.InquiryNote`
+2. All inquiries from `apps.inquiries.models.Inquiry`
+3. All inquiries from `apps.products.models.Inquiry`
+4. All product requests from `apps.products.models.ProductRequest` 
