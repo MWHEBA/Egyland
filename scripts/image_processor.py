@@ -2,18 +2,18 @@
 # -*- coding: utf-8 -*-
 
 """
-# سكربت معالجة الصور الشامل
-يقوم هذا السكربت بكل مهام معالجة الصور في مكان واحد:
-1. ضغط الصور مع الحفاظ على الجودة
-2. تحويل الصور إلى WebP
-3. تحديث الإشارات في ملفات HTML/CSS/JS
-4. إضافة دعم عنصر <picture> في HTML
-5. تنظيف الصور الزائدة
+# Comprehensive Image Processor
+This script handles all image processing tasks in one place:
+1. Compress images while maintaining quality
+2. Convert images to WebP format
+3. Update references in HTML/CSS/JS files
+4. Add support for <picture> element in HTML
+5. Clean up excess images
 
-يمكن استخدامه:
-- كأداة CLI
-- مع إشارات Django
-- كوظيفة دورية (Cron job)
+Can be used:
+- As a CLI tool
+- With Django signals
+- As a cron job
 """
 
 import os
@@ -27,7 +27,7 @@ from pathlib import Path
 from PIL import Image
 import logging
 
-# إعداد التسجيل
+# Setup logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -37,19 +37,19 @@ logging.basicConfig(
     ]
 )
 
-# المجلد الرئيسي للمشروع
+# Project root directory
 if __name__ == "__main__":
     BASE_DIR = Path(__file__).resolve().parent.parent
 else:
     BASE_DIR = Path(os.environ.get('DJANGO_BASE_DIR', '.'))
 
-# مجلد الصور
+# Image directories
 IMG_DIRS = [
     BASE_DIR / 'static' / 'img',
     BASE_DIR / 'media',
 ]
 
-# مجلدات الكود التي تحتاج إلى فحص
+# Code directories that need checking
 CODE_DIRS = [
     BASE_DIR / 'templates',
     BASE_DIR / 'static' / 'css',
@@ -58,15 +58,15 @@ CODE_DIRS = [
     BASE_DIR / 'apps',
 ]
 
-# الإعدادات
-JPEG_QUALITY = 85  # جودة الصور بتنسيق JPEG
-PNG_COMPRESSION = 9  # درجة ضغط PNG
-WEBP_QUALITY = 85  # جودة WebP
-MAX_SIZE = 1920  # الحد الأقصى لأبعاد الصورة
+# Settings
+JPEG_QUALITY = 85  # JPEG quality
+PNG_COMPRESSION = 9  # PNG compression level
+WEBP_QUALITY = 85  # WebP quality
+MAX_SIZE = 1920  # Maximum image dimension
 VALID_IMG_EXTENSIONS = {'.jpg', '.jpeg', '.png'}
 VALID_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.webp'}
 CODE_EXTENSIONS = {'.html', '.css', '.scss', '.js', '.py'}
-PROCESSED_MARKER = '.processed'  # علامة للصور المعالجة
+PROCESSED_MARKER = '.processed'  # Marker for processed images
 
 # Application lock handling
 class ApplicationLock:
@@ -132,39 +132,39 @@ class ApplicationLock:
 
 def optimize_image(image_path, convert_to_webp=True, keep_original=True):
     """
-    ضغط صورة وتحويلها إلى WebP إذا تم تحديد ذلك
+    Compress an image and convert to WebP if specified
     """
     try:
-        # التحقق من امتداد الملف
+        # Check file extension
         file_ext = os.path.splitext(image_path)[1].lower()
         if file_ext not in VALID_EXTENSIONS:
-            return {'success': False, 'error': f'امتداد غير صالح: {file_ext}'}
+            return {'success': False, 'error': f'Invalid extension: {file_ext}'}
         
-        # حفظ المعلومات الأصلية
+        # Save original information
         original_size = os.path.getsize(image_path)
         
-        # التحقق مما إذا كانت الصورة قد تمت معالجتها بالفعل
+        # Check if image has already been processed
         processed_marker = image_path + PROCESSED_MARKER
         if os.path.exists(processed_marker):
             with open(processed_marker, 'r') as f:
                 timestamp = f.read().strip()
             file_modified = os.path.getmtime(image_path)
             
-            # إذا كانت الصورة لم تتغير منذ آخر معالجة
+            # If image hasn't changed since last processing
             if str(file_modified) == timestamp:
-                return {'success': True, 'skipped': True, 'message': 'الصورة تمت معالجتها بالفعل'}
+                return {'success': True, 'skipped': True, 'message': 'Image already processed'}
         
-        # فتح الصورة
+        # Open the image
         img = Image.open(image_path)
         
-        # تحويل إلى RGB إذا كان هناك قناة ألفا (باستثناء PNG)
+        # Convert to RGB if there's an alpha channel (except for PNG)
         if img.mode == 'RGBA' and file_ext != '.png':
             img = img.convert('RGB')
         
-        # تغيير حجم الصورة إذا كانت أكبر من الحد الأقصى
+        # Resize image if larger than maximum size
         resized = False
         if max(img.size) > MAX_SIZE:
-            # الحفاظ على نسبة العرض إلى الارتفاع
+            # Maintain aspect ratio
             if img.width > img.height:
                 new_width = MAX_SIZE
                 new_height = int(img.height * MAX_SIZE / img.width)
@@ -174,21 +174,21 @@ def optimize_image(image_path, convert_to_webp=True, keep_original=True):
             
             img = img.resize((new_width, new_height), Image.LANCZOS)
             resized = True
-            logging.info(f"تم تغيير حجم الصورة: {image_path} - الحجم الجديد: {new_width}x{new_height}")
+            logging.info(f"Resized image: {image_path} - New size: {new_width}x{new_height}")
         
-        # إنشاء نسخة WebP إذا تم طلب ذلك
+        # Create WebP version if requested
         webp_path = None
         if convert_to_webp:
             webp_path = os.path.splitext(image_path)[0] + '.webp'
             
-            # حفظ صورة WebP
+            # Save WebP image
             if img.mode in ['RGBA', 'LA']:
                 img.save(webp_path, 'WEBP', quality=WEBP_QUALITY, lossless=False, method=6)
             else:
                 img_rgb = img.convert('RGB')
                 img_rgb.save(webp_path, 'WEBP', quality=WEBP_QUALITY, lossless=False, method=6)
             
-            # إذا لم نحتفظ بالأصلية، استبدل الصورة الأصلية بصورة WebP
+            # If not keeping original, replace original image with WebP
             if not keep_original:
                 temp_path = image_path + '.temp'
                 shutil.copy2(webp_path, temp_path)
@@ -197,7 +197,7 @@ def optimize_image(image_path, convert_to_webp=True, keep_original=True):
                 os.remove(webp_path)
                 webp_path = None
         
-        # حفظ الصورة المضغوطة بتنسيقها الأصلي
+        # Save compressed image in its original format
         if file_ext in ['.jpg', '.jpeg']:
             img.save(image_path, 'JPEG', quality=JPEG_QUALITY, optimize=True, progressive=True)
         elif file_ext == '.png':
@@ -205,11 +205,11 @@ def optimize_image(image_path, convert_to_webp=True, keep_original=True):
         elif file_ext == '.webp':
             img.save(image_path, 'WEBP', quality=JPEG_QUALITY)
         
-        # حساب نسبة الضغط
+        # Calculate compression ratio
         new_size = os.path.getsize(image_path)
         reduction = (original_size - new_size) / original_size * 100 if original_size > 0 else 0
         
-        # إضافة علامة للصورة المعالجة
+        # Add marker for processed image
         with open(processed_marker, 'w') as f:
             f.write(str(os.path.getmtime(image_path)))
         
@@ -223,17 +223,17 @@ def optimize_image(image_path, convert_to_webp=True, keep_original=True):
             'webp_path': webp_path
         }
         
-        logging.info(f"تم معالجة الصورة: {image_path} - الحجم الأصلي: {original_size/1024:.2f}KB - الحجم الجديد: {new_size/1024:.2f}KB - التخفيض: {reduction:.2f}%")
+        logging.info(f"Processed image: {image_path} - Original size: {original_size/1024:.2f}KB - New size: {new_size/1024:.2f}KB - Reduction: {reduction:.2f}%")
         
         return result
         
     except Exception as e:
-        logging.error(f"خطأ في معالجة الصورة {image_path}: {str(e)}")
+        logging.error(f"Error processing image {image_path}: {str(e)}")
         return {'success': False, 'error': str(e)}
 
 def process_directory(directory, convert_to_webp=True, keep_original=True, process_all=False):
     """
-    معالجة جميع الصور في مجلد
+    Process all images in a directory
     """
     stats = {
         'processed': 0,
@@ -242,13 +242,13 @@ def process_directory(directory, convert_to_webp=True, keep_original=True, proce
         'total_saved': 0
     }
     
-    # إزالة علامات المعالجة إذا كنا سنعالج جميع الصور
+    # Remove processing markers if processing all images
     if process_all:
         remove_processed_markers(directory)
     
     for root, _, files in os.walk(directory):
         for file in files:
-            # تجاهل ملفات العلامات
+            # Skip marker files
             if file.endswith(PROCESSED_MARKER):
                 continue
                 
@@ -267,31 +267,31 @@ def process_directory(directory, convert_to_webp=True, keep_original=True, proce
                 else:
                     stats['errors'] += 1
     
-    logging.info(f"تم معالجة {stats['processed']} صورة. تم تخطي {stats['skipped']} صورة. أخطاء: {stats['errors']}. إجمالي المساحة الموفرة: {stats['total_saved']/1024/1024:.2f} ميجابايت")
+    logging.info(f"Processed {stats['processed']} images. Skipped {stats['skipped']} images. Errors: {stats['errors']}. Total space saved: {stats['total_saved']/1024/1024:.2f} MB")
     
     return stats
 
 def remove_processed_markers(directory):
-    """إزالة علامات المعالجة من الصور"""
+    """Remove processing markers from images"""
     for root, _, files in os.walk(directory):
         for file in files:
             if file.endswith(PROCESSED_MARKER):
                 try:
                     os.remove(os.path.join(root, file))
                 except Exception as e:
-                    logging.error(f"خطأ في إزالة علامة المعالجة: {e}")
+                    logging.error(f"Error removing processing marker: {e}")
 
 def process_single_image(image_path, convert_to_webp=True, keep_original=True):
-    """معالجة صورة واحدة"""
+    """Process a single image"""
     if not os.path.exists(image_path):
-        logging.error(f"الملف غير موجود: {image_path}")
+        logging.error(f"File not found: {image_path}")
         return False
     
     result = optimize_image(image_path, convert_to_webp, keep_original)
     return result.get('success', False)
 
 def find_all_webp_pairs():
-    """العثور على جميع أزواج الصور (الأصلية والمقابلة بصيغة WebP)"""
+    """Find all image pairs (original and WebP counterpart)"""
     pairs = []
     
     for img_dir in IMG_DIRS:
@@ -307,7 +307,7 @@ def find_all_webp_pairs():
                     webp_path = os.path.splitext(file_path)[0] + '.webp'
                     
                     if os.path.exists(webp_path):
-                        # استخدام المسار النسبي للصور
+                        # Use relative path for images
                         rel_file_path = os.path.relpath(file_path, BASE_DIR)
                         rel_webp_path = os.path.relpath(webp_path, BASE_DIR)
                         
@@ -321,28 +321,28 @@ def find_all_webp_pairs():
     return pairs
 
 def replace_images(pairs, make_backup=True):
-    """استبدال الصور الأصلية بصور WebP"""
+    """Replace original images with WebP versions"""
     for pair in pairs:
         try:
-            # إنشاء نسخة احتياطية إذا كان مطلوبًا
+            # Create backup if requested
             if make_backup:
                 backup_path = pair['original'] + '.backup'
                 shutil.copy2(pair['original'], backup_path)
-                logging.info(f"تم إنشاء نسخة احتياطية من: {pair['original']}")
+                logging.info(f"Created backup of: {pair['original']}")
             
-            # حذف الصورة الأصلية
+            # Delete original image
             os.remove(pair['original'])
             
-            # نسخ صورة WebP وإعادة تسمية إلى اسم الصورة الأصلية
+            # Copy WebP image and rename to original image name
             shutil.copy2(pair['webp'], pair['original'])
             
-            logging.info(f"تم استبدال: {pair['original']} بصورة WebP")
+            logging.info(f"Replaced: {pair['original']} with WebP image")
             
         except Exception as e:
-            logging.error(f"خطأ في استبدال الصورة {pair['original']}: {str(e)}")
+            logging.error(f"Error replacing image {pair['original']}: {str(e)}")
 
 def find_code_files():
-    """العثور على جميع ملفات الكود التي قد تحتوي على إشارات للصور"""
+    """Find all code files that may contain image references"""
     code_files = []
     
     for directory in CODE_DIRS:
@@ -504,7 +504,7 @@ def update_html_for_webp_support():
     return modified_count
 
 def clean_webp_files(directories=None):
-    """مسح ملفات WebP الإضافية"""
+    """Clean up extra WebP files"""
     count = 0
     
     if directories is None:
@@ -521,9 +521,9 @@ def clean_webp_files(directories=None):
             for file in files:
                 file_path = os.path.join(root, file)
                 
-                # مسح ملفات WebP
+                # Clean WebP files
                 if file.lower().endswith('.webp'):
-                    # تحقق مما إذا كان هناك ملف أصلي له
+                    # Check if there's an original file for it
                     original_jpg = os.path.splitext(file_path)[0] + '.jpg'
                     original_jpeg = os.path.splitext(file_path)[0] + '.jpeg'
                     original_png = os.path.splitext(file_path)[0] + '.png'
@@ -531,45 +531,45 @@ def clean_webp_files(directories=None):
                     if os.path.exists(original_jpg) or os.path.exists(original_jpeg) or os.path.exists(original_png):
                         try:
                             os.remove(file_path)
-                            logging.info(f"تم مسح ملف WebP: {file_path}")
+                            logging.info(f"Deleted WebP file: {file_path}")
                             count += 1
                         except Exception as e:
-                            logging.error(f"خطأ في مسح ملف {file_path}: {str(e)}")
+                            logging.error(f"Error deleting file {file_path}: {str(e)}")
     
-    logging.info(f"تم مسح {count} ملف WebP")
+    logging.info(f"Deleted {count} WebP files")
     return count
 
 def setup_django_signal():
-    """إعداد نموذج كود لإشارة Django لمعالجة الصور تلقائياً"""
+    """Setup Django signal model code for automatic image processing"""
     code = """
-# أضف هذا الكود إلى models.py في التطبيق المسؤول عن الصور
+# Add this code to models.py in your images app
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import YourImageModel  # استبدل بنموذج الصور الخاص بك
+from .models import YourImageModel  # Replace with your image model
 from scripts.image_processor import process_single_image
 
 @receiver(post_save, sender=YourImageModel)
 def optimize_uploaded_image(sender, instance, created, **kwargs):
-    \"\"\"معالجة الصور تلقائياً بعد الرفع\"\"\"
-    if instance.image:  # استبدل بحقل الصورة الخاص بك
+    \"\"\"Process images automatically after upload\"\"\"
+    if instance.image:  # Replace with your image field
         image_path = instance.image.path
         process_single_image(image_path, convert_to_webp=True, keep_original=False)
 """
     
-    print("\n=== نموذج لإشارة Django ===")
+    print("\n=== Django Signal Example ===")
     print(code)
-    print("=== انتهى النموذج ===\n")
+    print("=== End Example ===\n")
 
 def setup_cron_job():
-    """إعداد وظيفة دورية لمعالجة الصور"""
+    """Setup cron job for image processing"""
     cron_command = f"0 3 * * * cd {BASE_DIR} && python scripts/image_processor.py --all >> logs/cron_image_processor.log 2>&1"
     
-    print("\n=== نموذج وظيفة دورية (Cron job) ===")
-    print("قم بإضافة السطر التالي إلى ملف crontab باستخدام الأمر: crontab -e")
+    print("\n=== Cron Job Example ===")
+    print("Add the following line to your crontab using: crontab -e")
     print(cron_command)
-    print("=== انتهى النموذج ===\n")
-    print("هذه الوظيفة ستعمل كل يوم الساعة 3 صباحاً وتعالج جميع الصور الجديدة")
+    print("=== End Example ===\n")
+    print("This job will run every day at 3 AM and process all new images")
 
 def process_all_image_directories(convert_to_webp=True, keep_original=True, process_all=False):
     """
