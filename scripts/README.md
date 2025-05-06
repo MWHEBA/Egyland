@@ -185,3 +185,63 @@ For cPanel environments, you may want to add the `--no-lock` option:
 - Max Dimensions: 1920px (preserves aspect ratio)
 - Supported formats: JPEG, PNG
 - Output formats: Original format (compressed) + WebP 
+
+# Lock Files Remover Script
+
+## Overview
+
+The `clear_locks.py` script finds and removes lock files that can cause issues with Django commands and image processing tasks.
+
+## Purpose
+
+Lock files can sometimes remain in the system if a process is interrupted abruptly, preventing subsequent processes from running correctly. This script helps identify and remove these lock files, particularly useful in:
+
+1. Shared hosting environments like cPanel
+2. After image processing script crashes
+3. When Django `collectstatic` commands fail with lock errors
+4. When multiple processes try to access the same resources
+
+## Usage
+
+### Basic Usage (With Confirmation)
+
+```bash
+python scripts/clear_locks.py
+```
+
+This scans for lock files and asks for confirmation before deleting them.
+
+### Remove Lock Files Without Confirmation
+
+```bash
+python scripts/clear_locks.py --force
+```
+
+### When to Use This Script
+
+Run this script when you encounter these common errors:
+
+1. "Another process is already running" errors
+2. "Lock file exists" errors with image processing
+3. Django commands hanging indefinitely
+4. File permission errors in shared hosting
+
+## Integration with Deployment
+
+You can add this script to your deployment process to ensure no stale lock files exist:
+
+```bash
+# Example deployment script
+python scripts/clear_locks.py --force
+python manage.py collectstatic --noinput
+python manage.py migrate
+```
+
+## Where Lock Files Are Checked
+
+The script checks for lock files in:
+
+1. System temporary directories
+2. Project directory
+3. Static and media directories
+4. cPanel temporary directories (for shared hosting) 
