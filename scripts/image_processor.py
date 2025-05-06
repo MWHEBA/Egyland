@@ -22,6 +22,7 @@ import re
 import shutil
 import time
 import argparse
+import tempfile
 from pathlib import Path
 from PIL import Image
 import logging
@@ -66,6 +67,68 @@ VALID_IMG_EXTENSIONS = {'.jpg', '.jpeg', '.png'}
 VALID_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.webp'}
 CODE_EXTENSIONS = {'.html', '.css', '.scss', '.js', '.py'}
 PROCESSED_MARKER = '.processed'  # علامة للصور المعالجة
+
+# Application lock handling
+class ApplicationLock:
+    """
+    Class to handle application locking to prevent multiple instances running
+    """
+    def __init__(self, lock_file=None, disabled=False):
+        self.disabled = disabled
+        if self.disabled:
+            logging.info("Application lock disabled")
+            return
+            
+        if lock_file is None:
+            # Use temporary directory for lock file to avoid permission issues
+            temp_dir = tempfile.gettempdir()
+            self.lock_file = os.path.join(temp_dir, 'image_processor.lock')
+        else:
+            self.lock_file = lock_file
+        self.locked = False
+        
+    def acquire(self):
+        """Acquire application lock"""
+        if self.disabled:
+            return True
+            
+        if os.path.exists(self.lock_file):
+            # Check if the lock is stale (older than 1 hour)
+            lock_time = os.path.getmtime(self.lock_file)
+            current_time = time.time()
+            if current_time - lock_time > 3600:  # 1 hour
+                logging.warning(f"Removing stale lock file (age: {(current_time - lock_time) / 60:.1f} minutes)")
+                try:
+                    os.remove(self.lock_file)
+                except:
+                    logging.error(f"Failed to remove stale lock file: {self.lock_file}")
+                    return False
+            else:
+                logging.error(f"Another instance is running. Lock file: {self.lock_file}")
+                return False
+                
+        try:
+            with open(self.lock_file, 'w') as f:
+                f.write(f"{os.getpid()}")
+            self.locked = True
+            logging.info(f"Acquired application lock: {self.lock_file}")
+            return True
+        except Exception as e:
+            logging.error(f"Failed to create lock file: {str(e)}")
+            return False
+    
+    def release(self):
+        """Release application lock"""
+        if self.disabled or not self.locked:
+            return
+            
+        if os.path.exists(self.lock_file):
+            try:
+                os.remove(self.lock_file)
+                self.locked = False
+                logging.info(f"Released application lock: {self.lock_file}")
+            except Exception as e:
+                logging.error(f"Failed to remove lock file: {str(e)}")
 
 def optimize_image(image_path, convert_to_webp=True, keep_original=True):
     """
@@ -548,6 +611,8 @@ def main():
     parser.add_argument('--django-signal', action='store_true', help='Show Django signal model code')
     parser.add_argument('--cron', action='store_true', help='Show cron job example')
     parser.add_argument('--only-compress', action='store_true', help='Only compress images without WebP conversion')
+    parser.add_argument('--no-lock', action='store_true', help='Disable application lock (use in cPanel environment)')
+    parser.add_argument('--lock-file', help='Custom path for lock file')
     
     args = parser.parse_args()
     
@@ -556,72 +621,82 @@ def main():
     if not os.path.exists(logs_dir):
         os.makedirs(logs_dir)
     
-    if args.django_signal:
-        setup_django_signal()
-        return
-    
-    if args.cron:
-        setup_cron_job()
-        return
-    
-    logging.info("Starting image processing...")
-    
-    # Determine whether to keep original images
-    keep_original = not args.replace
-    
-    # Compress only
-    if args.only_compress:
+    # Create application lock
+    app_lock = ApplicationLock(args.lock_file, disabled=args.no_lock)
+    if not app_lock.acquire():
+        logging.error("Cannot acquire lock. Exiting.")
+        sys.exit(1)
+        
+    try:
+        if args.django_signal:
+            setup_django_signal()
+            return
+        
+        if args.cron:
+            setup_cron_job()
+            return
+        
+        logging.info("Starting image processing...")
+        
+        # Determine whether to keep original images
+        keep_original = not args.replace
+        
+        # Compress only
+        if args.only_compress:
+            if args.path:
+                path = Path(args.path)
+                if path.is_file():
+                    process_single_image(str(path), False, True)
+                elif path.is_dir():
+                    process_directory(str(path), False, True, args.all)
+                else:
+                    logging.error(f"Invalid path: {args.path}")
+            else:
+                process_all_image_directories(False, True, args.all)
+            logging.info("Image compression completed")
+            return
+        
+        # Clean WebP files if requested
+        if args.clean:
+            if args.path:
+                clean_webp_files(args.path)
+            else:
+                clean_webp_files()
+            return
+        
+        # Update HTML files only
+        if args.update_html:
+            update_html_for_webp_support()
+            return
+        
+        # Process specific path or default image directories
         if args.path:
             path = Path(args.path)
             if path.is_file():
-                process_single_image(str(path), False, True)
+                process_single_image(str(path), not args.no_webp, keep_original)
             elif path.is_dir():
-                process_directory(str(path), False, True, args.all)
+                process_directory(str(path), not args.no_webp, keep_original, args.all)
             else:
                 logging.error(f"Invalid path: {args.path}")
         else:
-            process_all_image_directories(False, True, args.all)
-        logging.info("Image compression completed")
-        return
-    
-    # Clean WebP files if requested
-    if args.clean:
-        if args.path:
-            clean_webp_files(args.path)
-        else:
-            clean_webp_files()
-        return
-    
-    # Update HTML files only
-    if args.update_html:
-        update_html_for_webp_support()
-        return
-    
-    # Process specific path or default image directories
-    if args.path:
-        path = Path(args.path)
-        if path.is_file():
-            process_single_image(str(path), not args.no_webp, keep_original)
-        elif path.is_dir():
-            process_directory(str(path), not args.no_webp, keep_original, args.all)
-        else:
-            logging.error(f"Invalid path: {args.path}")
-    else:
-        # Complete process: compress, convert, and update code
-        process_all_image_directories(not args.no_webp, keep_original, args.all)
+            # Complete process: compress, convert, and update code
+            process_all_image_directories(not args.no_webp, keep_original, args.all)
+            
+            if not args.no_webp:
+                # Find image pairs and update code
+                pairs = find_all_webp_pairs()
+                logging.info(f"Found {len(pairs)} image pairs")
+                
+                if not keep_original:
+                    replace_images(pairs)
+                
+                update_code_references(pairs)
+                update_html_for_webp_support()
         
-        if not args.no_webp:
-            # Find image pairs and update code
-            pairs = find_all_webp_pairs()
-            logging.info(f"Found {len(pairs)} image pairs")
-            
-            if not keep_original:
-                replace_images(pairs)
-            
-            update_code_references(pairs)
-            update_html_for_webp_support()
-    
-    logging.info("Image processing completed")
+        logging.info("Image processing completed")
+    finally:
+        # Release application lock
+        app_lock.release()
 
 if __name__ == "__main__":
     main() 

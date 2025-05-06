@@ -115,6 +115,22 @@ Removes WebP versions of images:
 python scripts/image_processor.py --clean
 ```
 
+### cPanel Environment
+
+When running in cPanel or environments with file permission issues, use the `--no-lock` option:
+
+```bash
+python scripts/image_processor.py --no-lock
+```
+
+This disables the application lock mechanism, allowing the script to run even if lock files can't be created or removed properly.
+
+You can also specify a custom lock file location:
+
+```bash
+python scripts/image_processor.py --lock-file /tmp/custom_image_processor.lock
+```
+
 ## Django Integration
 
 You can use this script with Django signals to automatically process images when they're uploaded. Add the following code to your models.py file:
@@ -136,7 +152,13 @@ def optimize_uploaded_image(sender, instance, created, **kwargs):
 To run this script daily, add the following to your crontab:
 
 ```
-0 3 * * * cd /path/to/project && python scripts/image_processor.py >> logs/cron_image_processor.log 2>&1
+0 3 * * * cd /path/to/project && python scripts/image_processor.py --all >> logs/cron_image_processor.log 2>&1
+```
+
+For cPanel environments, you may want to add the `--no-lock` option:
+
+```
+0 3 * * * cd /path/to/project && python scripts/image_processor.py --all --no-lock >> logs/cron_image_processor.log 2>&1
 ```
 
 ## Options
@@ -151,6 +173,8 @@ To run this script daily, add the following to your crontab:
   --django-signal       Show Django signal model code
   --cron                Show cron job example
   --only-compress       Only compress images without WebP conversion
+  --no-lock             Disable application lock (use in cPanel environment)
+  --lock-file PATH      Custom path for lock file
 ```
 
 ## Technical Details
