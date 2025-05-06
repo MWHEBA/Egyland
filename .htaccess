@@ -2,9 +2,9 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
     
-    # توجيه خاص للفافيكون
-    RewriteCond %{REQUEST_URI} ^/favicon\.ico$
-    RewriteRule ^favicon\.ico$ /static/img/favicon.ico [L]
+    # توجيه خاص للفافيكون بالاسم الجديد
+    RewriteCond %{REQUEST_URI} ^/egyland-icon-v1\.ico$
+    RewriteRule ^egyland-icon-v1\.ico$ /static/img/egyland-icon-v1.ico [L]
     
     # إعادة توجيه طلبات الملفات الوسائط إلى الموقع الفعلي
     
@@ -37,7 +37,7 @@
     ExpiresByType application/javascript "access 1 month"
     ExpiresByType application/x-javascript "access 1 month"
     ExpiresByType application/x-shockwave-flash "access 1 month"
-    ExpiresByType image/x-icon "access plus 0 seconds"
+    ExpiresByType image/x-icon "access 1 year"
 </IfModule>
 
 # ضغط المحتوى
