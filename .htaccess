@@ -2,9 +2,9 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
     
-    # توجيه خاص للفافيكون بالاسم الجديد
-    RewriteCond %{REQUEST_URI} ^/egyland-icon-v1\.ico$
-    RewriteRule ^egyland-icon-v1\.ico$ /static/img/egyland-icon-v1.ico [L]
+    # توجيه خاص للفافيكون بالاسم الجديد (PNG بدلاً من ICO)
+    RewriteCond %{REQUEST_URI} ^/site-logo-v1\.png$
+    RewriteRule ^site-logo-v1\.png$ /static/img/site-logo-v1.png [L]
     
     # إعادة توجيه طلبات الملفات الوسائط إلى الموقع الفعلي
     
@@ -29,7 +29,7 @@
     ExpiresByType image/jpg "access 1 year"
     ExpiresByType image/jpeg "access 1 year"
     ExpiresByType image/gif "access 1 year"
-    ExpiresByType image/png "access 1 year"
+    ExpiresByType image/png "access plus 0 seconds"
     ExpiresByType image/svg+xml "access 1 year"
     ExpiresByType text/css "access 1 month"
     ExpiresByType text/html "access 1 month"
@@ -37,7 +37,7 @@
     ExpiresByType application/javascript "access 1 month"
     ExpiresByType application/x-javascript "access 1 month"
     ExpiresByType application/x-shockwave-flash "access 1 month"
-    ExpiresByType image/x-icon "access 1 year"
+    ExpiresByType image/x-icon "access plus 0 seconds"
 </IfModule>
 
 # ضغط المحتوى
@@ -70,8 +70,10 @@
     Header set X-XSS-Protection "1; mode=block"
     Header set X-Frame-Options "SAMEORIGIN"
     
-    # تعيين الكاش للفافيكون
-    <FilesMatch "favicon\.ico$">
-        Header set Cache-Control "max-age=0, public, must-revalidate"
+    # منع تخزين صورة الأيقونة في الكاش نهائياً
+    <FilesMatch "site-logo-v1\.png$">
+        Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
     </FilesMatch>
 </IfModule> 
