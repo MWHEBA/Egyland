@@ -1,0 +1,42 @@
+/* 
+ * تطبيق فونت Red Hat Display على عناصر الـ p
+ * مع الحفاظ على نفس حجم الخط والسُمك 
+ */
+
+/* القاعدة الرئيسية لكل عناصر p */
+p {
+  font-family: 'Red Hat Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+/* القاعدة الرئيسية لكل عناصر span */
+span {
+  font-family: 'Red Hat Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+/* ضمان تطبيق الفونت على جميع عناصر p الموجودة في أي قسم */
+.special-product-description p,
+.packaging-description p,
+.product-description p,
+.about-content p,
+.content-section p,
+.text-content p,
+.blog-content p,
+.article-content p,
+.faq-content p,
+.main-content p {
+  font-family: 'Red Hat Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+/* ضمان تطبيق الفونت على جميع عناصر span الموجودة في أي قسم */
+.special-product-description span,
+.packaging-description span,
+.product-description span,
+.about-content span,
+.content-section span,
+.text-content span,
+.blog-content span,
+.article-content span,
+.faq-content span,
+.main-content span {
+  font-family: 'Red Hat Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+} 

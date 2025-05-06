@@ -24,4 +24,29 @@
   src: local('Raleway ExtraBold'),
        url('../fonts/raleway-v28-latin-800.woff2') format('woff2');
   font-display: swap;
+}
+
+/* تعريف خط Red Hat Display */
+@font-face {
+  font-family: 'Red Hat Display';
+  font-style: normal;
+  font-weight: 400;
+  src: url('https://fonts.googleapis.com/css2?family=Red+Hat+Display&display=swap');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Red Hat Display';
+  font-style: normal;
+  font-weight: 600;
+  src: url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@600&display=swap');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Red Hat Display';
+  font-style: normal;
+  font-weight: 800;
+  src: url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@800&display=swap');
+  font-display: swap;
 } 

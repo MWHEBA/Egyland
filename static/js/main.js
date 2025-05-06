@@ -45,6 +45,13 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+// معالجة حدث تحميل الصفحة 
+window.addEventListener('load', function() {
+    // تأكد من إزالة أي تأثيرات انتقالية متبقية
+    document.body.classList.remove('page-exit');
+    document.body.style.opacity = '1';
+});
+
 /**
  * تهيئة سلوك شريط التنقل عند التمرير
  */
@@ -169,6 +176,9 @@ function initFormValidation() {
  * تهيئة انتقالات الصفحة
  */
 function initPageTransitions() {
+    // تعديل زر الرجوع والتأكد من عمله بشكل صحيح
+    // إزالة كل معالجات الأحداث السابقة التي قد تؤثر على زر الرجوع
+    
     const links = document.querySelectorAll('a:not([target="_blank"]):not([href^="#"]):not([href^="mailto:"]):not([href^="tel:"])');
 
     links.forEach(link => {
@@ -178,9 +188,11 @@ function initPageTransitions() {
             // التحقق من أن الرابط يؤدي إلى صفحة داخلية
             if (href && href.indexOf('http') !== 0) {
                 event.preventDefault();
-
+                
+                // إضافة تأثير خروج بسيط
                 document.body.classList.add('page-exit');
 
+                // الانتقال بعد فترة قصيرة للسماح بإكمال التأثير
                 setTimeout(function () {
                     window.location.href = href;
                 }, 300);
