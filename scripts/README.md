@@ -50,4 +50,114 @@ The script will delete the following data:
 1. All inquiry notes from `apps.inquiries.models.InquiryNote`
 2. All inquiries from `apps.inquiries.models.Inquiry`
 3. All inquiries from `apps.products.models.Inquiry`
-4. All product requests from `apps.products.models.ProductRequest` 
+4. All product requests from `apps.products.models.ProductRequest`
+
+# Image Processor Script
+
+## Overview
+
+The `image_processor.py` script provides comprehensive image processing capabilities:
+
+1. **Compresses images** while maintaining visual quality
+2. **Converts images to WebP format** for better performance
+3. **Updates references** in HTML/CSS/JS files
+4. **Adds `<picture>` element support** in HTML for cross-browser compatibility
+5. **Cleans up excess image files** when needed
+
+## Default Directories
+
+The script processes images in the following directories by default:
+- `static/img/` - Static image assets
+- `media/` - User-uploaded images
+
+## Usage
+
+### Basic Usage
+
+Process all images in the default directories:
+
+```bash
+python scripts/image_processor.py
+```
+
+### Process a Specific Directory or File
+
+```bash
+python scripts/image_processor.py --path media/products/
+python scripts/image_processor.py --path static/img/logo.png
+```
+
+### Compression Only (No WebP Conversion)
+
+```bash
+python scripts/image_processor.py --only-compress
+```
+
+### Process All Images, Including Already Processed
+
+```bash
+python scripts/image_processor.py --all
+```
+
+### Update HTML For WebP Support
+
+Updates HTML files to use the `<picture>` element with WebP:
+
+```bash
+python scripts/image_processor.py --update-html
+```
+
+### Clean WebP Files
+
+Removes WebP versions of images:
+
+```bash
+python scripts/image_processor.py --clean
+```
+
+## Django Integration
+
+You can use this script with Django signals to automatically process images when they're uploaded. Add the following code to your models.py file:
+
+```python
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from scripts.image_processor import process_single_image
+
+@receiver(post_save, sender=YourImageModel)
+def optimize_uploaded_image(sender, instance, created, **kwargs):
+    if instance.image:
+        image_path = instance.image.path
+        process_single_image(image_path)
+```
+
+## Cron Job Setup
+
+To run this script daily, add the following to your crontab:
+
+```
+0 3 * * * cd /path/to/project && python scripts/image_processor.py >> logs/cron_image_processor.log 2>&1
+```
+
+## Options
+
+```
+  --path PATH           Specific image or directory path to process
+  --all                 Process all images, including previously processed ones
+  --no-webp             Do not convert images to WebP
+  --replace             Replace original images with WebP versions
+  --clean               Clean redundant WebP files
+  --update-html         Update HTML files for WebP support
+  --django-signal       Show Django signal model code
+  --cron                Show cron job example
+  --only-compress       Only compress images without WebP conversion
+```
+
+## Technical Details
+
+- JPEG Quality: 85%
+- PNG Compression: Level 9
+- WebP Quality: 85%
+- Max Dimensions: 1920px (preserves aspect ratio)
+- Supported formats: JPEG, PNG
+- Output formats: Original format (compressed) + WebP 

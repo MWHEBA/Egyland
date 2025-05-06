@@ -43,7 +43,10 @@ else:
     BASE_DIR = Path(os.environ.get('DJANGO_BASE_DIR', '.'))
 
 # مجلد الصور
-IMG_DIR = BASE_DIR / 'static' / 'img'
+IMG_DIRS = [
+    BASE_DIR / 'static' / 'img',
+    BASE_DIR / 'media',
+]
 
 # مجلدات الكود التي تحتاج إلى فحص
 CODE_DIRS = [
@@ -228,25 +231,29 @@ def find_all_webp_pairs():
     """العثور على جميع أزواج الصور (الأصلية والمقابلة بصيغة WebP)"""
     pairs = []
     
-    for root, _, files in os.walk(IMG_DIR):
-        for file in files:
-            file_path = os.path.join(root, file)
-            file_ext = os.path.splitext(file_path)[1].lower()
+    for img_dir in IMG_DIRS:
+        if not os.path.exists(img_dir):
+            continue
             
-            if file_ext in VALID_IMG_EXTENSIONS:
-                webp_path = os.path.splitext(file_path)[0] + '.webp'
+        for root, _, files in os.walk(img_dir):
+            for file in files:
+                file_path = os.path.join(root, file)
+                file_ext = os.path.splitext(file_path)[1].lower()
                 
-                if os.path.exists(webp_path):
-                    # استخدام المسار النسبي للصور
-                    rel_file_path = os.path.relpath(file_path, BASE_DIR)
-                    rel_webp_path = os.path.relpath(webp_path, BASE_DIR)
+                if file_ext in VALID_IMG_EXTENSIONS:
+                    webp_path = os.path.splitext(file_path)[0] + '.webp'
                     
-                    pairs.append({
-                        'original': file_path,
-                        'webp': webp_path,
-                        'rel_original': rel_file_path.replace('\\', '/'),
-                        'rel_webp': rel_webp_path.replace('\\', '/')
-                    })
+                    if os.path.exists(webp_path):
+                        # استخدام المسار النسبي للصور
+                        rel_file_path = os.path.relpath(file_path, BASE_DIR)
+                        rel_webp_path = os.path.relpath(webp_path, BASE_DIR)
+                        
+                        pairs.append({
+                            'original': file_path,
+                            'webp': webp_path,
+                            'rel_original': rel_file_path.replace('\\', '/'),
+                            'rel_webp': rel_webp_path.replace('\\', '/')
+                        })
     
     return pairs
 
@@ -290,24 +297,23 @@ def find_code_files():
     return code_files
 
 def update_code_references(pairs, make_backup=True):
-    """تحديث الإشارات إلى الصور في ملفات الكود"""
+    """Update image references in code files"""
+    if not pairs:
+        logging.info("No image pairs found, skipping code update")
+        return 0
+    
     code_files = find_code_files()
-    modified_files = 0
+    modified_count = 0
     
-    # إنشاء قاموس للبحث والاستبدال
-    replacements = {}
-    for pair in pairs:
-        # استخراج المسارات النسبية للصور
-        original_path = pair['rel_original']
-        # لا نقوم بتغيير الاسم، فقط التنسيق
-        for ext in VALID_IMG_EXTENSIONS:
-            if original_path.lower().endswith(ext):
-                # استبدال أي إشارة صريحة إلى امتداد الملف
-                webp_search = original_path.replace(ext, '.webp')
-                replacements[original_path] = original_path  # نبقى على نفس الاسم في الكود
-                replacements[webp_search] = original_path  # نستبدل أي إشارات موجودة إلى ملفات WebP
+    # Create a lookup table for faster search
+    replacement_map = {pair['rel_original']: pair['rel_webp'] for pair in pairs}
     
-    # تعديل ملفات الكود
+    # Regular expression patterns to find image references
+    img_patterns = [
+        re.compile(r'(static\/img\/[^"\']+\.(jpg|jpeg|png))|(/static/img/[^"\']+\.(jpg|jpeg|png))'),
+        re.compile(r'(media\/[^"\']+\.(jpg|jpeg|png))|(/media/[^"\']+\.(jpg|jpeg|png))')
+    ]
+    
     for file_path in code_files:
         try:
             with open(file_path, 'r', encoding='utf-8', errors='ignore') as file:
@@ -316,16 +322,17 @@ def update_code_references(pairs, make_backup=True):
             original_content = content
             modified = False
             
-            # استبدال جميع الإشارات
-            for search, replace in replacements.items():
-                if search in content:
-                    content = content.replace(search, replace)
-                    modified = True
-                    logging.info(f"تم تحديث إشارة في {file_path}: {search} -> {replace}")
+            # Replace all image references
+            for original, webp in replacement_map.items():
+                if original in content:
+                    # Keep both versions for HTML picture element later
+                    if not file_path.endswith('.html'):
+                        content = content.replace(original, webp)
+                        modified = True
             
-            # حفظ الملف إذا تم تعديله
+            # Save the file if modified
             if modified:
-                # إنشاء نسخة احتياطية إذا كان مطلوبًا
+                # Create backup
                 if make_backup:
                     backup_path = file_path + '.backup'
                     with open(backup_path, 'w', encoding='utf-8') as backup:
@@ -334,19 +341,20 @@ def update_code_references(pairs, make_backup=True):
                 with open(file_path, 'w', encoding='utf-8') as file:
                     file.write(content)
                 
-                modified_files += 1
-                
+                modified_count += 1
+                logging.info(f"Updated image references in: {file_path}")
+        
         except Exception as e:
-            logging.error(f"خطأ في تحديث الإشارات في {file_path}: {str(e)}")
+            logging.error(f"Error updating file {file_path}: {str(e)}")
     
-    logging.info(f"تم تعديل {modified_files} ملف من أصل {len(code_files)} ملف تم فحصه")
+    logging.info(f"Updated {modified_count} files with WebP references")
+    return modified_count
 
 def update_html_for_webp_support():
-    """تحديث ملفات HTML لاستخدام عنصر <picture> لدعم متصفحات متعددة"""
+    """Update HTML files to use the picture element for WebP support"""
     html_files = []
     
-    # البحث عن ملفات HTML
-    for directory in [BASE_DIR / 'templates']:
+    for directory in CODE_DIRS:
         if not os.path.exists(directory):
             continue
             
@@ -355,8 +363,18 @@ def update_html_for_webp_support():
                 if file.endswith('.html'):
                     html_files.append(os.path.join(root, file))
     
-    # نمط البحث عن وسوم <img>
-    img_pattern = re.compile(r'<img[^>]*src=["\'](\/static\/img\/[^"\']+\.(jpg|jpeg|png))["\'][^>]*>', re.IGNORECASE)
+    if not html_files:
+        logging.info("No HTML files found")
+        return 0
+    
+    modified_count = 0
+    # Update regex patterns to match both static/img and media paths
+    img_patterns = [
+        re.compile(r'<img[^>]*src=["\'](\/static\/img\/[^"\']+\.(jpg|jpeg|png))["\'][^>]*>', re.IGNORECASE),
+        re.compile(r'<img[^>]*src=["\'](\/media\/[^"\']+\.(jpg|jpeg|png))["\'][^>]*>', re.IGNORECASE),
+        re.compile(r'<img[^>]*src=["\'](static\/img\/[^"\']+\.(jpg|jpeg|png))["\'][^>]*>', re.IGNORECASE),
+        re.compile(r'<img[^>]*src=["\'](media\/[^"\']+\.(jpg|jpeg|png))["\'][^>]*>', re.IGNORECASE)
+    ]
     
     for file_path in html_files:
         try:
@@ -366,39 +384,46 @@ def update_html_for_webp_support():
             original_content = content
             modified = False
             
-            # استبدال عناصر <img> بعناصر <picture>
-            def replace_img(match):
-                img_tag = match.group(0)
-                img_src = match.group(1)
-                
-                # التحقق مما إذا كانت الصورة لها نسخة WebP
-                webp_src = os.path.splitext(img_src)[0] + '.webp'
-                webp_path = os.path.join(BASE_DIR, webp_src.lstrip('/'))
-                
-                if os.path.exists(webp_path):
-                    # استخراج سمة alt
-                    alt_match = re.search(r'alt=["\'](.*?)["\']', img_tag)
-                    alt_text = alt_match.group(1) if alt_match else ""
+            # Process each regex pattern
+            for img_pattern in img_patterns:
+                # Replace <img> elements with <picture> elements
+                def replace_img(match):
+                    img_tag = match.group(0)
+                    img_src = match.group(1)
                     
-                    # استخراج سمات أخرى
-                    other_attrs = re.sub(r'<img|\s+src=["\'](.*?)["\']|\s+alt=["\'](.*?)["\']', '', img_tag)
+                    # Check if the image has a WebP version
+                    webp_src = os.path.splitext(img_src)[0] + '.webp'
+                    # Handle both absolute and relative paths
+                    if img_src.startswith('/'):
+                        webp_path = os.path.join(BASE_DIR, webp_src.lstrip('/'))
+                    else:
+                        webp_path = os.path.join(BASE_DIR, webp_src)
                     
-                    # إنشاء عنصر <picture>
-                    picture_tag = f"""<picture>
+                    if os.path.exists(webp_path):
+                        # Extract alt attribute
+                        alt_match = re.search(r'alt=["\'](.*?)["\']', img_tag)
+                        alt_text = alt_match.group(1) if alt_match else ""
+                        
+                        # Extract other attributes
+                        other_attrs = re.sub(r'<img|\s+src=["\'](.*?)["\']|\s+alt=["\'](.*?)["\']', '', img_tag)
+                        
+                        # Create picture element
+                        picture_tag = f"""<picture>
     <source srcset="{webp_src}" type="image/webp">
     <img src="{img_src}" alt="{alt_text}"{other_attrs}>
 </picture>"""
+                        
+                        nonlocal modified
+                        modified = True
+                        return picture_tag
                     
-                    modified = True
-                    return picture_tag
+                    return img_tag
                 
-                return img_tag
+                content = img_pattern.sub(replace_img, content)
             
-            content = img_pattern.sub(replace_img, content)
-            
-            # حفظ الملف إذا تم تعديله
+            # Save the file if modified
             if content != original_content:
-                # إنشاء نسخة احتياطية
+                # Create backup
                 backup_path = file_path + '.backup'
                 with open(backup_path, 'w', encoding='utf-8') as backup:
                     backup.write(original_content)
@@ -406,33 +431,47 @@ def update_html_for_webp_support():
                 with open(file_path, 'w', encoding='utf-8') as file:
                     file.write(content)
                 
-                logging.info(f"تم تحديث ملف HTML لدعم WebP: {file_path}")
+                modified_count += 1
+                logging.info(f"Updated HTML file for WebP support: {file_path}")
             
         except Exception as e:
-            logging.error(f"خطأ في تحديث ملف HTML {file_path}: {str(e)}")
+            logging.error(f"Error updating HTML file {file_path}: {str(e)}")
+    
+    logging.info(f"Updated {modified_count} HTML files for WebP support")
+    return modified_count
 
-def clean_webp_files(directory):
+def clean_webp_files(directories=None):
     """مسح ملفات WebP الإضافية"""
     count = 0
     
-    for root, _, files in os.walk(directory):
-        for file in files:
-            file_path = os.path.join(root, file)
+    if directories is None:
+        directories = IMG_DIRS
+    
+    if isinstance(directories, str):
+        directories = [directories]
+    
+    for directory in directories:
+        if not os.path.exists(directory):
+            continue
             
-            # مسح ملفات WebP
-            if file.lower().endswith('.webp'):
-                # تحقق مما إذا كان هناك ملف أصلي له
-                original_jpg = os.path.splitext(file_path)[0] + '.jpg'
-                original_jpeg = os.path.splitext(file_path)[0] + '.jpeg'
-                original_png = os.path.splitext(file_path)[0] + '.png'
+        for root, _, files in os.walk(directory):
+            for file in files:
+                file_path = os.path.join(root, file)
                 
-                if os.path.exists(original_jpg) or os.path.exists(original_jpeg) or os.path.exists(original_png):
-                    try:
-                        os.remove(file_path)
-                        logging.info(f"تم مسح ملف WebP: {file_path}")
-                        count += 1
-                    except Exception as e:
-                        logging.error(f"خطأ في مسح ملف {file_path}: {str(e)}")
+                # مسح ملفات WebP
+                if file.lower().endswith('.webp'):
+                    # تحقق مما إذا كان هناك ملف أصلي له
+                    original_jpg = os.path.splitext(file_path)[0] + '.jpg'
+                    original_jpeg = os.path.splitext(file_path)[0] + '.jpeg'
+                    original_png = os.path.splitext(file_path)[0] + '.png'
+                    
+                    if os.path.exists(original_jpg) or os.path.exists(original_jpeg) or os.path.exists(original_png):
+                        try:
+                            os.remove(file_path)
+                            logging.info(f"تم مسح ملف WebP: {file_path}")
+                            count += 1
+                        except Exception as e:
+                            logging.error(f"خطأ في مسح ملف {file_path}: {str(e)}")
     
     logging.info(f"تم مسح {count} ملف WebP")
     return count
@@ -469,23 +508,50 @@ def setup_cron_job():
     print("=== انتهى النموذج ===\n")
     print("هذه الوظيفة ستعمل كل يوم الساعة 3 صباحاً وتعالج جميع الصور الجديدة")
 
+def process_all_image_directories(convert_to_webp=True, keep_original=True, process_all=False):
+    """
+    Process all configured image directories
+    """
+    total_stats = {
+        'processed': 0,
+        'skipped': 0,
+        'errors': 0,
+        'total_saved': 0
+    }
+    
+    for directory in IMG_DIRS:
+        if os.path.exists(directory):
+            logging.info(f"Processing directory: {directory}")
+            stats = process_directory(directory, convert_to_webp, keep_original, process_all)
+            
+            total_stats['processed'] += stats['processed']
+            total_stats['skipped'] += stats['skipped']
+            total_stats['errors'] += stats['errors']
+            total_stats['total_saved'] += stats['total_saved']
+        else:
+            logging.warning(f"Directory not found: {directory}")
+    
+    logging.info(f"Total: Processed {total_stats['processed']} images. Skipped {total_stats['skipped']}. Errors: {total_stats['errors']}. Total space saved: {total_stats['total_saved']/1024/1024:.2f} MB")
+    
+    return total_stats
+
 def main():
-    """الدالة الرئيسية للسكريبت"""
-    # إعداد محلل وسيطات سطر الأوامر
-    parser = argparse.ArgumentParser(description='معالج الصور الشامل')
-    parser.add_argument('--path', help='مسار صورة أو مجلد محدد للمعالجة')
-    parser.add_argument('--all', action='store_true', help='معالجة جميع الصور، حتى التي تمت معالجتها من قبل')
-    parser.add_argument('--no-webp', action='store_true', help='لا تقم بتحويل الصور إلى WebP')
-    parser.add_argument('--replace', action='store_true', help='استبدال الصور الأصلية بصور WebP')
-    parser.add_argument('--clean', action='store_true', help='مسح ملفات WebP الإضافية')
-    parser.add_argument('--update-html', action='store_true', help='تحديث ملفات HTML لدعم WebP')
-    parser.add_argument('--django-signal', action='store_true', help='عرض نموذج إشارة Django')
-    parser.add_argument('--cron', action='store_true', help='عرض نموذج وظيفة دورية (Cron job)')
-    parser.add_argument('--only-compress', action='store_true', help='ضغط الصور فقط دون تحويل إلى WebP')
+    """Main function for the script"""
+    # Setup command line argument parser
+    parser = argparse.ArgumentParser(description='Comprehensive Image Processor')
+    parser.add_argument('--path', help='Specific image or directory path to process')
+    parser.add_argument('--all', action='store_true', help='Process all images, including previously processed ones')
+    parser.add_argument('--no-webp', action='store_true', help='Do not convert images to WebP')
+    parser.add_argument('--replace', action='store_true', help='Replace original images with WebP versions')
+    parser.add_argument('--clean', action='store_true', help='Clean redundant WebP files')
+    parser.add_argument('--update-html', action='store_true', help='Update HTML files for WebP support')
+    parser.add_argument('--django-signal', action='store_true', help='Show Django signal model code')
+    parser.add_argument('--cron', action='store_true', help='Show cron job example')
+    parser.add_argument('--only-compress', action='store_true', help='Only compress images without WebP conversion')
     
     args = parser.parse_args()
     
-    # التأكد من وجود مجلد السجلات
+    # Ensure logs directory exists
     logs_dir = BASE_DIR / 'logs'
     if not os.path.exists(logs_dir):
         os.makedirs(logs_dir)
@@ -498,12 +564,12 @@ def main():
         setup_cron_job()
         return
     
-    logging.info("بدء عملية معالجة الصور...")
+    logging.info("Starting image processing...")
     
-    # تحديد ما إذا كنا سنحتفظ بالصور الأصلية أم لا
+    # Determine whether to keep original images
     keep_original = not args.replace
     
-    # ضغط الصور فقط
+    # Compress only
     if args.only_compress:
         if args.path:
             path = Path(args.path)
@@ -512,23 +578,26 @@ def main():
             elif path.is_dir():
                 process_directory(str(path), False, True, args.all)
             else:
-                logging.error(f"المسار غير صالح: {args.path}")
+                logging.error(f"Invalid path: {args.path}")
         else:
-            process_directory(IMG_DIR, False, True, args.all)
-        logging.info("اكتملت عملية ضغط الصور")
+            process_all_image_directories(False, True, args.all)
+        logging.info("Image compression completed")
         return
     
-    # مسح ملفات WebP الإضافية إذا طلب المستخدم ذلك
+    # Clean WebP files if requested
     if args.clean:
-        clean_webp_files(IMG_DIR if args.path is None else args.path)
+        if args.path:
+            clean_webp_files(args.path)
+        else:
+            clean_webp_files()
         return
     
-    # تحديث ملفات HTML فقط
+    # Update HTML files only
     if args.update_html:
         update_html_for_webp_support()
         return
     
-    # معالجة مسار محدد أو مجلد الصور الافتراضي
+    # Process specific path or default image directories
     if args.path:
         path = Path(args.path)
         if path.is_file():
@@ -536,15 +605,15 @@ def main():
         elif path.is_dir():
             process_directory(str(path), not args.no_webp, keep_original, args.all)
         else:
-            logging.error(f"المسار غير صالح: {args.path}")
+            logging.error(f"Invalid path: {args.path}")
     else:
-        # العملية الكاملة: ضغط وتحويل وتحديث الكود
-        process_directory(IMG_DIR, not args.no_webp, keep_original, args.all)
+        # Complete process: compress, convert, and update code
+        process_all_image_directories(not args.no_webp, keep_original, args.all)
         
         if not args.no_webp:
-            # العثور على أزواج الصور وتحديث الكود
+            # Find image pairs and update code
             pairs = find_all_webp_pairs()
-            logging.info(f"تم العثور على {len(pairs)} زوج من الصور")
+            logging.info(f"Found {len(pairs)} image pairs")
             
             if not keep_original:
                 replace_images(pairs)
@@ -552,7 +621,7 @@ def main():
             update_code_references(pairs)
             update_html_for_webp_support()
     
-    logging.info("اكتملت عملية معالجة الصور")
+    logging.info("Image processing completed")
 
 if __name__ == "__main__":
     main() 
