@@ -2,6 +2,10 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
     
+    # توجيه خاص للفافيكون
+    RewriteCond %{REQUEST_URI} ^/favicon\.ico$
+    RewriteRule ^favicon\.ico$ /static/img/favicon.ico [L]
+    
     # إعادة توجيه طلبات الملفات الوسائط إلى الموقع الفعلي
     
     # المسار الفعلي للميديا
@@ -33,7 +37,7 @@
     ExpiresByType application/javascript "access 1 month"
     ExpiresByType application/x-javascript "access 1 month"
     ExpiresByType application/x-shockwave-flash "access 1 month"
-    ExpiresByType image/x-icon "access 1 year"
+    ExpiresByType image/x-icon "access plus 0 seconds"
 </IfModule>
 
 # ضغط المحتوى
@@ -57,7 +61,7 @@
     BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
     
     # استثناء الصور من الضغط (لأنها مضغوطة بالفعل)
-    SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png)$ no-gzip dont-vary
+    SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|ico)$ no-gzip dont-vary
 </IfModule>
 
 # أمان إضافي
@@ -65,4 +69,9 @@
     Header set X-Content-Type-Options "nosniff"
     Header set X-XSS-Protection "1; mode=block"
     Header set X-Frame-Options "SAMEORIGIN"
+    
+    # تعيين الكاش للفافيكون
+    <FilesMatch "favicon\.ico$">
+        Header set Cache-Control "max-age=0, public, must-revalidate"
+    </FilesMatch>
 </IfModule> 
